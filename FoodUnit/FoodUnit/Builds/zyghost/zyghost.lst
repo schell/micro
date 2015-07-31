@@ -1,0 +1,120 @@
+   1               		.file	"zyghost.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__RAMPZ__ = 0x3b
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+   9               		.text
+  10               	.Ltext0:
+ 108               	.global	byte_to_binary
+ 110               	byte_to_binary:
+   1:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/zyghost.c **** //
+   2:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/zyghost.c **** //  zyghost.c
+   3:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/zyghost.c **** //  FoodUnit
+   4:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/zyghost.c **** //
+   5:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/zyghost.c **** //  Created by Schell Scivally on 2/22/15.
+   6:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/zyghost.c **** //  Copyright (c) 2015 zyghost. All rights reserved.
+   7:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/zyghost.c **** //
+   8:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/zyghost.c **** 
+   9:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/zyghost.c **** #include <stdio.h>
+  10:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/zyghost.c **** 
+  11:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/zyghost.c **** void byte_to_binary(char* b, uint8_t x) {
+ 112               	.LM0:
+ 113               	.LFBB1:
+ 114               	/* prologue: function */
+ 115               	/* frame size = 0 */
+ 116               	/* stack size = 0 */
+ 117               	.L__stack_usage = 0
+ 118               	.LBB2:
+  12:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/zyghost.c ****     for (int i = 7; i >= 0; i--) {
+ 120               	.LM1:
+ 121 0000 27E0      		ldi r18,lo8(7)
+ 122 0002 30E0      		ldi r19,0
+  13:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/zyghost.c ****         b[i] = x >> i & 0x01 ? '1' : '0';
+ 124               	.LM2:
+ 125 0004 70E0      		ldi r23,0
+ 126               	.L4:
+ 127 0006 AB01      		movw r20,r22
+ 128 0008 022E      		mov r0,r18
+ 129 000a 00C0      		rjmp 2f
+ 130               		1:
+ 131 000c 5595      		asr r21
+ 132 000e 4795      		ror r20
+ 133               		2:
+ 134 0010 0A94      		dec r0
+ 135 0012 02F4      		brpl 1b
+ 136 0014 40FF      		sbrs r20,0
+ 137 0016 00C0      		rjmp .L5
+ 138 0018 41E3      		ldi r20,lo8(49)
+ 139 001a 00C0      		rjmp .L2
+ 140               	.L5:
+ 141 001c 40E3      		ldi r20,lo8(48)
+ 142               	.L2:
+ 143 001e FC01      		movw r30,r24
+ 144 0020 E20F      		add r30,r18
+ 145 0022 F31F      		adc r31,r19
+ 147               	.LM3:
+ 148 0024 4083      		st Z,r20
+  12:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/zyghost.c ****     for (int i = 7; i >= 0; i--) {
+ 150               	.LM4:
+ 151 0026 2150      		subi r18,1
+ 152 0028 3109      		sbc r19,__zero_reg__
+ 153 002a 00F4      		brcc .L4
+ 154               	.LBE2:
+  14:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/zyghost.c ****     }
+  15:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/zyghost.c ****     b[8] = '\0';
+ 156               	.LM5:
+ 157 002c FC01      		movw r30,r24
+ 158 002e 1086      		std Z+8,__zero_reg__
+ 159 0030 0895      		ret
+ 164               	.Lscope1:
+ 167               	.global	zstrlen
+ 169               	zstrlen:
+  16:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/zyghost.c **** }
+  17:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/zyghost.c **** 
+  18:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/zyghost.c **** uint8_t zstrlen(char* s) {
+ 171               	.LM6:
+ 172               	.LFBB2:
+ 173               	/* prologue: function */
+ 174               	/* frame size = 0 */
+ 175               	/* stack size = 0 */
+ 176               	.L__stack_usage = 0
+ 177 0032 FC01      		movw r30,r24
+  19:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/zyghost.c ****     uint8_t i = 0;
+ 179               	.LM7:
+ 180 0034 80E0      		ldi r24,0
+ 181               	.L8:
+  20:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/zyghost.c ****     while (i < 255 && s[i] != '\0') {
+ 183               	.LM8:
+ 184 0036 9191      		ld r25,Z+
+ 185 0038 9923      		tst r25
+ 186 003a 01F0      		breq .L9
+  21:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/zyghost.c ****         i++;
+ 188               	.LM9:
+ 189 003c 8F5F      		subi r24,lo8(-(1))
+  20:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/zyghost.c ****     while (i < 255 && s[i] != '\0') {
+ 191               	.LM10:
+ 192 003e 8F3F      		cpi r24,lo8(-1)
+ 193 0040 01F4      		brne .L8
+ 194               	.L9:
+  22:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/zyghost.c ****     }
+  23:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/zyghost.c ****     return i;
+  24:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/zyghost.c **** }...
+ 196               	.LM11:
+ 197 0042 0895      		ret
+ 202               	.Lscope2:
+ 204               	.Letext0:
+ 205               		.ident	"GCC: (GNU) 4.8.1"
+DEFINED SYMBOLS
+                            *ABS*:00000000 zyghost.c
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc6e1DB8.s:2      *ABS*:0000003e __SP_H__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc6e1DB8.s:3      *ABS*:0000003d __SP_L__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc6e1DB8.s:4      *ABS*:0000003f __SREG__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc6e1DB8.s:5      *ABS*:0000003b __RAMPZ__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc6e1DB8.s:6      *ABS*:00000000 __tmp_reg__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc6e1DB8.s:7      *ABS*:00000001 __zero_reg__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc6e1DB8.s:110    .text:00000000 byte_to_binary
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc6e1DB8.s:169    .text:00000032 zstrlen
+
+NO UNDEFINED SYMBOLS

@@ -1,0 +1,156 @@
+   1               		.file	"analog.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__RAMPZ__ = 0x3b
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+   9               		.text
+  10               	.Ltext0:
+ 109               	.global	analogReference
+ 111               	analogReference:
+   1:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** // Simple analog to digitial conversion
+   2:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** 
+   3:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** #include <avr/io.h>
+   4:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** #include <avr/pgmspace.h>
+   5:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** #include <stdint.h>
+   6:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** #include "analog.h"
+   7:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** 
+   8:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** 
+   9:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** static uint8_t aref = (1<<REFS0); // default to AREF = Vcc
+  10:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** 
+  11:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** 
+  12:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** void analogReference(uint8_t mode)
+  13:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** {
+ 113               	.LM0:
+ 114               	.LFBB1:
+ 115               	/* prologue: function */
+ 116               	/* frame size = 0 */
+ 117               	/* stack size = 0 */
+ 118               	.L__stack_usage = 0
+  14:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** 	aref = mode & 0xC0;
+ 120               	.LM1:
+ 121 0000 807C      		andi r24,lo8(-64)
+ 122 0002 8093 0000 		sts aref,r24
+ 123 0006 0895      		ret
+ 125               	.Lscope1:
+ 128               	.global	adc_read
+ 130               	adc_read:
+  15:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** }
+  16:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** 
+  17:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** 
+  18:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** // Arduino compatible pin input
+  19:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** int16_t analogRead(uint8_t pin)
+  20:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** {
+  21:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** #if defined(__AVR_ATmega32U4__)
+  22:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** 	static const uint8_t PROGMEM pin_to_mux[] = {
+  23:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** 		0x00, 0x01, 0x04, 0x05, 0x06, 0x07,
+  24:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** 		0x25, 0x24, 0x23, 0x22, 0x21, 0x20};
+  25:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** 	if (pin >= 12) return 0;
+  26:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** 	return adc_read(pgm_read_byte(pin_to_mux + pin));
+  27:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** #elif defined(__AVR_AT90USB646__) || defined(__AVR_AT90USB1286__)
+  28:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** 	if (pin >= 8) return 0;
+  29:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** 	return adc_read(pin);
+  30:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** #else
+  31:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** 	return 0;
+  32:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** #endif
+  33:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** }
+  34:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** 
+  35:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** // Mux input
+  36:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** int16_t adc_read(uint8_t mux)
+  37:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** {
+ 132               	.LM2:
+ 133               	.LFBB2:
+ 134               	/* prologue: function */
+ 135               	/* frame size = 0 */
+ 136               	/* stack size = 0 */
+ 137               	.L__stack_usage = 0
+  38:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** #if defined(__AVR_AT90USB162__)
+  39:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** 	return 0;
+  40:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** #else
+  41:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** 	uint8_t low;
+  42:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** 
+  43:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** 	ADCSRA = (1<<ADEN) | ADC_PRESCALER;		// enable ADC
+ 139               	.LM3:
+ 140 0008 96E8      		ldi r25,lo8(-122)
+ 141 000a 9093 7A00 		sts 122,r25
+  44:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** 	ADCSRB = (1<<ADHSM) | (mux & 0x20);		// high speed mode
+ 143               	.LM4:
+ 144 000e 982F      		mov r25,r24
+ 145 0010 9072      		andi r25,lo8(32)
+ 146 0012 9068      		ori r25,lo8(-128)
+ 147 0014 9093 7B00 		sts 123,r25
+  45:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** 	ADMUX = aref | (mux & 0x1F);			// configure mux input
+ 149               	.LM5:
+ 150 0018 8F71      		andi r24,lo8(31)
+ 151 001a 9091 0000 		lds r25,aref
+ 152 001e 892B      		or r24,r25
+ 153 0020 8093 7C00 		sts 124,r24
+  46:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** 	ADCSRA = (1<<ADEN) | ADC_PRESCALER | (1<<ADSC);	// start the conversion
+ 155               	.LM6:
+ 156 0024 86EC      		ldi r24,lo8(-58)
+ 157 0026 8093 7A00 		sts 122,r24
+ 158               	.L4:
+  47:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** 	while (ADCSRA & (1<<ADSC)) ;			// wait for result
+ 160               	.LM7:
+ 161 002a 8091 7A00 		lds r24,122
+ 162 002e 86FD      		sbrc r24,6
+ 163 0030 00C0      		rjmp .L4
+  48:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** 	low = ADCL;					// must read LSB first
+ 165               	.LM8:
+ 166 0032 8091 7800 		lds r24,120
+  49:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** 	return (ADCH << 8) | low;			// must read MSB only once!
+ 168               	.LM9:
+ 169 0036 2091 7900 		lds r18,121
+ 170 003a 90E0      		ldi r25,0
+  50:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** #endif
+  51:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** }
+ 172               	.LM10:
+ 173 003c 922B      		or r25,r18
+ 174 003e 0895      		ret
+ 179               	.Lscope2:
+ 182               	.global	analogRead
+ 184               	analogRead:
+  20:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** {
+ 186               	.LM11:
+ 187               	.LFBB3:
+ 188               	/* prologue: function */
+ 189               	/* frame size = 0 */
+ 190               	/* stack size = 0 */
+ 191               	.L__stack_usage = 0
+  28:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** 	if (pin >= 8) return 0;
+ 193               	.LM12:
+ 194 0040 8830      		cpi r24,lo8(8)
+ 195 0042 00F4      		brsh .L7
+  29:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** 	return adc_read(pin);
+ 197               	.LM13:
+ 198 0044 0C94 0000 		jmp adc_read
+ 199               	.L7:
+  33:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/analog.c **** }
+ 201               	.LM14:
+ 202 0048 80E0      		ldi r24,0
+ 203 004a 90E0      		ldi r25,0
+ 204 004c 0895      		ret
+ 206               	.Lscope3:
+ 207               		.data
+ 210               	aref:
+ 211 0000 40        		.byte	64
+ 213               		.text
+ 215               	.Letext0:
+ 216               		.ident	"GCC: (GNU) 4.8.1"
+ 217               	.global __do_copy_data
+DEFINED SYMBOLS
+                            *ABS*:00000000 analog.c
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccFNgOci.s:2      *ABS*:0000003e __SP_H__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccFNgOci.s:3      *ABS*:0000003d __SP_L__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccFNgOci.s:4      *ABS*:0000003f __SREG__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccFNgOci.s:5      *ABS*:0000003b __RAMPZ__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccFNgOci.s:6      *ABS*:00000000 __tmp_reg__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccFNgOci.s:7      *ABS*:00000001 __zero_reg__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccFNgOci.s:111    .text:00000000 analogReference
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccFNgOci.s:210    .data:00000000 aref
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccFNgOci.s:130    .text:00000008 adc_read
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccFNgOci.s:184    .text:00000040 analogRead
+
+UNDEFINED SYMBOLS
+__do_copy_data

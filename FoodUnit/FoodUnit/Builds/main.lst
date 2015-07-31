@@ -1,0 +1,2724 @@
+   1               		.file	"main.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__RAMPZ__ = 0x3b
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+   9               		.text
+  10               	.Ltext0:
+ 130               	.global	time_is_greater
+ 132               	time_is_greater:
+   1:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** #include <stdio.h>
+   2:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** #include <avr/io.h>
+   3:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** #include <avr/interrupt.h>
+   4:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** #include <util/delay.h>
+   5:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** #include <avr/sleep.h>
+   6:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** #include <string.h>
+   7:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** #include "zyghost/zyghost.h"
+   8:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** #include "zyghost/lcd.h"
+   9:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** #include "zyghost/encoder.h"
+  10:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** 
+  11:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** typedef struct {
+  12:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     uint16_t clock;
+  13:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     uint16_t millis;
+  14:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     uint16_t seconds;
+  15:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     uint16_t hours;
+  16:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** } time;
+  17:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** 
+  18:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** #define TIME_ZERO time_make(0,0,0,0)
+  19:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** 
+  20:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** bool time_is_greater(time a, time b) {
+ 134               	.LM0:
+ 135               	.LFBB1:
+ 136 0000 AF92      		push r10
+ 137 0002 BF92      		push r11
+ 138 0004 CF92      		push r12
+ 139 0006 DF92      		push r13
+ 140 0008 EF92      		push r14
+ 141 000a FF92      		push r15
+ 142 000c 0F93      		push r16
+ 143 000e 1F93      		push r17
+ 144 0010 CF93      		push r28
+ 145 0012 DF93      		push r29
+ 146 0014 CDB7      		in r28,__SP_L__
+ 147 0016 DEB7      		in r29,__SP_H__
+ 148 0018 6097      		sbiw r28,16
+ 149 001a 0FB6      		in __tmp_reg__,__SREG__
+ 150 001c F894      		cli
+ 151 001e DEBF      		out __SP_H__,r29
+ 152 0020 0FBE      		out __SREG__,__tmp_reg__
+ 153 0022 CDBF      		out __SP_L__,r28
+ 154               	/* prologue: function */
+ 155               	/* frame size = 16 */
+ 156               	/* stack size = 26 */
+ 157               	.L__stack_usage = 26
+ 158 0024 2983      		std Y+1,r18
+ 159 0026 3A83      		std Y+2,r19
+ 160 0028 4B83      		std Y+3,r20
+ 161 002a 5C83      		std Y+4,r21
+ 162 002c 6D83      		std Y+5,r22
+ 163 002e 7E83      		std Y+6,r23
+ 164 0030 8F83      		std Y+7,r24
+ 165 0032 9887      		std Y+8,r25
+ 166 0034 A986      		std Y+9,r10
+ 167 0036 BA86      		std Y+10,r11
+ 168 0038 CB86      		std Y+11,r12
+ 169 003a DC86      		std Y+12,r13
+ 170 003c ED86      		std Y+13,r14
+ 171 003e FE86      		std Y+14,r15
+ 172 0040 0F87      		std Y+15,r16
+ 173 0042 188B      		std Y+16,r17
+ 174 0044 2B81      		ldd r18,Y+3
+ 175 0046 3C81      		ldd r19,Y+4
+ 176 0048 6D81      		ldd r22,Y+5
+ 177 004a 7E81      		ldd r23,Y+6
+ 178 004c AF81      		ldd r26,Y+7
+ 179 004e B885      		ldd r27,Y+8
+ 180 0050 8B85      		ldd r24,Y+11
+ 181 0052 9C85      		ldd r25,Y+12
+ 182 0054 4D85      		ldd r20,Y+13
+ 183 0056 5E85      		ldd r21,Y+14
+ 184 0058 EF85      		ldd r30,Y+15
+ 185 005a F889      		ldd r31,Y+16
+  21:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     if (a.hours > b.hours) {
+ 187               	.LM1:
+ 188 005c EA17      		cp r30,r26
+ 189 005e FB07      		cpc r31,r27
+ 190 0060 00F0      		brlo .L8
+  22:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         return true;
+  23:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     }
+  24:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     if (a.hours < b.hours) {
+ 192               	.LM2:
+ 193 0062 AE17      		cp r26,r30
+ 194 0064 BF07      		cpc r27,r31
+ 195 0066 00F0      		brlo .L9
+  25:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         return false;
+  26:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     }
+  27:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****    
+  28:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     if (a.seconds > b.seconds) {
+ 197               	.LM3:
+ 198 0068 4617      		cp r20,r22
+ 199 006a 5707      		cpc r21,r23
+ 200 006c 00F0      		brlo .L8
+  29:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         return true;
+  30:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     }
+  31:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     if (a.seconds < b.seconds) {
+ 202               	.LM4:
+ 203 006e 6417      		cp r22,r20
+ 204 0070 7507      		cpc r23,r21
+ 205 0072 00F0      		brlo .L9
+  32:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         return false;
+  33:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     }
+  34:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     
+  35:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     if (a.millis > b.millis) {
+ 207               	.LM5:
+ 208 0074 8217      		cp r24,r18
+ 209 0076 9307      		cpc r25,r19
+ 210 0078 00F0      		brlo .L8
+  36:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         return true;
+  37:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     }
+  38:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     if (a.millis < b.millis) {
+ 212               	.LM6:
+ 213 007a 2817      		cp r18,r24
+ 214 007c 3907      		cpc r19,r25
+ 215 007e 00F0      		brlo .L9
+  39:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         return false;
+  40:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     }
+  41:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     
+  42:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     if (a.clock > b.clock) {
+ 217               	.LM7:
+ 218 0080 81E0      		ldi r24,lo8(1)
+ 219 0082 4981      		ldd r20,Y+1
+ 220 0084 5A81      		ldd r21,Y+2
+ 221 0086 2985      		ldd r18,Y+9
+ 222 0088 3A85      		ldd r19,Y+10
+ 223 008a 2417      		cp r18,r20
+ 224 008c 3507      		cpc r19,r21
+ 225 008e 00F0      		brlo .L2
+ 226 0090 00C0      		rjmp .L9
+ 227               	.L8:
+  22:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         return true;
+ 229               	.LM8:
+ 230 0092 81E0      		ldi r24,lo8(1)
+ 231 0094 00C0      		rjmp .L2
+ 232               	.L9:
+  25:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         return false;
+ 234               	.LM9:
+ 235 0096 80E0      		ldi r24,0
+ 236               	.L2:
+ 237               	/* epilogue start */
+  43:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         return true;
+  44:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     }
+  45:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     return false;
+  46:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** }
+ 239               	.LM10:
+ 240 0098 6096      		adiw r28,16
+ 241 009a 0FB6      		in __tmp_reg__,__SREG__
+ 242 009c F894      		cli
+ 243 009e DEBF      		out __SP_H__,r29
+ 244 00a0 0FBE      		out __SREG__,__tmp_reg__
+ 245 00a2 CDBF      		out __SP_L__,r28
+ 246 00a4 DF91      		pop r29
+ 247 00a6 CF91      		pop r28
+ 248 00a8 1F91      		pop r17
+ 249 00aa 0F91      		pop r16
+ 250 00ac FF90      		pop r15
+ 251 00ae EF90      		pop r14
+ 252 00b0 DF90      		pop r13
+ 253 00b2 CF90      		pop r12
+ 254 00b4 BF90      		pop r11
+ 255 00b6 AF90      		pop r10
+ 256 00b8 0895      		ret
+ 258               	.Lscope1:
+ 262               	.global	time_update
+ 264               	time_update:
+  47:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** 
+  48:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** time time_update(time t, uint16_t clks) {
+ 266               	.LM11:
+ 267               	.LFBB2:
+ 268 00ba 0F93      		push r16
+ 269 00bc 1F93      		push r17
+ 270 00be CF93      		push r28
+ 271 00c0 DF93      		push r29
+ 272 00c2 CDB7      		in r28,__SP_L__
+ 273 00c4 DEB7      		in r29,__SP_H__
+ 274 00c6 6097      		sbiw r28,16
+ 275 00c8 0FB6      		in __tmp_reg__,__SREG__
+ 276 00ca F894      		cli
+ 277 00cc DEBF      		out __SP_H__,r29
+ 278 00ce 0FBE      		out __SREG__,__tmp_reg__
+ 279 00d0 CDBF      		out __SP_L__,r28
+ 280               	/* prologue: function */
+ 281               	/* frame size = 16 */
+ 282               	/* stack size = 20 */
+ 283               	.L__stack_usage = 20
+ 284 00d2 2987      		std Y+9,r18
+ 285 00d4 3A87      		std Y+10,r19
+ 286 00d6 4B87      		std Y+11,r20
+ 287 00d8 5C87      		std Y+12,r21
+ 288 00da 6D87      		std Y+13,r22
+ 289 00dc 7E87      		std Y+14,r23
+ 290 00de 8F87      		std Y+15,r24
+ 291 00e0 988B      		std Y+16,r25
+ 292 00e2 4985      		ldd r20,Y+9
+ 293 00e4 5A85      		ldd r21,Y+10
+ 294 00e6 2B85      		ldd r18,Y+11
+ 295 00e8 3C85      		ldd r19,Y+12
+ 296 00ea 6D85      		ldd r22,Y+13
+ 297 00ec 7E85      		ldd r23,Y+14
+ 298 00ee 8F85      		ldd r24,Y+15
+ 299 00f0 9889      		ldd r25,Y+16
+  49:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     t.clock += clks;
+ 301               	.LM12:
+ 302 00f2 040F      		add r16,r20
+ 303 00f4 151F      		adc r17,r21
+  50:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     if (t.clock >= (F_CPU / 1000)) {
+ 305               	.LM13:
+ 306 00f6 0038      		cpi r16,-128
+ 307 00f8 4EE3      		ldi r20,62
+ 308 00fa 1407      		cpc r17,r20
+ 309 00fc 00F0      		brlo .L13
+  51:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         t.millis++;
+ 311               	.LM14:
+ 312 00fe A901      		movw r20,r18
+ 313 0100 4F5F      		subi r20,-1
+ 314 0102 5F4F      		sbci r21,-1
+  52:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         t.clock -= (F_CPU / 1000);
+ 316               	.LM15:
+ 317 0104 0058      		subi r16,-128
+ 318 0106 1E43      		sbci r17,62
+  53:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         if (t.millis >= 1000) {
+ 320               	.LM16:
+ 321 0108 483E      		cpi r20,-24
+ 322 010a E3E0      		ldi r30,3
+ 323 010c 5E07      		cpc r21,r30
+ 324 010e 00F0      		brlo .L12
+  54:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             t.millis -= 1000;
+ 326               	.LM17:
+ 327 0110 485E      		subi r20,-24
+ 328 0112 5340      		sbci r21,3
+  55:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             t.seconds++;
+ 330               	.LM18:
+ 331 0114 9B01      		movw r18,r22
+ 332 0116 2F5F      		subi r18,-1
+ 333 0118 3F4F      		sbci r19,-1
+  56:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             if (t.seconds >= 3600) {
+ 335               	.LM19:
+ 336 011a 2031      		cpi r18,16
+ 337 011c EEE0      		ldi r30,14
+ 338 011e 3E07      		cpc r19,r30
+ 339 0120 00F0      		brlo .L14
+  57:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****                 t.seconds -= 3600;
+ 341               	.LM20:
+ 342 0122 6F50      		subi r22,15
+ 343 0124 7E40      		sbci r23,14
+  58:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****                 t.hours++;
+ 345               	.LM21:
+ 346 0126 0196      		adiw r24,1
+ 347 0128 00C0      		rjmp .L12
+ 348               	.L13:
+ 349 012a A901      		movw r20,r18
+ 350 012c 00C0      		rjmp .L12
+ 351               	.L14:
+ 352 012e B901      		movw r22,r18
+ 353               	.L12:
+  59:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             }
+  60:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         }
+  61:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     }
+  62:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     return t;
+ 355               	.LM22:
+ 356 0130 1A83      		std Y+2,r17
+ 357 0132 0983      		std Y+1,r16
+ 358 0134 5C83      		std Y+4,r21
+ 359 0136 4B83      		std Y+3,r20
+ 360 0138 7E83      		std Y+6,r23
+ 361 013a 6D83      		std Y+5,r22
+ 362 013c 9887      		std Y+8,r25
+ 363 013e 8F83      		std Y+7,r24
+ 364 0140 202F      		mov r18,r16
+ 365 0142 3A81      		ldd r19,Y+2
+ 366 0144 5C81      		ldd r21,Y+4
+ 367 0146 7E81      		ldd r23,Y+6
+  63:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** }
+ 369               	.LM23:
+ 370 0148 9885      		ldd r25,Y+8
+ 371               	/* epilogue start */
+ 372 014a 6096      		adiw r28,16
+ 373 014c 0FB6      		in __tmp_reg__,__SREG__
+ 374 014e F894      		cli
+ 375 0150 DEBF      		out __SP_H__,r29
+ 376 0152 0FBE      		out __SREG__,__tmp_reg__
+ 377 0154 CDBF      		out __SP_L__,r28
+ 378 0156 DF91      		pop r29
+ 379 0158 CF91      		pop r28
+ 380 015a 1F91      		pop r17
+ 381 015c 0F91      		pop r16
+ 382 015e 0895      		ret
+ 384               	.Lscope2:
+ 386               	.global	time_make
+ 388               	time_make:
+  64:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** 
+  65:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** time time_make(uint16_t clk, uint16_t ms, uint16_t s, uint16_t h) {
+ 390               	.LM24:
+ 391               	.LFBB3:
+ 392 0160 0F93      		push r16
+ 393 0162 1F93      		push r17
+ 394 0164 CF93      		push r28
+ 395 0166 DF93      		push r29
+ 396 0168 CDB7      		in r28,__SP_L__
+ 397 016a DEB7      		in r29,__SP_H__
+ 398 016c 6097      		sbiw r28,16
+ 399 016e 0FB6      		in __tmp_reg__,__SREG__
+ 400 0170 F894      		cli
+ 401 0172 DEBF      		out __SP_H__,r29
+ 402 0174 0FBE      		out __SREG__,__tmp_reg__
+ 403 0176 CDBF      		out __SP_L__,r28
+ 404               	/* prologue: function */
+ 405               	/* frame size = 16 */
+ 406               	/* stack size = 20 */
+ 407               	.L__stack_usage = 20
+ 408 0178 E82F      		mov r30,r24
+ 409 017a 822F      		mov r24,r18
+  66:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     time t;
+  67:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     t.clock = clk;
+ 411               	.LM25:
+ 412 017c 2E2F      		mov r18,r30
+ 413 017e E987      		std Y+9,r30
+ 414 0180 9A87      		std Y+10,r25
+  68:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     t.millis = ms;
+ 416               	.LM26:
+ 417 0182 962F      		mov r25,r22
+ 418 0184 6B87      		std Y+11,r22
+ 419 0186 7C87      		std Y+12,r23
+  69:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     t.seconds = s;
+ 421               	.LM27:
+ 422 0188 642F      		mov r22,r20
+ 423 018a 4D87      		std Y+13,r20
+ 424 018c 5E87      		std Y+14,r21
+  70:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     t.hours = h;
+ 426               	.LM28:
+ 427 018e 8F87      		std Y+15,r24
+ 428 0190 388B      		std Y+16,r19
+  71:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     return time_update(t, 0);
+ 430               	.LM29:
+ 431 0192 00E0      		ldi r16,0
+ 432 0194 10E0      		ldi r17,0
+ 433 0196 3A85      		ldd r19,Y+10
+ 434 0198 492F      		mov r20,r25
+ 435 019a 572F      		mov r21,r23
+ 436 019c 7E85      		ldd r23,Y+14
+ 437 019e 9889      		ldd r25,Y+16
+ 438 01a0 0E94 0000 		call time_update
+ 439               	/* epilogue start */
+  72:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** }
+ 441               	.LM30:
+ 442 01a4 6096      		adiw r28,16
+ 443 01a6 0FB6      		in __tmp_reg__,__SREG__
+ 444 01a8 F894      		cli
+ 445 01aa DEBF      		out __SP_H__,r29
+ 446 01ac 0FBE      		out __SREG__,__tmp_reg__
+ 447 01ae CDBF      		out __SP_L__,r28
+ 448 01b0 DF91      		pop r29
+ 449 01b2 CF91      		pop r28
+ 450 01b4 1F91      		pop r17
+ 451 01b6 0F91      		pop r16
+ 452 01b8 0895      		ret
+ 457               	.Lscope3:
+ 461               	.global	time_add
+ 463               	time_add:
+  73:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** 
+  74:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** time time_add(time a, time b) {
+ 465               	.LM31:
+ 466               	.LFBB4:
+ 467 01ba AF92      		push r10
+ 468 01bc BF92      		push r11
+ 469 01be CF92      		push r12
+ 470 01c0 DF92      		push r13
+ 471 01c2 EF92      		push r14
+ 472 01c4 FF92      		push r15
+ 473 01c6 0F93      		push r16
+ 474 01c8 1F93      		push r17
+ 475 01ca CF93      		push r28
+ 476 01cc DF93      		push r29
+ 477 01ce CDB7      		in r28,__SP_L__
+ 478 01d0 DEB7      		in r29,__SP_H__
+ 479 01d2 A897      		sbiw r28,40
+ 480 01d4 0FB6      		in __tmp_reg__,__SREG__
+ 481 01d6 F894      		cli
+ 482 01d8 DEBF      		out __SP_H__,r29
+ 483 01da 0FBE      		out __SREG__,__tmp_reg__
+ 484 01dc CDBF      		out __SP_L__,r28
+ 485               	/* prologue: function */
+ 486               	/* frame size = 40 */
+ 487               	/* stack size = 50 */
+ 488               	.L__stack_usage = 50
+ 489 01de A9A2      		std Y+33,r10
+ 490 01e0 BAA2      		std Y+34,r11
+ 491 01e2 CBA2      		std Y+35,r12
+ 492 01e4 DCA2      		std Y+36,r13
+ 493 01e6 EDA2      		std Y+37,r14
+ 494 01e8 FEA2      		std Y+38,r15
+ 495 01ea 0FA3      		std Y+39,r16
+ 496 01ec 18A7      		std Y+40,r17
+  75:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     time aa = time_update(a, 0);
+ 498               	.LM32:
+ 499 01ee 00E0      		ldi r16,0
+ 500 01f0 10E0      		ldi r17,0
+ 501 01f2 0E94 0000 		call time_update
+ 502 01f6 298B      		std Y+17,r18
+ 503 01f8 3A8B      		std Y+18,r19
+ 504 01fa 4B8B      		std Y+19,r20
+ 505 01fc 5C8B      		std Y+20,r21
+ 506 01fe 6D8B      		std Y+21,r22
+ 507 0200 7E8B      		std Y+22,r23
+ 508 0202 8F8B      		std Y+23,r24
+ 509 0204 988F      		std Y+24,r25
+  76:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     time bb = time_update(b, 0);
+ 511               	.LM33:
+ 512 0206 29A1      		ldd r18,Y+33
+ 513 0208 3AA1      		ldd r19,Y+34
+ 514 020a 4BA1      		ldd r20,Y+35
+ 515 020c 5CA1      		ldd r21,Y+36
+ 516 020e 6DA1      		ldd r22,Y+37
+ 517 0210 7EA1      		ldd r23,Y+38
+ 518 0212 8FA1      		ldd r24,Y+39
+ 519 0214 98A5      		ldd r25,Y+40
+ 520 0216 0E94 0000 		call time_update
+ 521 021a 2987      		std Y+9,r18
+ 522 021c 3A87      		std Y+10,r19
+ 523 021e 4B87      		std Y+11,r20
+ 524 0220 5C87      		std Y+12,r21
+ 525 0222 6D87      		std Y+13,r22
+ 526 0224 7E87      		std Y+14,r23
+ 527 0226 8F87      		std Y+15,r24
+ 528 0228 988B      		std Y+16,r25
+  77:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     return time_make(aa.clock + bb.clock, aa.millis + bb.millis, aa.seconds + bb.seconds, aa.hours 
+ 530               	.LM34:
+ 531 022a 2F85      		ldd r18,Y+15
+ 532 022c 3889      		ldd r19,Y+16
+ 533 022e 8F89      		ldd r24,Y+23
+ 534 0230 988D      		ldd r25,Y+24
+ 535 0232 280F      		add r18,r24
+ 536 0234 391F      		adc r19,r25
+ 537 0236 4D85      		ldd r20,Y+13
+ 538 0238 5E85      		ldd r21,Y+14
+ 539 023a 8D89      		ldd r24,Y+21
+ 540 023c 9E89      		ldd r25,Y+22
+ 541 023e 480F      		add r20,r24
+ 542 0240 591F      		adc r21,r25
+ 543 0242 6B85      		ldd r22,Y+11
+ 544 0244 7C85      		ldd r23,Y+12
+ 545 0246 8B89      		ldd r24,Y+19
+ 546 0248 9C89      		ldd r25,Y+20
+ 547 024a 680F      		add r22,r24
+ 548 024c 791F      		adc r23,r25
+ 549 024e E985      		ldd r30,Y+9
+ 550 0250 FA85      		ldd r31,Y+10
+ 551 0252 8989      		ldd r24,Y+17
+ 552 0254 9A89      		ldd r25,Y+18
+ 553 0256 8E0F      		add r24,r30
+ 554 0258 9F1F      		adc r25,r31
+ 555 025a 0E94 0000 		call time_make
+ 556               	/* epilogue start */
+  78:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** }
+ 558               	.LM35:
+ 559 025e A896      		adiw r28,40
+ 560 0260 0FB6      		in __tmp_reg__,__SREG__
+ 561 0262 F894      		cli
+ 562 0264 DEBF      		out __SP_H__,r29
+ 563 0266 0FBE      		out __SREG__,__tmp_reg__
+ 564 0268 CDBF      		out __SP_L__,r28
+ 565 026a DF91      		pop r29
+ 566 026c CF91      		pop r28
+ 567 026e 1F91      		pop r17
+ 568 0270 0F91      		pop r16
+ 569 0272 FF90      		pop r15
+ 570 0274 EF90      		pop r14
+ 571 0276 DF90      		pop r13
+ 572 0278 CF90      		pop r12
+ 573 027a BF90      		pop r11
+ 574 027c AF90      		pop r10
+ 575 027e 0895      		ret
+ 581               	.Lscope4:
+ 585               	.global	time_diff_internal
+ 587               	time_diff_internal:
+  79:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** 
+  80:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** time time_diff_internal(time a, time b) {
+ 589               	.LM36:
+ 590               	.LFBB5:
+ 591 0280 6F92      		push r6
+ 592 0282 7F92      		push r7
+ 593 0284 8F92      		push r8
+ 594 0286 9F92      		push r9
+ 595 0288 AF92      		push r10
+ 596 028a BF92      		push r11
+ 597 028c CF92      		push r12
+ 598 028e DF92      		push r13
+ 599 0290 EF92      		push r14
+ 600 0292 FF92      		push r15
+ 601 0294 0F93      		push r16
+ 602 0296 1F93      		push r17
+ 603 0298 CF93      		push r28
+ 604 029a DF93      		push r29
+ 605 029c CDB7      		in r28,__SP_L__
+ 606 029e DEB7      		in r29,__SP_H__
+ 607 02a0 A097      		sbiw r28,32
+ 608 02a2 0FB6      		in __tmp_reg__,__SREG__
+ 609 02a4 F894      		cli
+ 610 02a6 DEBF      		out __SP_H__,r29
+ 611 02a8 0FBE      		out __SREG__,__tmp_reg__
+ 612 02aa CDBF      		out __SP_L__,r28
+ 613               	/* prologue: function */
+ 614               	/* frame size = 32 */
+ 615               	/* stack size = 46 */
+ 616               	.L__stack_usage = 46
+ 617 02ac E22F      		mov r30,r18
+ 618 02ae 298B      		std Y+17,r18
+ 619 02b0 F32F      		mov r31,r19
+ 620 02b2 3A8B      		std Y+18,r19
+ 621 02b4 A42F      		mov r26,r20
+ 622 02b6 4B8B      		std Y+19,r20
+ 623 02b8 B52F      		mov r27,r21
+ 624 02ba 5C8B      		std Y+20,r21
+ 625 02bc 962E      		mov r9,r22
+ 626 02be 6D8B      		std Y+21,r22
+ 627 02c0 872E      		mov r8,r23
+ 628 02c2 7E8B      		std Y+22,r23
+ 629 02c4 782E      		mov r7,r24
+ 630 02c6 8F8B      		std Y+23,r24
+ 631 02c8 692E      		mov r6,r25
+ 632 02ca 988F      		std Y+24,r25
+ 633 02cc 2A2D      		mov r18,r10
+ 634 02ce A98E      		std Y+25,r10
+ 635 02d0 3B2D      		mov r19,r11
+ 636 02d2 BA8E      		std Y+26,r11
+ 637 02d4 4C2D      		mov r20,r12
+ 638 02d6 CB8E      		std Y+27,r12
+ 639 02d8 5D2D      		mov r21,r13
+ 640 02da DC8E      		std Y+28,r13
+ 641 02dc 6E2D      		mov r22,r14
+ 642 02de ED8E      		std Y+29,r14
+ 643 02e0 7F2D      		mov r23,r15
+ 644 02e2 FE8E      		std Y+30,r15
+ 645 02e4 802F      		mov r24,r16
+ 646 02e6 0F8F      		std Y+31,r16
+ 647 02e8 912F      		mov r25,r17
+ 648 02ea 18A3      		std Y+32,r17
+  81:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     if (time_is_greater(b, a)) {
+ 650               	.LM37:
+ 651 02ec 5F01      		movw r10,r30
+ 652 02ee 6D01      		movw r12,r26
+ 653 02f0 E92C      		mov r14,r9
+ 654 02f2 F82C      		mov r15,r8
+ 655 02f4 072D      		mov r16,r7
+ 656 02f6 162D      		mov r17,r6
+ 657 02f8 0E94 0000 		call time_is_greater
+ 658 02fc 8823      		tst r24
+ 659 02fe 01F0      		breq .L18
+  82:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         return TIME_ZERO;
+ 661               	.LM38:
+ 662 0300 20E0      		ldi r18,0
+ 663 0302 30E0      		ldi r19,0
+ 664 0304 40E0      		ldi r20,0
+ 665 0306 50E0      		ldi r21,0
+ 666 0308 60E0      		ldi r22,0
+ 667 030a 70E0      		ldi r23,0
+ 668 030c 80E0      		ldi r24,0
+ 669 030e 90E0      		ldi r25,0
+ 670 0310 0E94 0000 		call time_make
+ 671 0314 00C0      		rjmp .L34
+ 672               	.L18:
+  83:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     }
+  84:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     
+  85:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     uint16_t clocka = a.clock;
+ 674               	.LM39:
+ 675 0316 2989      		ldd r18,Y+17
+ 676 0318 3A89      		ldd r19,Y+18
+  86:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     uint16_t millia = a.millis;
+ 678               	.LM40:
+ 679 031a 4B89      		ldd r20,Y+19
+ 680 031c 5C89      		ldd r21,Y+20
+  87:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     uint16_t seconda = a.seconds;
+ 682               	.LM41:
+ 683 031e 6D89      		ldd r22,Y+21
+ 684 0320 7E89      		ldd r23,Y+22
+  88:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     uint16_t hoursa = a.hours;
+ 686               	.LM42:
+ 687 0322 8F89      		ldd r24,Y+23
+ 688 0324 988D      		ldd r25,Y+24
+  89:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     
+  90:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     uint16_t clockb = b.clock;
+ 690               	.LM43:
+ 691 0326 E98C      		ldd r14,Y+25
+ 692 0328 FA8C      		ldd r15,Y+26
+  91:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     uint16_t millib = b.millis;
+ 694               	.LM44:
+ 695 032a 0B8D      		ldd r16,Y+27
+ 696 032c 1C8D      		ldd r17,Y+28
+  92:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     uint16_t secondb = b.seconds;
+ 698               	.LM45:
+ 699 032e AD8D      		ldd r26,Y+29
+ 700 0330 BE8D      		ldd r27,Y+30
+  93:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     uint16_t hoursb = b.hours;
+ 702               	.LM46:
+ 703 0332 AF8C      		ldd r10,Y+31
+ 704 0334 B8A0      		ldd r11,Y+32
+ 705               	.L20:
+  94:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     
+  95:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     while (clocka < clockb && millia > 0) {
+ 707               	.LM47:
+ 708 0336 2E15      		cp r18,r14
+ 709 0338 3F05      		cpc r19,r15
+ 710 033a 00F4      		brsh .L23
+ 712               	.LM48:
+ 713 033c 4115      		cp r20,__zero_reg__
+ 714 033e 5105      		cpc r21,__zero_reg__
+ 715 0340 01F0      		breq .L23
+  96:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         millia--;
+ 717               	.LM49:
+ 718 0342 FA01      		movw r30,r20
+ 719 0344 3197      		sbiw r30,1
+  97:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         clocka += 256;
+ 721               	.LM50:
+ 722 0346 3395      		inc r19
+  98:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         if (millia == 0) {
+ 724               	.LM51:
+ 725 0348 3097      		sbiw r30,0
+ 726 034a 01F4      		brne .L21
+  99:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             seconda--;
+ 728               	.LM52:
+ 729 034c 6B01      		movw r12,r22
+ 730 034e E1E0      		ldi r30,1
+ 731 0350 CE1A      		sub r12,r30
+ 732 0352 D108      		sbc r13,__zero_reg__
+ 100:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             millia += 1000;
+ 734               	.LM53:
+ 735 0354 FA01      		movw r30,r20
+ 736 0356 E951      		subi r30,25
+ 737 0358 FC4F      		sbci r31,-4
+ 101:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             if (seconda == 0) {
+ 739               	.LM54:
+ 740 035a C114      		cp r12,__zero_reg__
+ 741 035c D104      		cpc r13,__zero_reg__
+ 742 035e 01F4      		brne .L33
+ 102:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****                 hoursa--;
+ 744               	.LM55:
+ 745 0360 0197      		sbiw r24,1
+ 103:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****                 seconda += 3600;
+ 747               	.LM56:
+ 748 0362 615F      		subi r22,-15
+ 749 0364 714F      		sbci r23,-15
+ 750 0366 00C0      		rjmp .L21
+ 751               	.L33:
+ 752 0368 B601      		movw r22,r12
+ 753               	.L21:
+ 754 036a AF01      		movw r20,r30
+ 755 036c 00C0      		rjmp .L20
+ 756               	.L35:
+ 104:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             }
+ 105:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         }
+ 106:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     }
+ 107:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     
+ 108:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     while (millia < millib && seconda > 0) {
+ 758               	.LM57:
+ 759 036e 6115      		cp r22,__zero_reg__
+ 760 0370 7105      		cpc r23,__zero_reg__
+ 761 0372 01F0      		breq .L28
+ 109:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         seconda--;
+ 763               	.LM58:
+ 764 0374 FB01      		movw r30,r22
+ 765 0376 3197      		sbiw r30,1
+ 110:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         millia += 1000;
+ 767               	.LM59:
+ 768 0378 4851      		subi r20,24
+ 769 037a 5C4F      		sbci r21,-4
+ 111:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         if (seconda == 0) {
+ 771               	.LM60:
+ 772 037c 3097      		sbiw r30,0
+ 773 037e 01F4      		brne .L26
+ 112:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             hoursa--;
+ 775               	.LM61:
+ 776 0380 0197      		sbiw r24,1
+ 113:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             seconda += 3600;
+ 778               	.LM62:
+ 779 0382 E05F      		subi r30,-16
+ 780 0384 F14F      		sbci r31,-15
+ 781               	.L26:
+ 782 0386 BF01      		movw r22,r30
+ 783               	.L23:
+ 108:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     while (millia < millib && seconda > 0) {
+ 785               	.LM63:
+ 786 0388 4017      		cp r20,r16
+ 787 038a 5107      		cpc r21,r17
+ 788 038c 00F0      		brlo .L35
+ 789 038e 00C0      		rjmp .L28
+ 790               	.L36:
+ 114:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         }
+ 115:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     }
+ 116:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     
+ 117:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     while (seconda < secondb && hoursa > 0) {
+ 792               	.LM64:
+ 793 0390 0097      		sbiw r24,0
+ 794 0392 01F0      		breq .L31
+ 118:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         hoursa--;
+ 796               	.LM65:
+ 797 0394 0197      		sbiw r24,1
+ 119:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         seconda += 3600;
+ 799               	.LM66:
+ 800 0396 605F      		subi r22,-16
+ 801 0398 714F      		sbci r23,-15
+ 802               	.L28:
+ 117:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     while (seconda < secondb && hoursa > 0) {
+ 804               	.LM67:
+ 805 039a 6A17      		cp r22,r26
+ 806 039c 7B07      		cpc r23,r27
+ 807 039e 00F0      		brlo .L36
+ 808               	.L31:
+ 120:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     }
+ 121:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     
+ 122:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     time t;
+ 123:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     t.clock = clocka - clockb;
+ 810               	.LM68:
+ 811 03a0 F901      		movw r30,r18
+ 812 03a2 EE19      		sub r30,r14
+ 813 03a4 FF09      		sbc r31,r15
+ 814 03a6 2E2F      		mov r18,r30
+ 815 03a8 FA87      		std Y+10,r31
+ 816 03aa E987      		std Y+9,r30
+ 124:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     t.millis = millia - millib;
+ 818               	.LM69:
+ 819 03ac FA01      		movw r30,r20
+ 820 03ae E01B      		sub r30,r16
+ 821 03b0 F10B      		sbc r31,r17
+ 822 03b2 4E2F      		mov r20,r30
+ 823 03b4 FC87      		std Y+12,r31
+ 824 03b6 EB87      		std Y+11,r30
+ 125:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     t.seconds = seconda - secondb;
+ 826               	.LM70:
+ 827 03b8 FB01      		movw r30,r22
+ 828 03ba EA1B      		sub r30,r26
+ 829 03bc FB0B      		sbc r31,r27
+ 830 03be 6E2F      		mov r22,r30
+ 831 03c0 FE87      		std Y+14,r31
+ 832 03c2 ED87      		std Y+13,r30
+ 126:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     t.hours = hoursa - hoursb;
+ 834               	.LM71:
+ 835 03c4 8A19      		sub r24,r10
+ 836 03c6 9B09      		sbc r25,r11
+ 837 03c8 988B      		std Y+16,r25
+ 838 03ca 8F87      		std Y+15,r24
+ 127:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     return time_update(t, 0);
+ 840               	.LM72:
+ 841 03cc 00E0      		ldi r16,0
+ 842 03ce 10E0      		ldi r17,0
+ 843 03d0 3A85      		ldd r19,Y+10
+ 844 03d2 5C85      		ldd r21,Y+12
+ 845 03d4 7E85      		ldd r23,Y+14
+ 846 03d6 9889      		ldd r25,Y+16
+ 847 03d8 0E94 0000 		call time_update
+ 848               	.L34:
+ 849 03dc 2983      		std Y+1,r18
+ 850 03de 3A83      		std Y+2,r19
+ 851 03e0 4B83      		std Y+3,r20
+ 852 03e2 5C83      		std Y+4,r21
+ 853 03e4 6D83      		std Y+5,r22
+ 854 03e6 7E83      		std Y+6,r23
+ 855 03e8 8F83      		std Y+7,r24
+ 856 03ea 9887      		std Y+8,r25
+ 857 03ec 2981      		ldd r18,Y+1
+ 858 03ee 3A81      		ldd r19,Y+2
+ 859 03f0 4B81      		ldd r20,Y+3
+ 860 03f2 5C81      		ldd r21,Y+4
+ 861 03f4 6D81      		ldd r22,Y+5
+ 862 03f6 7E81      		ldd r23,Y+6
+ 128:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** }
+ 864               	.LM73:
+ 865 03f8 8F81      		ldd r24,Y+7
+ 866 03fa 9885      		ldd r25,Y+8
+ 867               	/* epilogue start */
+ 868 03fc A096      		adiw r28,32
+ 869 03fe 0FB6      		in __tmp_reg__,__SREG__
+ 870 0400 F894      		cli
+ 871 0402 DEBF      		out __SP_H__,r29
+ 872 0404 0FBE      		out __SREG__,__tmp_reg__
+ 873 0406 CDBF      		out __SP_L__,r28
+ 874 0408 DF91      		pop r29
+ 875 040a CF91      		pop r28
+ 876 040c 1F91      		pop r17
+ 877 040e 0F91      		pop r16
+ 878 0410 FF90      		pop r15
+ 879 0412 EF90      		pop r14
+ 880 0414 DF90      		pop r13
+ 881 0416 CF90      		pop r12
+ 882 0418 BF90      		pop r11
+ 883 041a AF90      		pop r10
+ 884 041c 9F90      		pop r9
+ 885 041e 8F90      		pop r8
+ 886 0420 7F90      		pop r7
+ 887 0422 6F90      		pop r6
+ 888 0424 0895      		ret
+ 899               	.Lscope5:
+ 903               	.global	time_diff
+ 905               	time_diff:
+ 129:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** 
+ 130:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** time time_diff(time a, time b) {
+ 907               	.LM74:
+ 908               	.LFBB6:
+ 909 0426 6F92      		push r6
+ 910 0428 7F92      		push r7
+ 911 042a 8F92      		push r8
+ 912 042c 9F92      		push r9
+ 913 042e AF92      		push r10
+ 914 0430 BF92      		push r11
+ 915 0432 CF92      		push r12
+ 916 0434 DF92      		push r13
+ 917 0436 EF92      		push r14
+ 918 0438 FF92      		push r15
+ 919 043a 0F93      		push r16
+ 920 043c 1F93      		push r17
+ 921 043e CF93      		push r28
+ 922 0440 DF93      		push r29
+ 923 0442 CDB7      		in r28,__SP_L__
+ 924 0444 DEB7      		in r29,__SP_H__
+ 925 0446 6897      		sbiw r28,24
+ 926 0448 0FB6      		in __tmp_reg__,__SREG__
+ 927 044a F894      		cli
+ 928 044c DEBF      		out __SP_H__,r29
+ 929 044e 0FBE      		out __SREG__,__tmp_reg__
+ 930 0450 CDBF      		out __SP_L__,r28
+ 931               	/* prologue: function */
+ 932               	/* frame size = 24 */
+ 933               	/* stack size = 38 */
+ 934               	.L__stack_usage = 38
+ 935 0452 E22F      		mov r30,r18
+ 936 0454 2987      		std Y+9,r18
+ 937 0456 F32F      		mov r31,r19
+ 938 0458 3A87      		std Y+10,r19
+ 939 045a A42F      		mov r26,r20
+ 940 045c 4B87      		std Y+11,r20
+ 941 045e B52F      		mov r27,r21
+ 942 0460 5C87      		std Y+12,r21
+ 943 0462 962E      		mov r9,r22
+ 944 0464 6D87      		std Y+13,r22
+ 945 0466 872E      		mov r8,r23
+ 946 0468 7E87      		std Y+14,r23
+ 947 046a 782E      		mov r7,r24
+ 948 046c 8F87      		std Y+15,r24
+ 949 046e 692E      		mov r6,r25
+ 950 0470 988B      		std Y+16,r25
+ 951 0472 2A2D      		mov r18,r10
+ 952 0474 A98A      		std Y+17,r10
+ 953 0476 3B2D      		mov r19,r11
+ 954 0478 BA8A      		std Y+18,r11
+ 955 047a 4C2D      		mov r20,r12
+ 956 047c CB8A      		std Y+19,r12
+ 957 047e 5D2D      		mov r21,r13
+ 958 0480 DC8A      		std Y+20,r13
+ 959 0482 6E2D      		mov r22,r14
+ 960 0484 ED8A      		std Y+21,r14
+ 961 0486 7F2D      		mov r23,r15
+ 962 0488 FE8A      		std Y+22,r15
+ 963 048a 802F      		mov r24,r16
+ 964 048c 0F8B      		std Y+23,r16
+ 965 048e 912F      		mov r25,r17
+ 966 0490 188F      		std Y+24,r17
+ 131:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     if (time_is_greater(b, a)) {
+ 968               	.LM75:
+ 969 0492 5F01      		movw r10,r30
+ 970 0494 6D01      		movw r12,r26
+ 971 0496 E92C      		mov r14,r9
+ 972 0498 F82C      		mov r15,r8
+ 973 049a 072D      		mov r16,r7
+ 974 049c 162D      		mov r17,r6
+ 975 049e 0E94 0000 		call time_is_greater
+ 976 04a2 8823      		tst r24
+ 977 04a4 01F0      		breq .L38
+ 132:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         return time_diff_internal(b, a);
+ 979               	.LM76:
+ 980 04a6 2989      		ldd r18,Y+17
+ 981 04a8 3A89      		ldd r19,Y+18
+ 982 04aa 4B89      		ldd r20,Y+19
+ 983 04ac 5C89      		ldd r21,Y+20
+ 984 04ae 6D89      		ldd r22,Y+21
+ 985 04b0 7E89      		ldd r23,Y+22
+ 986 04b2 8F89      		ldd r24,Y+23
+ 987 04b4 988D      		ldd r25,Y+24
+ 988 04b6 00C0      		rjmp .L40
+ 989               	.L38:
+ 133:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     }
+ 134:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     
+ 135:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     return time_diff_internal(a, b);
+ 991               	.LM77:
+ 992 04b8 A988      		ldd r10,Y+17
+ 993 04ba BA88      		ldd r11,Y+18
+ 994 04bc CB88      		ldd r12,Y+19
+ 995 04be DC88      		ldd r13,Y+20
+ 996 04c0 ED88      		ldd r14,Y+21
+ 997 04c2 FE88      		ldd r15,Y+22
+ 998 04c4 0F89      		ldd r16,Y+23
+ 999 04c6 188D      		ldd r17,Y+24
+ 1000 04c8 2985      		ldd r18,Y+9
+ 1001 04ca 3A85      		ldd r19,Y+10
+ 1002 04cc 4B85      		ldd r20,Y+11
+ 1003 04ce 5C85      		ldd r21,Y+12
+ 1004 04d0 6D85      		ldd r22,Y+13
+ 1005 04d2 7E85      		ldd r23,Y+14
+ 1006 04d4 8F85      		ldd r24,Y+15
+ 1007 04d6 9889      		ldd r25,Y+16
+ 1008               	.L40:
+ 1009 04d8 0E94 0000 		call time_diff_internal
+ 1010 04dc 2983      		std Y+1,r18
+ 1011 04de 3A83      		std Y+2,r19
+ 1012 04e0 4B83      		std Y+3,r20
+ 1013 04e2 5C83      		std Y+4,r21
+ 1014 04e4 6D83      		std Y+5,r22
+ 1015 04e6 7E83      		std Y+6,r23
+ 1016 04e8 8F83      		std Y+7,r24
+ 1017 04ea 9887      		std Y+8,r25
+ 1018 04ec 2981      		ldd r18,Y+1
+ 1019 04ee 3A81      		ldd r19,Y+2
+ 1020 04f0 4B81      		ldd r20,Y+3
+ 1021 04f2 5C81      		ldd r21,Y+4
+ 1022 04f4 6D81      		ldd r22,Y+5
+ 1023 04f6 7E81      		ldd r23,Y+6
+ 136:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** }
+ 1025               	.LM78:
+ 1026 04f8 8F81      		ldd r24,Y+7
+ 1027 04fa 9885      		ldd r25,Y+8
+ 1028               	/* epilogue start */
+ 1029 04fc 6896      		adiw r28,24
+ 1030 04fe 0FB6      		in __tmp_reg__,__SREG__
+ 1031 0500 F894      		cli
+ 1032 0502 DEBF      		out __SP_H__,r29
+ 1033 0504 0FBE      		out __SREG__,__tmp_reg__
+ 1034 0506 CDBF      		out __SP_L__,r28
+ 1035 0508 DF91      		pop r29
+ 1036 050a CF91      		pop r28
+ 1037 050c 1F91      		pop r17
+ 1038 050e 0F91      		pop r16
+ 1039 0510 FF90      		pop r15
+ 1040 0512 EF90      		pop r14
+ 1041 0514 DF90      		pop r13
+ 1042 0516 CF90      		pop r12
+ 1043 0518 BF90      		pop r11
+ 1044 051a AF90      		pop r10
+ 1045 051c 9F90      		pop r9
+ 1046 051e 8F90      		pop r8
+ 1047 0520 7F90      		pop r7
+ 1048 0522 6F90      		pop r6
+ 1049 0524 0895      		ret
+ 1051               	.Lscope6:
+ 1052               		.section	.rodata.str1.1,"aMS",@progbits,1
+ 1053               	.LC0:
+ 1054 0000 2575 6820 		.string	"%uh %us %ums"
+ 1054      2575 7320 
+ 1054      2575 6D73 
+ 1054      00
+ 1055               		.text
+ 1058               	.global	time_str
+ 1060               	time_str:
+ 137:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** 
+ 138:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** void time_str(char* str, time t) {
+ 1062               	.LM79:
+ 1063               	.LFBB7:
+ 1064 0526 0F93      		push r16
+ 1065 0528 1F93      		push r17
+ 1066 052a CF93      		push r28
+ 1067 052c DF93      		push r29
+ 1068 052e CDB7      		in r28,__SP_L__
+ 1069 0530 DEB7      		in r29,__SP_H__
+ 1070 0532 2897      		sbiw r28,8
+ 1071 0534 0FB6      		in __tmp_reg__,__SREG__
+ 1072 0536 F894      		cli
+ 1073 0538 DEBF      		out __SP_H__,r29
+ 1074 053a 0FBE      		out __SREG__,__tmp_reg__
+ 1075 053c CDBF      		out __SP_L__,r28
+ 1076               	/* prologue: function */
+ 1077               	/* frame size = 8 */
+ 1078               	/* stack size = 12 */
+ 1079               	.L__stack_usage = 12
+ 1080 053e 2B83      		std Y+3,r18
+ 1081 0540 4D83      		std Y+5,r20
+ 1082 0542 5E83      		std Y+6,r21
+ 1083 0544 6F83      		std Y+7,r22
+ 1084 0546 7887      		std Y+8,r23
+ 139:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     sprintf(str, "%uh %us %ums", t.hours, t.seconds, t.millis);
+ 1086               	.LM80:
+ 1087 0548 3F93      		push r19
+ 1088 054a 2B81      		ldd r18,Y+3
+ 1089 054c 2F93      		push r18
+ 1090 054e 2E81      		ldd r18,Y+6
+ 1091 0550 2F93      		push r18
+ 1092 0552 2D81      		ldd r18,Y+5
+ 1093 0554 2F93      		push r18
+ 1094 0556 2885      		ldd r18,Y+8
+ 1095 0558 2F93      		push r18
+ 1096 055a 2F81      		ldd r18,Y+7
+ 1097 055c 2F93      		push r18
+ 1098 055e 20E0      		ldi r18,lo8(.LC0)
+ 1099 0560 30E0      		ldi r19,hi8(.LC0)
+ 1100 0562 3F93      		push r19
+ 1101 0564 2F93      		push r18
+ 1102 0566 9F93      		push r25
+ 1103 0568 8F93      		push r24
+ 1104 056a 0E94 0000 		call sprintf
+ 1105 056e 0FB6      		in __tmp_reg__,__SREG__
+ 1106 0570 F894      		cli
+ 1107 0572 DEBF      		out __SP_H__,r29
+ 1108 0574 0FBE      		out __SREG__,__tmp_reg__
+ 1109 0576 CDBF      		out __SP_L__,r28
+ 1110               	/* epilogue start */
+ 140:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** }
+ 1112               	.LM81:
+ 1113 0578 2896      		adiw r28,8
+ 1114 057a 0FB6      		in __tmp_reg__,__SREG__
+ 1115 057c F894      		cli
+ 1116 057e DEBF      		out __SP_H__,r29
+ 1117 0580 0FBE      		out __SREG__,__tmp_reg__
+ 1118 0582 CDBF      		out __SP_L__,r28
+ 1119 0584 DF91      		pop r29
+ 1120 0586 CF91      		pop r28
+ 1121 0588 1F91      		pop r17
+ 1122 058a 0F91      		pop r16
+ 1123 058c 0895      		ret
+ 1125               	.Lscope7:
+ 1127               	.global	__vector_23
+ 1129               	__vector_23:
+ 141:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** 
+ 142:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** volatile time timer;
+ 143:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** ISR(TIMER0_OVF_vect) {
+ 1131               	.LM82:
+ 1132               	.LFBB8:
+ 1133 058e 1F92      		push r1
+ 1134 0590 0F92      		push r0
+ 1135 0592 0FB6      		in r0,__SREG__
+ 1136 0594 0F92      		push r0
+ 1137 0596 1124      		clr __zero_reg__
+ 1138 0598 0BB6      		in r0,__RAMPZ__
+ 1139 059a 0F92      		push r0
+ 1140 059c 0F93      		push r16
+ 1141 059e 1F93      		push r17
+ 1142 05a0 2F93      		push r18
+ 1143 05a2 3F93      		push r19
+ 1144 05a4 4F93      		push r20
+ 1145 05a6 5F93      		push r21
+ 1146 05a8 6F93      		push r22
+ 1147 05aa 7F93      		push r23
+ 1148 05ac 8F93      		push r24
+ 1149 05ae 9F93      		push r25
+ 1150 05b0 AF93      		push r26
+ 1151 05b2 BF93      		push r27
+ 1152 05b4 EF93      		push r30
+ 1153 05b6 FF93      		push r31
+ 1154               	/* prologue: Signal */
+ 1155               	/* frame size = 0 */
+ 1156               	/* stack size = 18 */
+ 1157               	.L__stack_usage = 18
+ 144:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     // Using 8bit timer we've traversed 256 clock cycles
+ 145:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     timer = time_update(timer, 256);
+ 1159               	.LM83:
+ 1160 05b8 00E0      		ldi r16,0
+ 1161 05ba 11E0      		ldi r17,lo8(1)
+ 1162 05bc 2091 0000 		lds r18,timer
+ 1163 05c0 3091 0000 		lds r19,timer+1
+ 1164 05c4 4091 0000 		lds r20,timer+2
+ 1165 05c8 5091 0000 		lds r21,timer+3
+ 1166 05cc 6091 0000 		lds r22,timer+4
+ 1167 05d0 7091 0000 		lds r23,timer+5
+ 1168 05d4 8091 0000 		lds r24,timer+6
+ 1169 05d8 9091 0000 		lds r25,timer+7
+ 1170 05dc 0E94 0000 		call time_update
+ 1171 05e0 E0E0      		ldi r30,lo8(timer)
+ 1172 05e2 F0E0      		ldi r31,hi8(timer)
+ 1173 05e4 2083      		st Z,r18
+ 1174 05e6 3183      		std Z+1,r19
+ 1175 05e8 4283      		std Z+2,r20
+ 1176 05ea 5383      		std Z+3,r21
+ 1177 05ec 6483      		std Z+4,r22
+ 1178 05ee 7583      		std Z+5,r23
+ 1179 05f0 8683      		std Z+6,r24
+ 1180 05f2 9783      		std Z+7,r25
+ 1181               	/* epilogue start */
+ 146:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** }
+ 1183               	.LM84:
+ 1184 05f4 FF91      		pop r31
+ 1185 05f6 EF91      		pop r30
+ 1186 05f8 BF91      		pop r27
+ 1187 05fa AF91      		pop r26
+ 1188 05fc 9F91      		pop r25
+ 1189 05fe 8F91      		pop r24
+ 1190 0600 7F91      		pop r23
+ 1191 0602 6F91      		pop r22
+ 1192 0604 5F91      		pop r21
+ 1193 0606 4F91      		pop r20
+ 1194 0608 3F91      		pop r19
+ 1195 060a 2F91      		pop r18
+ 1196 060c 1F91      		pop r17
+ 1197 060e 0F91      		pop r16
+ 1198 0610 0F90      		pop r0
+ 1199 0612 0BBE      		out __RAMPZ__,r0
+ 1200 0614 0F90      		pop r0
+ 1201 0616 0FBE      		out __SREG__,r0
+ 1202 0618 0F90      		pop r0
+ 1203 061a 1F90      		pop r1
+ 1204 061c 1895      		reti
+ 1206               	.Lscope8:
+ 1208               	.global	timer_start
+ 1210               	timer_start:
+ 147:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** 
+ 148:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** void timer_start(void) {
+ 1212               	.LM85:
+ 1213               	.LFBB9:
+ 1214               	/* prologue: function */
+ 1215               	/* frame size = 0 */
+ 1216               	/* stack size = 0 */
+ 1217               	.L__stack_usage = 0
+ 149:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     // Setup our timer interrupt
+ 150:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     TCCR0A = 0;
+ 1219               	.LM86:
+ 1220 061e 14BC      		out 0x24,__zero_reg__
+ 151:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     TCCR0B = 0;
+ 1222               	.LM87:
+ 1223 0620 15BC      		out 0x25,__zero_reg__
+ 152:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     TCNT0 = 0;
+ 1225               	.LM88:
+ 1226 0622 16BC      		out 0x26,__zero_reg__
+ 153:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     TIMSK0 = _BV(TOIE0);
+ 1228               	.LM89:
+ 1229 0624 81E0      		ldi r24,lo8(1)
+ 1230 0626 8093 6E00 		sts 110,r24
+ 154:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     timer.clock = 0;
+ 1232               	.LM90:
+ 1233 062a 1092 0000 		sts timer+1,__zero_reg__
+ 1234 062e 1092 0000 		sts timer,__zero_reg__
+ 155:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     timer.millis = 0;
+ 1236               	.LM91:
+ 1237 0632 1092 0000 		sts timer+2+1,__zero_reg__
+ 1238 0636 1092 0000 		sts timer+2,__zero_reg__
+ 156:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     timer.seconds = 0;
+ 1240               	.LM92:
+ 1241 063a 1092 0000 		sts timer+4+1,__zero_reg__
+ 1242 063e 1092 0000 		sts timer+4,__zero_reg__
+ 157:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     timer.hours = 0;
+ 1244               	.LM93:
+ 1245 0642 1092 0000 		sts timer+6+1,__zero_reg__
+ 1246 0646 1092 0000 		sts timer+6,__zero_reg__
+ 158:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     // Start it!
+ 159:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     TCCR0B = 1;
+ 1248               	.LM94:
+ 1249 064a 85BD      		out 0x25,r24
+ 1250 064c 0895      		ret
+ 1252               	.Lscope9:
+ 1254               	.global	timer_stop
+ 1256               	timer_stop:
+ 160:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** }
+ 161:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** 
+ 162:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** void timer_stop(void) {
+ 1258               	.LM95:
+ 1259               	.LFBB10:
+ 1260               	/* prologue: function */
+ 1261               	/* frame size = 0 */
+ 1262               	/* stack size = 0 */
+ 1263               	.L__stack_usage = 0
+ 163:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     TCCR0A = 0;
+ 1265               	.LM96:
+ 1266 064e 14BC      		out 0x24,__zero_reg__
+ 164:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     TCCR0B = 0;
+ 1268               	.LM97:
+ 1269 0650 15BC      		out 0x25,__zero_reg__
+ 165:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     TCNT0 = 0;
+ 1271               	.LM98:
+ 1272 0652 16BC      		out 0x26,__zero_reg__
+ 166:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     TIMSK0 = _BV(TOIE0);
+ 1274               	.LM99:
+ 1275 0654 81E0      		ldi r24,lo8(1)
+ 1276 0656 8093 6E00 		sts 110,r24
+ 167:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     timer.clock = 0;
+ 1278               	.LM100:
+ 1279 065a 1092 0000 		sts timer+1,__zero_reg__
+ 1280 065e 1092 0000 		sts timer,__zero_reg__
+ 168:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     timer.millis = 0;
+ 1282               	.LM101:
+ 1283 0662 1092 0000 		sts timer+2+1,__zero_reg__
+ 1284 0666 1092 0000 		sts timer+2,__zero_reg__
+ 169:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     timer.seconds = 0;
+ 1286               	.LM102:
+ 1287 066a 1092 0000 		sts timer+4+1,__zero_reg__
+ 1288 066e 1092 0000 		sts timer+4,__zero_reg__
+ 170:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     timer.hours = 0;
+ 1290               	.LM103:
+ 1291 0672 1092 0000 		sts timer+6+1,__zero_reg__
+ 1292 0676 1092 0000 		sts timer+6,__zero_reg__
+ 1293 067a 0895      		ret
+ 1295               	.Lscope10:
+ 1298               	.global	time_set_global
+ 1300               	time_set_global:
+ 171:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** }
+ 172:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** 
+ 173:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** void time_set_global(time* t) {
+ 1302               	.LM104:
+ 1303               	.LFBB11:
+ 1304               	/* prologue: function */
+ 1305               	/* frame size = 0 */
+ 1306               	/* stack size = 0 */
+ 1307               	.L__stack_usage = 0
+ 1308 067c FC01      		movw r30,r24
+ 174:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     t->clock = timer.clock;
+ 1310               	.LM105:
+ 1311 067e 8091 0000 		lds r24,timer
+ 1312 0682 9091 0000 		lds r25,timer+1
+ 1313 0686 9183      		std Z+1,r25
+ 1314 0688 8083      		st Z,r24
+ 175:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     t->millis = timer.millis;
+ 1316               	.LM106:
+ 1317 068a 8091 0000 		lds r24,timer+2
+ 1318 068e 9091 0000 		lds r25,timer+2+1
+ 1319 0692 9383      		std Z+3,r25
+ 1320 0694 8283      		std Z+2,r24
+ 176:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     t->seconds = timer.seconds;
+ 1322               	.LM107:
+ 1323 0696 8091 0000 		lds r24,timer+4
+ 1324 069a 9091 0000 		lds r25,timer+4+1
+ 1325 069e 9583      		std Z+5,r25
+ 1326 06a0 8483      		std Z+4,r24
+ 177:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     t->hours = timer.hours;
+ 1328               	.LM108:
+ 1329 06a2 8091 0000 		lds r24,timer+6
+ 1330 06a6 9091 0000 		lds r25,timer+6+1
+ 1331 06aa 9783      		std Z+7,r25
+ 1332 06ac 8683      		std Z+6,r24
+ 1333 06ae 0895      		ret
+ 1335               	.Lscope11:
+ 1339               	.global	lcd_clear
+ 1341               	lcd_clear:
+ 178:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** }
+ 179:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** 
+ 180:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** void lcd_clear(hd44780* lcd, char* str) {
+ 1343               	.LM109:
+ 1344               	.LFBB12:
+ 1345 06b0 0F93      		push r16
+ 1346 06b2 1F93      		push r17
+ 1347 06b4 CF93      		push r28
+ 1348 06b6 DF93      		push r29
+ 1349               	/* prologue: function */
+ 1350               	/* frame size = 0 */
+ 1351               	/* stack size = 4 */
+ 1352               	.L__stack_usage = 4
+ 1353 06b8 EC01      		movw r28,r24
+ 1354 06ba 8B01      		movw r16,r22
+ 181:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     uint8_t flags = lcd_display_clear_flags();
+ 1356               	.LM110:
+ 1357 06bc 0E94 0000 		call lcd_display_clear_flags
+ 182:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     lcd_send_command(lcd, flags);
+ 1359               	.LM111:
+ 1360 06c0 682F      		mov r22,r24
+ 1361 06c2 CE01      		movw r24,r28
+ 1362 06c4 0E94 0000 		call lcd_send_command
+ 183:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     flags = lcd_return_home_flags();
+ 1364               	.LM112:
+ 1365 06c8 0E94 0000 		call lcd_return_home_flags
+ 184:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     lcd_send_command(lcd, flags);
+ 1367               	.LM113:
+ 1368 06cc 682F      		mov r22,r24
+ 1369 06ce CE01      		movw r24,r28
+ 1370 06d0 0E94 0000 		call lcd_send_command
+ 185:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     if (strcmp(str, "") != 0) {
+ 1372               	.LM114:
+ 1373 06d4 F801      		movw r30,r16
+ 1374 06d6 8081      		ld r24,Z
+ 1375 06d8 8823      		tst r24
+ 1376 06da 01F0      		breq .L46
+ 186:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         lcd_write(lcd, str);
+ 1378               	.LM115:
+ 1379 06dc B801      		movw r22,r16
+ 1380 06de CE01      		movw r24,r28
+ 1381               	/* epilogue start */
+ 187:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     }
+ 188:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** }
+ 1383               	.LM116:
+ 1384 06e0 DF91      		pop r29
+ 1385 06e2 CF91      		pop r28
+ 1386 06e4 1F91      		pop r17
+ 1387 06e6 0F91      		pop r16
+ 186:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         lcd_write(lcd, str);
+ 1389               	.LM117:
+ 1390 06e8 0C94 0000 		jmp lcd_write
+ 1391               	.L46:
+ 1392               	/* epilogue start */
+ 1394               	.LM118:
+ 1395 06ec DF91      		pop r29
+ 1396 06ee CF91      		pop r28
+ 1397 06f0 1F91      		pop r17
+ 1398 06f2 0F91      		pop r16
+ 1399 06f4 0895      		ret
+ 1401               	.Lscope12:
+ 1404               	.global	foodunit_update_current_screen
+ 1406               	foodunit_update_current_screen:
+ 189:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** 
+ 190:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** typedef enum {
+ 191:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     screen_unknown,
+ 192:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     screen_startup,
+ 193:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     screen_menu,
+ 194:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     screen_set_drain
+ 195:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** } screen;
+ 196:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** 
+ 197:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** typedef struct {
+ 198:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     pin h2o_sensor;
+ 199:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     pin pump_relay;
+ 200:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     hd44780 lcd;
+ 201:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     encoder enc;
+ 202:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     screen screen;
+ 203:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     time when_drain_ends;
+ 204:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     time next_h2o_check;
+ 205:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     bool draining;
+ 206:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     uint16_t drain_seconds;
+ 207:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     uint16_t h2o_threshold;
+ 208:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** } foodunit;
+ 209:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** 
+ 210:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** void foodunit_startup(foodunit* f);
+ 211:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** void foodunit_update_current_screen(foodunit* f);
+ 212:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** void foodunit_display(foodunit* f, screen s);
+ 213:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** void foodunit_init(foodunit* f);
+ 214:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** void foodunit_drain(foodunit* f);
+ 215:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** void foodunit_update_h2o_check(foodunit* f);
+ 216:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** void foodunit_fill(foodunit* f);
+ 217:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** void foodunit_update(foodunit* f);
+ 218:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** 
+ 219:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** void foodunit_update_current_screen(foodunit* f) {
+ 1408               	.LM119:
+ 1409               	.LFBB13:
+ 1410               	/* prologue: function */
+ 1411               	/* frame size = 0 */
+ 1412               	/* stack size = 0 */
+ 1413               	.L__stack_usage = 0
+ 1414 06f6 0895      		ret
+ 1416               	.Lscope13:
+ 1417               		.section	.rodata.str1.1
+ 1418               	.LC1:
+ 1419 000d 2533 6900 		.string	"%3i"
+ 1420               		.text
+ 1426               	.global	foodunit_read_user
+ 1428               	foodunit_read_user:
+ 220:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     // This is where we set up the functionality for our current screen.
+ 221:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     switch (f->screen) {
+ 222:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         default:
+ 223:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             break;
+ 224:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     }
+ 225:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** }
+ 226:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** 
+ 227:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** int8_t foodunit_read_user(foodunit* f, uint8_t x, uint8_t y, const char* suffix) {
+ 1430               	.LM120:
+ 1431               	.LFBB14:
+ 1433               	.LM121:
+ 1434 06f8 5F92      		push r5
+ 1435 06fa 6F92      		push r6
+ 1436 06fc 7F92      		push r7
+ 1437 06fe 8F92      		push r8
+ 1438 0700 9F92      		push r9
+ 1439 0702 AF92      		push r10
+ 1440 0704 BF92      		push r11
+ 1441 0706 CF92      		push r12
+ 1442 0708 DF92      		push r13
+ 1443 070a EF92      		push r14
+ 1444 070c FF92      		push r15
+ 1445 070e 0F93      		push r16
+ 1446 0710 1F93      		push r17
+ 1447 0712 CF93      		push r28
+ 1448 0714 DF93      		push r29
+ 1449 0716 CDB7      		in r28,__SP_L__
+ 1450 0718 DEB7      		in r29,__SP_H__
+ 1451 071a 6497      		sbiw r28,20
+ 1452 071c 0FB6      		in __tmp_reg__,__SREG__
+ 1453 071e F894      		cli
+ 1454 0720 DEBF      		out __SP_H__,r29
+ 1455 0722 0FBE      		out __SREG__,__tmp_reg__
+ 1456 0724 CDBF      		out __SP_L__,r28
+ 1457               	/* prologue: function */
+ 1458               	/* frame size = 20 */
+ 1459               	/* stack size = 35 */
+ 1460               	.L__stack_usage = 35
+ 1461 0726 762E      		mov r7,r22
+ 1462 0728 642E      		mov r6,r20
+ 228:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     f->enc.steps = 0;
+ 1464               	.LM122:
+ 1465 072a 8C01      		movw r16,r24
+ 1466 072c 0D58      		subi r16,-115
+ 1467 072e 1F4F      		sbci r17,-1
+ 1468 0730 F801      		movw r30,r16
+ 1469 0732 1082      		st Z,__zero_reg__
+ 229:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     char str[20];
+ 230:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     int8_t steps = f->enc.steps;
+ 1471               	.LM123:
+ 1472 0734 512C      		mov r5,__zero_reg__
+ 231:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     while (!encoder_btn_up_edge(&f->enc)) {
+ 1474               	.LM124:
+ 1475 0736 6C01      		movw r12,r24
+ 1476 0738 FCE5      		ldi r31,92
+ 1477 073a CF0E      		add r12,r31
+ 1478 073c D11C      		adc r13,__zero_reg__
+ 232:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         encoder_update(&f->enc);
+ 233:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         if (steps != f->enc.steps) {
+ 234:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             lcd_xy(&f->lcd, x, y);
+ 1480               	.LM125:
+ 1481 073e 5C01      		movw r10,r24
+ 1482 0740 2EE0      		ldi r18,14
+ 1483 0742 A20E      		add r10,r18
+ 1484 0744 B11C      		adc r11,__zero_reg__
+ 235:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             sprintf(str, "%3i",f->enc.steps);
+ 1486               	.LM126:
+ 1487 0746 80E0      		ldi r24,lo8(.LC1)
+ 1488 0748 882E      		mov r8,r24
+ 1489 074a 80E0      		ldi r24,hi8(.LC1)
+ 1490 074c 982E      		mov r9,r24
+ 1491 074e CE01      		movw r24,r28
+ 1492 0750 0196      		adiw r24,1
+ 1493 0752 7C01      		movw r14,r24
+ 1494               	.L52:
+ 231:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     while (!encoder_btn_up_edge(&f->enc)) {
+ 1496               	.LM127:
+ 1497 0754 C601      		movw r24,r12
+ 1498 0756 0E94 0000 		call encoder_btn_up_edge
+ 1499 075a 8111      		cpse r24,__zero_reg__
+ 1500 075c 00C0      		rjmp .L54
+ 232:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         encoder_update(&f->enc);
+ 1502               	.LM128:
+ 1503 075e C601      		movw r24,r12
+ 1504 0760 0E94 0000 		call encoder_update
+ 233:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         if (steps != f->enc.steps) {
+ 1506               	.LM129:
+ 1507 0764 F801      		movw r30,r16
+ 1508 0766 8081      		ld r24,Z
+ 1509 0768 5816      		cp r5,r24
+ 1510 076a 01F0      		breq .L52
+ 234:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             lcd_xy(&f->lcd, x, y);
+ 1512               	.LM130:
+ 1513 076c 462D      		mov r20,r6
+ 1514 076e 672D      		mov r22,r7
+ 1515 0770 C501      		movw r24,r10
+ 1516 0772 0E94 0000 		call lcd_xy
+ 1518               	.LM131:
+ 1519 0776 F801      		movw r30,r16
+ 1520 0778 2081      		ld r18,Z
+ 1521 077a 822F      		mov r24,r18
+ 1522 077c 9927      		clr r25
+ 1523 077e 87FD      		sbrc r24,7
+ 1524 0780 9095      		com r25
+ 1525 0782 9F93      		push r25
+ 1526 0784 2F93      		push r18
+ 1527 0786 9F92      		push r9
+ 1528 0788 8F92      		push r8
+ 1529 078a FF92      		push r15
+ 1530 078c EF92      		push r14
+ 1531 078e 0E94 0000 		call sprintf
+ 236:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             lcd_write(&f->lcd, str);
+ 1533               	.LM132:
+ 1534 0792 B701      		movw r22,r14
+ 1535 0794 C501      		movw r24,r10
+ 1536 0796 0E94 0000 		call lcd_write
+ 237:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             steps = f->enc.steps;
+ 1538               	.LM133:
+ 1539 079a F801      		movw r30,r16
+ 1540 079c 5080      		ld r5,Z
+ 1541 079e 0F90      		pop __tmp_reg__
+ 1542 07a0 0F90      		pop __tmp_reg__
+ 1543 07a2 0F90      		pop __tmp_reg__
+ 1544 07a4 0F90      		pop __tmp_reg__
+ 1545 07a6 0F90      		pop __tmp_reg__
+ 1546 07a8 0F90      		pop __tmp_reg__
+ 1547 07aa 00C0      		rjmp .L52
+ 1548               	.L54:
+ 238:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         }
+ 239:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     }
+ 240:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     return 0;
+ 241:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** }
+ 1550               	.LM134:
+ 1551 07ac 80E0      		ldi r24,0
+ 1552               	/* epilogue start */
+ 1553 07ae 6496      		adiw r28,20
+ 1554 07b0 0FB6      		in __tmp_reg__,__SREG__
+ 1555 07b2 F894      		cli
+ 1556 07b4 DEBF      		out __SP_H__,r29
+ 1557 07b6 0FBE      		out __SREG__,__tmp_reg__
+ 1558 07b8 CDBF      		out __SP_L__,r28
+ 1559 07ba DF91      		pop r29
+ 1560 07bc CF91      		pop r28
+ 1561 07be 1F91      		pop r17
+ 1562 07c0 0F91      		pop r16
+ 1563 07c2 FF90      		pop r15
+ 1564 07c4 EF90      		pop r14
+ 1565 07c6 DF90      		pop r13
+ 1566 07c8 CF90      		pop r12
+ 1567 07ca BF90      		pop r11
+ 1568 07cc AF90      		pop r10
+ 1569 07ce 9F90      		pop r9
+ 1570 07d0 8F90      		pop r8
+ 1571 07d2 7F90      		pop r7
+ 1572 07d4 6F90      		pop r6
+ 1573 07d6 5F90      		pop r5
+ 1574 07d8 0895      		ret
+ 1580               	.Lscope14:
+ 1581               		.section	.rodata.str1.1
+ 1582               	.LC2:
+ 1583 0011 466F 6F64 		.string	"FoodUnit v0.0\nPlease push the\nencoder to start.\n>Ok"
+ 1583      556E 6974 
+ 1583      2076 302E 
+ 1583      300A 506C 
+ 1583      6561 7365 
+ 1584               	.LC3:
+ 1585 0045 506C 6561 		.string	"Please set the drain\nduration."
+ 1585      7365 2073 
+ 1585      6574 2074 
+ 1585      6865 2064 
+ 1585      7261 696E 
+ 1586               	.LC4:
+ 1587 0064 6D69 6E75 		.string	"minutes"
+ 1587      7465 7300 
+ 1588               	.LC5:
+ 1589 006c 7774 6600 		.string	"wtf"
+ 1590               		.text
+ 1594               	.global	foodunit_display
+ 1596               	foodunit_display:
+ 242:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** 
+ 243:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** void foodunit_display(foodunit* f, screen s) {
+ 1598               	.LM135:
+ 1599               	.LFBB15:
+ 1600 07da DF92      		push r13
+ 1601 07dc EF92      		push r14
+ 1602 07de FF92      		push r15
+ 1603 07e0 0F93      		push r16
+ 1604 07e2 1F93      		push r17
+ 1605 07e4 CF93      		push r28
+ 1606 07e6 DF93      		push r29
+ 1607               	/* prologue: function */
+ 1608               	/* frame size = 0 */
+ 1609               	/* stack size = 7 */
+ 1610               	.L__stack_usage = 7
+ 1611 07e8 EC01      		movw r28,r24
+ 1612 07ea D62E      		mov r13,r22
+ 244:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     // We've already displayed the current screen, all we may need to do is
+ 245:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     // update it.
+ 246:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     if (f->screen == s) {
+ 1614               	.LM136:
+ 1615 07ec 7C01      		movw r14,r24
+ 1616 07ee 84E7      		ldi r24,116
+ 1617 07f0 E80E      		add r14,r24
+ 1618 07f2 F11C      		adc r15,__zero_reg__
+ 1619 07f4 F701      		movw r30,r14
+ 1620 07f6 8081      		ld r24,Z
+ 1621 07f8 8617      		cp r24,r22
+ 1622 07fa 01F0      		breq .L55
+ 1623 07fc 8E01      		movw r16,r28
+ 1624 07fe 025F      		subi r16,-14
+ 1625 0800 1F4F      		sbci r17,-1
+ 247:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         foodunit_update_current_screen(f);
+ 248:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         return;
+ 249:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     }
+ 250:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     
+ 251:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     // This is where we do the initial screen setup.
+ 252:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     switch (s) {
+ 1627               	.LM137:
+ 1628 0802 F1E0      		ldi r31,lo8(1)
+ 1629 0804 6F17      		cp r22,r31
+ 1630 0806 01F0      		breq .L58
+ 1631 0808 82E0      		ldi r24,lo8(2)
+ 1632 080a 6813      		cpse r22,r24
+ 1633 080c 00C0      		rjmp .L65
+ 253:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         case screen_startup: {
+ 254:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             lcd_clear(&f->lcd, "FoodUnit v0.0\nPlease push the\nencoder to start.\n>Ok");
+ 255:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             lcd_xy(&f->lcd, 0, 3);
+ 256:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             while (!encoder_btn_up_edge(&f->enc)) {
+ 257:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****                 encoder_update(&f->enc);
+ 258:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             }
+ 259:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             encoder_clear(&f->enc);
+ 260:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             foodunit_display(f, screen_menu);
+ 261:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             break;
+ 262:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         }
+ 263:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             
+ 264:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         case screen_menu: {
+ 265:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             lcd_clear(&f->lcd, "Please set the drain\nduration.");
+ 1635               	.LM138:
+ 1636 080e 60E0      		ldi r22,lo8(.LC3)
+ 1637 0810 70E0      		ldi r23,hi8(.LC3)
+ 1638 0812 C801      		movw r24,r16
+ 1639 0814 0E94 0000 		call lcd_clear
+ 266:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             foodunit_read_user(f, 0, 3, "minutes");
+ 1641               	.LM139:
+ 1642 0818 20E0      		ldi r18,lo8(.LC4)
+ 1643 081a 30E0      		ldi r19,hi8(.LC4)
+ 1644 081c 43E0      		ldi r20,lo8(3)
+ 1645 081e 60E0      		ldi r22,0
+ 1646 0820 CE01      		movw r24,r28
+ 1647 0822 0E94 0000 		call foodunit_read_user
+ 267:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             foodunit_display(f, screen_unknown);
+ 1649               	.LM140:
+ 1650 0826 60E0      		ldi r22,0
+ 1651 0828 00C0      		rjmp .L64
+ 1652               	.L58:
+ 254:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             lcd_clear(&f->lcd, "FoodUnit v0.0\nPlease push the\nencoder to start.\n>Ok");
+ 1654               	.LM141:
+ 1655 082a 60E0      		ldi r22,lo8(.LC2)
+ 1656 082c 70E0      		ldi r23,hi8(.LC2)
+ 1657 082e C801      		movw r24,r16
+ 1658 0830 0E94 0000 		call lcd_clear
+ 255:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             lcd_xy(&f->lcd, 0, 3);
+ 1660               	.LM142:
+ 1661 0834 43E0      		ldi r20,lo8(3)
+ 1662 0836 60E0      		ldi r22,0
+ 1663 0838 C801      		movw r24,r16
+ 1664 083a 0E94 0000 		call lcd_xy
+ 256:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             while (!encoder_btn_up_edge(&f->enc)) {
+ 1666               	.LM143:
+ 1667 083e 8E01      		movw r16,r28
+ 1668 0840 045A      		subi r16,-92
+ 1669 0842 1F4F      		sbci r17,-1
+ 1670               	.L60:
+ 256:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             while (!encoder_btn_up_edge(&f->enc)) {
+ 1672               	.LM144:
+ 1673 0844 C801      		movw r24,r16
+ 1674 0846 0E94 0000 		call encoder_btn_up_edge
+ 1675 084a 8111      		cpse r24,__zero_reg__
+ 1676 084c 00C0      		rjmp .L66
+ 257:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****                 encoder_update(&f->enc);
+ 1678               	.LM145:
+ 1679 084e C801      		movw r24,r16
+ 1680 0850 0E94 0000 		call encoder_update
+ 1681 0854 00C0      		rjmp .L60
+ 1682               	.L66:
+ 259:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             encoder_clear(&f->enc);
+ 1684               	.LM146:
+ 1685 0856 C801      		movw r24,r16
+ 1686 0858 0E94 0000 		call encoder_clear
+ 260:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             foodunit_display(f, screen_menu);
+ 1688               	.LM147:
+ 1689 085c 62E0      		ldi r22,lo8(2)
+ 1690               	.L64:
+ 1692               	.LM148:
+ 1693 085e CE01      		movw r24,r28
+ 1694 0860 0E94 0000 		call foodunit_display
+ 268:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             break;
+ 1696               	.LM149:
+ 1697 0864 00C0      		rjmp .L62
+ 1698               	.L65:
+ 269:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         }
+ 270:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             
+ 271:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         default:
+ 272:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             lcd_clear(&f->lcd, "wtf");
+ 1700               	.LM150:
+ 1701 0866 60E0      		ldi r22,lo8(.LC5)
+ 1702 0868 70E0      		ldi r23,hi8(.LC5)
+ 1703 086a C801      		movw r24,r16
+ 1704 086c 0E94 0000 		call lcd_clear
+ 1705               	.L62:
+ 273:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             break;
+ 274:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     }
+ 275:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     
+ 276:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     f->screen = s;
+ 1707               	.LM151:
+ 1708 0870 F701      		movw r30,r14
+ 1709 0872 D082      		st Z,r13
+ 1710               	.L55:
+ 1711               	/* epilogue start */
+ 277:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** }
+ 1713               	.LM152:
+ 1714 0874 DF91      		pop r29
+ 1715 0876 CF91      		pop r28
+ 1716 0878 1F91      		pop r17
+ 1717 087a 0F91      		pop r16
+ 1718 087c FF90      		pop r15
+ 1719 087e EF90      		pop r14
+ 1720 0880 DF90      		pop r13
+ 1721 0882 0895      		ret
+ 1723               	.Lscope15:
+ 1726               	.global	foodunit_init
+ 1728               	foodunit_init:
+ 278:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** 
+ 279:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** void foodunit_init(foodunit* f) {
+ 1730               	.LM153:
+ 1731               	.LFBB16:
+ 1732 0884 BF92      		push r11
+ 1733 0886 CF92      		push r12
+ 1734 0888 DF92      		push r13
+ 1735 088a EF92      		push r14
+ 1736 088c FF92      		push r15
+ 1737 088e 0F93      		push r16
+ 1738 0890 1F93      		push r17
+ 1739 0892 CF93      		push r28
+ 1740 0894 DF93      		push r29
+ 1741               	/* prologue: function */
+ 1742               	/* frame size = 0 */
+ 1743               	/* stack size = 9 */
+ 1744               	.L__stack_usage = 9
+ 1745 0896 EC01      		movw r28,r24
+ 280:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     // Analog h2o pin F0
+ 281:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     analogReference(ADC_REF_POWER);
+ 1747               	.LM154:
+ 1748 0898 80E4      		ldi r24,lo8(64)
+ 1749 089a 0E94 0000 		call analogReference
+ 282:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     f->h2o_sensor = pin_make(&PORTF, &DDRF, &PINF, 0);
+ 1751               	.LM155:
+ 1752 089e 20E0      		ldi r18,0
+ 1753 08a0 4FE2      		ldi r20,lo8(47)
+ 1754 08a2 50E0      		ldi r21,0
+ 1755 08a4 60E3      		ldi r22,lo8(48)
+ 1756 08a6 70E0      		ldi r23,0
+ 1757 08a8 81E3      		ldi r24,lo8(49)
+ 1758 08aa 90E0      		ldi r25,0
+ 1759 08ac 0E94 0000 		call pin_make
+ 1760 08b0 2883      		st Y,r18
+ 1761 08b2 3983      		std Y+1,r19
+ 1762 08b4 4A83      		std Y+2,r20
+ 1763 08b6 5B83      		std Y+3,r21
+ 1764 08b8 6C83      		std Y+4,r22
+ 1765 08ba 7D83      		std Y+5,r23
+ 1766 08bc 8E83      		std Y+6,r24
+ 283:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     input_pin(f->h2o_sensor);
+ 1768               	.LM156:
+ 1769 08be 0E94 0000 		call input_pin
+ 284:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     
+ 285:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     // The pump relay.
+ 286:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     f->pump_relay = pin_make(&PORTB, &DDRB, &PINB, 6);
+ 1771               	.LM157:
+ 1772 08c2 26E0      		ldi r18,lo8(6)
+ 1773 08c4 43E2      		ldi r20,lo8(35)
+ 1774 08c6 50E0      		ldi r21,0
+ 1775 08c8 64E2      		ldi r22,lo8(36)
+ 1776 08ca 70E0      		ldi r23,0
+ 1777 08cc 85E2      		ldi r24,lo8(37)
+ 1778 08ce 90E0      		ldi r25,0
+ 1779 08d0 0E94 0000 		call pin_make
+ 1780 08d4 2F83      		std Y+7,r18
+ 1781 08d6 3887      		std Y+8,r19
+ 1782 08d8 4987      		std Y+9,r20
+ 1783 08da 5A87      		std Y+10,r21
+ 1784 08dc 6B87      		std Y+11,r22
+ 1785 08de 7C87      		std Y+12,r23
+ 1786 08e0 8D87      		std Y+13,r24
+ 287:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     output_pin(f->pump_relay);
+ 1788               	.LM158:
+ 1789 08e2 0E94 0000 		call output_pin
+ 288:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     clear_pin(f->pump_relay);
+ 1791               	.LM159:
+ 1792 08e6 2F81      		ldd r18,Y+7
+ 1793 08e8 3885      		ldd r19,Y+8
+ 1794 08ea 4985      		ldd r20,Y+9
+ 1795 08ec 5A85      		ldd r21,Y+10
+ 1796 08ee 6B85      		ldd r22,Y+11
+ 1797 08f0 7C85      		ldd r23,Y+12
+ 1798 08f2 8D85      		ldd r24,Y+13
+ 1799 08f4 0E94 0000 		call clear_pin
+ 289:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     
+ 290:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     // Initial programmable values.
+ 291:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     f->draining = true;
+ 1801               	.LM160:
+ 1802 08f8 FE01      		movw r30,r28
+ 1803 08fa EB57      		subi r30,123
+ 1804 08fc FF4F      		sbci r31,-1
+ 1805 08fe 81E0      		ldi r24,lo8(1)
+ 1806 0900 8083      		st Z,r24
+ 292:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     f->when_drain_ends = time_make(0, 0, 0, 0);
+ 1808               	.LM161:
+ 1809 0902 8E01      		movw r16,r28
+ 1810 0904 0B58      		subi r16,-117
+ 1811 0906 1F4F      		sbci r17,-1
+ 1812 0908 20E0      		ldi r18,0
+ 1813 090a 30E0      		ldi r19,0
+ 1814 090c 40E0      		ldi r20,0
+ 1815 090e 50E0      		ldi r21,0
+ 1816 0910 60E0      		ldi r22,0
+ 1817 0912 70E0      		ldi r23,0
+ 1818 0914 80E0      		ldi r24,0
+ 1819 0916 90E0      		ldi r25,0
+ 1820 0918 0E94 0000 		call time_make
+ 1821 091c F801      		movw r30,r16
+ 1822 091e 2083      		st Z,r18
+ 1823 0920 3183      		std Z+1,r19
+ 1824 0922 4283      		std Z+2,r20
+ 1825 0924 5383      		std Z+3,r21
+ 1826 0926 6483      		std Z+4,r22
+ 1827 0928 7583      		std Z+5,r23
+ 1828 092a 8683      		std Z+6,r24
+ 1829 092c 9783      		std Z+7,r25
+ 293:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     f->next_h2o_check = time_make(0, 0, 0, 0);
+ 1831               	.LM162:
+ 1832 092e 085F      		subi r16,-8
+ 1833 0930 1F4F      		sbci r17,-1
+ 1834 0932 20E0      		ldi r18,0
+ 1835 0934 30E0      		ldi r19,0
+ 1836 0936 40E0      		ldi r20,0
+ 1837 0938 50E0      		ldi r21,0
+ 1838 093a 60E0      		ldi r22,0
+ 1839 093c 70E0      		ldi r23,0
+ 1840 093e 80E0      		ldi r24,0
+ 1841 0940 90E0      		ldi r25,0
+ 1842 0942 0E94 0000 		call time_make
+ 1843 0946 F801      		movw r30,r16
+ 1844 0948 2083      		st Z,r18
+ 1845 094a 3183      		std Z+1,r19
+ 1846 094c 4283      		std Z+2,r20
+ 1847 094e 5383      		std Z+3,r21
+ 1848 0950 6483      		std Z+4,r22
+ 1849 0952 7583      		std Z+5,r23
+ 1850 0954 8683      		std Z+6,r24
+ 1851 0956 9783      		std Z+7,r25
+ 294:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     f->drain_seconds = 10;
+ 1853               	.LM163:
+ 1854 0958 3996      		adiw r30,9
+ 1855 095a 8AE0      		ldi r24,lo8(10)
+ 1856 095c 90E0      		ldi r25,0
+ 1857 095e 9183      		std Z+1,r25
+ 1858 0960 8083      		st Z,r24
+ 295:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     f->h2o_threshold = 50;
+ 1860               	.LM164:
+ 1861 0962 3296      		adiw r30,2
+ 1862 0964 82E3      		ldi r24,lo8(50)
+ 1863 0966 90E0      		ldi r25,0
+ 1864 0968 9183      		std Z+1,r25
+ 1865 096a 8083      		st Z,r24
+ 296:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     f->screen = screen_unknown;
+ 1867               	.LM165:
+ 1868 096c 7497      		sbiw r30,20
+ 1869 096e 1082      		st Z,__zero_reg__
+ 297:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     
+ 298:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     // The lcd screen.
+ 299:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     f->lcd.rs = pin_make(&PORTD, &DDRD, &PIND, 5);
+ 1871               	.LM166:
+ 1872 0970 25E0      		ldi r18,lo8(5)
+ 1873 0972 49E2      		ldi r20,lo8(41)
+ 1874 0974 50E0      		ldi r21,0
+ 1875 0976 6AE2      		ldi r22,lo8(42)
+ 1876 0978 70E0      		ldi r23,0
+ 1877 097a 8BE2      		ldi r24,lo8(43)
+ 1878 097c 90E0      		ldi r25,0
+ 1879 097e 0E94 0000 		call pin_make
+ 1880 0982 2E87      		std Y+14,r18
+ 1881 0984 3F87      		std Y+15,r19
+ 1882 0986 488B      		std Y+16,r20
+ 1883 0988 598B      		std Y+17,r21
+ 1884 098a 6A8B      		std Y+18,r22
+ 1885 098c 7B8B      		std Y+19,r23
+ 1886 098e 8C8B      		std Y+20,r24
+ 300:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     f->lcd.rw = pin_make(&PORTD, &DDRD, &PIND, 6);
+ 1888               	.LM167:
+ 1889 0990 26E0      		ldi r18,lo8(6)
+ 1890 0992 49E2      		ldi r20,lo8(41)
+ 1891 0994 50E0      		ldi r21,0
+ 1892 0996 6AE2      		ldi r22,lo8(42)
+ 1893 0998 70E0      		ldi r23,0
+ 1894 099a 8BE2      		ldi r24,lo8(43)
+ 1895 099c 90E0      		ldi r25,0
+ 1896 099e 0E94 0000 		call pin_make
+ 1897 09a2 2D8B      		std Y+21,r18
+ 1898 09a4 3E8B      		std Y+22,r19
+ 1899 09a6 4F8B      		std Y+23,r20
+ 1900 09a8 588F      		std Y+24,r21
+ 1901 09aa 698F      		std Y+25,r22
+ 1902 09ac 7A8F      		std Y+26,r23
+ 1903 09ae 8B8F      		std Y+27,r24
+ 301:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     f->lcd.e = pin_make(&PORTD, &DDRD, &PIND, 7);
+ 1905               	.LM168:
+ 1906 09b0 27E0      		ldi r18,lo8(7)
+ 1907 09b2 49E2      		ldi r20,lo8(41)
+ 1908 09b4 50E0      		ldi r21,0
+ 1909 09b6 6AE2      		ldi r22,lo8(42)
+ 1910 09b8 70E0      		ldi r23,0
+ 1911 09ba 8BE2      		ldi r24,lo8(43)
+ 1912 09bc 90E0      		ldi r25,0
+ 1913 09be 0E94 0000 		call pin_make
+ 1914 09c2 2C8F      		std Y+28,r18
+ 1915 09c4 3D8F      		std Y+29,r19
+ 1916 09c6 4E8F      		std Y+30,r20
+ 1917 09c8 5F8F      		std Y+31,r21
+ 1918 09ca 68A3      		std Y+32,r22
+ 1919 09cc 79A3      		std Y+33,r23
+ 1920 09ce 8AA3      		std Y+34,r24
+ 1921               	.LBB4:
+ 302:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     for (int i = 0; i < 8; i++) {
+ 1923               	.LM169:
+ 1924 09d0 E12C      		mov r14,__zero_reg__
+ 1925 09d2 F12C      		mov r15,__zero_reg__
+ 303:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         f->lcd.db[i] = pin_make(&PORTC, &DDRC, &PINC, i);
+ 1927               	.LM170:
+ 1928 09d4 97E0      		ldi r25,lo8(7)
+ 1929 09d6 B92E      		mov r11,r25
+ 1930               	.L69:
+ 1932               	.LM171:
+ 1933 09d8 BE9C      		mul r11,r14
+ 1934 09da 6001      		movw r12,r0
+ 1935 09dc BF9C      		mul r11,r15
+ 1936 09de D00C      		add r13,r0
+ 1937 09e0 1124      		clr __zero_reg__
+ 1938 09e2 CC0E      		add r12,r28
+ 1939 09e4 DD1E      		adc r13,r29
+ 1940 09e6 8601      		movw r16,r12
+ 1941 09e8 0D5D      		subi r16,-35
+ 1942 09ea 1F4F      		sbci r17,-1
+ 1943 09ec 2E2D      		mov r18,r14
+ 1944 09ee 46E2      		ldi r20,lo8(38)
+ 1945 09f0 50E0      		ldi r21,0
+ 1946 09f2 67E2      		ldi r22,lo8(39)
+ 1947 09f4 70E0      		ldi r23,0
+ 1948 09f6 88E2      		ldi r24,lo8(40)
+ 1949 09f8 90E0      		ldi r25,0
+ 1950 09fa 0E94 0000 		call pin_make
+ 1951 09fe F601      		movw r30,r12
+ 1952 0a00 23A3      		std Z+35,r18
+ 1953 0a02 F801      		movw r30,r16
+ 1954 0a04 3183      		std Z+1,r19
+ 1955 0a06 4283      		std Z+2,r20
+ 1956 0a08 5383      		std Z+3,r21
+ 1957 0a0a 6483      		std Z+4,r22
+ 1958 0a0c 7583      		std Z+5,r23
+ 1959 0a0e 8683      		std Z+6,r24
+ 302:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     for (int i = 0; i < 8; i++) {
+ 1961               	.LM172:
+ 1962 0a10 FFEF      		ldi r31,-1
+ 1963 0a12 EF1A      		sub r14,r31
+ 1964 0a14 FF0A      		sbc r15,r31
+ 1965 0a16 88E0      		ldi r24,8
+ 1966 0a18 E816      		cp r14,r24
+ 1967 0a1a F104      		cpc r15,__zero_reg__
+ 1968 0a1c 01F4      		brne .L69
+ 1969               	.LBE4:
+ 304:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     }
+ 305:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     f->lcd.mode = LCD_8BITS;
+ 1971               	.LM173:
+ 1972 0a1e FE01      		movw r30,r28
+ 1973 0a20 E55A      		subi r30,-91
+ 1974 0a22 FF4F      		sbci r31,-1
+ 1975 0a24 81E0      		ldi r24,lo8(1)
+ 1976 0a26 8083      		st Z,r24
+ 306:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     lcd_init(&f->lcd);
+ 1978               	.LM174:
+ 1979 0a28 8E01      		movw r16,r28
+ 1980 0a2a 025F      		subi r16,-14
+ 1981 0a2c 1F4F      		sbci r17,-1
+ 1982 0a2e C801      		movw r24,r16
+ 1983 0a30 0E94 0000 		call lcd_init
+ 307:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     lcd_send_command(&f->lcd, lcd_display_toggle_flags(LCD_DISPLAYON, LCD_CURSORON, LCD_CURSORBLINK
+ 1985               	.LM175:
+ 1986 0a34 40E0      		ldi r20,0
+ 1987 0a36 61E0      		ldi r22,lo8(1)
+ 1988 0a38 81E0      		ldi r24,lo8(1)
+ 1989 0a3a 0E94 0000 		call lcd_display_toggle_flags
+ 1990 0a3e 682F      		mov r22,r24
+ 1991 0a40 C801      		movw r24,r16
+ 1992 0a42 0E94 0000 		call lcd_send_command
+ 308:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     
+ 309:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     // The rotary encoder/pushbutton
+ 310:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     encoder_init(&f->enc);
+ 1994               	.LM176:
+ 1995 0a46 025B      		subi r16,-78
+ 1996 0a48 1F4F      		sbci r17,-1
+ 1997 0a4a C801      		movw r24,r16
+ 1998 0a4c 0E94 0000 		call encoder_init
+ 311:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     f->enc.btn = pin_make(&PORTD, &DDRD, &PIND, 1);
+ 2000               	.LM177:
+ 2001 0a50 7E01      		movw r14,r28
+ 2002 0a52 EAE6      		ldi r30,106
+ 2003 0a54 EE0E      		add r14,r30
+ 2004 0a56 F11C      		adc r15,__zero_reg__
+ 2005 0a58 21E0      		ldi r18,lo8(1)
+ 2006 0a5a 49E2      		ldi r20,lo8(41)
+ 2007 0a5c 50E0      		ldi r21,0
+ 2008 0a5e 6AE2      		ldi r22,lo8(42)
+ 2009 0a60 70E0      		ldi r23,0
+ 2010 0a62 8BE2      		ldi r24,lo8(43)
+ 2011 0a64 90E0      		ldi r25,0
+ 2012 0a66 0E94 0000 		call pin_make
+ 2013 0a6a F701      		movw r30,r14
+ 2014 0a6c 2083      		st Z,r18
+ 2015 0a6e 3183      		std Z+1,r19
+ 2016 0a70 4283      		std Z+2,r20
+ 2017 0a72 5383      		std Z+3,r21
+ 2018 0a74 6483      		std Z+4,r22
+ 2019 0a76 7583      		std Z+5,r23
+ 2020 0a78 8683      		std Z+6,r24
+ 312:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     set_pin(f->enc.btn); // pull up
+ 2022               	.LM178:
+ 2023 0a7a 0E94 0000 		call set_pin
+ 313:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     f->enc.a = pin_make(&PORTD, &DDRD, &PIND, 2);
+ 2025               	.LM179:
+ 2026 0a7e 22E0      		ldi r18,lo8(2)
+ 2027 0a80 49E2      		ldi r20,lo8(41)
+ 2028 0a82 50E0      		ldi r21,0
+ 2029 0a84 6AE2      		ldi r22,lo8(42)
+ 2030 0a86 70E0      		ldi r23,0
+ 2031 0a88 8BE2      		ldi r24,lo8(43)
+ 2032 0a8a 90E0      		ldi r25,0
+ 2033 0a8c 0E94 0000 		call pin_make
+ 2034 0a90 F801      		movw r30,r16
+ 2035 0a92 2083      		st Z,r18
+ 2036 0a94 3183      		std Z+1,r19
+ 2037 0a96 4283      		std Z+2,r20
+ 2038 0a98 5383      		std Z+3,r21
+ 2039 0a9a 6483      		std Z+4,r22
+ 2040 0a9c 7583      		std Z+5,r23
+ 2041 0a9e 8683      		std Z+6,r24
+ 314:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     f->enc.b = pin_make(&PORTD, &DDRD, &PIND, 3);
+ 2043               	.LM180:
+ 2044 0aa0 095F      		subi r16,-7
+ 2045 0aa2 1F4F      		sbci r17,-1
+ 2046 0aa4 23E0      		ldi r18,lo8(3)
+ 2047 0aa6 49E2      		ldi r20,lo8(41)
+ 2048 0aa8 50E0      		ldi r21,0
+ 2049 0aaa 6AE2      		ldi r22,lo8(42)
+ 2050 0aac 70E0      		ldi r23,0
+ 2051 0aae 8BE2      		ldi r24,lo8(43)
+ 2052 0ab0 90E0      		ldi r25,0
+ 2053 0ab2 0E94 0000 		call pin_make
+ 2054 0ab6 F801      		movw r30,r16
+ 2055 0ab8 2083      		st Z,r18
+ 2056 0aba 3183      		std Z+1,r19
+ 2057 0abc 4283      		std Z+2,r20
+ 2058 0abe 5383      		std Z+3,r21
+ 2059 0ac0 6483      		std Z+4,r22
+ 2060 0ac2 7583      		std Z+5,r23
+ 2061 0ac4 8683      		std Z+6,r24
+ 315:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     
+ 316:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     // Show our startup screen.
+ 317:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     foodunit_display(f, screen_startup);
+ 2063               	.LM181:
+ 2064 0ac6 61E0      		ldi r22,lo8(1)
+ 2065 0ac8 CE01      		movw r24,r28
+ 2066               	/* epilogue start */
+ 318:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** }
+ 2068               	.LM182:
+ 2069 0aca DF91      		pop r29
+ 2070 0acc CF91      		pop r28
+ 2071 0ace 1F91      		pop r17
+ 2072 0ad0 0F91      		pop r16
+ 2073 0ad2 FF90      		pop r15
+ 2074 0ad4 EF90      		pop r14
+ 2075 0ad6 DF90      		pop r13
+ 2076 0ad8 CF90      		pop r12
+ 2077 0ada BF90      		pop r11
+ 317:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     foodunit_display(f, screen_startup);
+ 2079               	.LM183:
+ 2080 0adc 0C94 0000 		jmp foodunit_display
+ 2085               	.Lscope16:
+ 2088               	.global	water_level
+ 2090               	water_level:
+ 319:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** 
+ 320:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** /** Read the water sensor. */
+ 321:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** uint16_t water_level(pin* h2o) {
+ 2092               	.LM184:
+ 2093               	.LFBB17:
+ 2094 0ae0 EF92      		push r14
+ 2095 0ae2 FF92      		push r15
+ 2096 0ae4 0F93      		push r16
+ 2097 0ae6 1F93      		push r17
+ 2098 0ae8 CF93      		push r28
+ 2099 0aea DF93      		push r29
+ 2100               	/* prologue: function */
+ 2101               	/* frame size = 0 */
+ 2102               	/* stack size = 6 */
+ 2103               	.L__stack_usage = 6
+ 2104 0aec 7C01      		movw r14,r24
+ 2106               	.LM185:
+ 2107 0aee 0AE0      		ldi r16,lo8(10)
+ 2108 0af0 10E0      		ldi r17,0
+ 322:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     int avg = 0;
+ 2110               	.LM186:
+ 2111 0af2 C0E0      		ldi r28,0
+ 2112 0af4 D0E0      		ldi r29,0
+ 2113               	.L72:
+ 2114               	.LBB5:
+ 2115               	.LBB6:
+ 323:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     for (int i = 0; i < 10; i++) {
+ 324:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         uint16_t adc = adc_read(h2o->bit);
+ 2117               	.LM187:
+ 2118 0af6 F701      		movw r30,r14
+ 2119 0af8 8681      		ldd r24,Z+6
+ 2120 0afa 0E94 0000 		call adc_read
+ 325:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         avg += adc;
+ 2122               	.LM188:
+ 2123 0afe C80F      		add r28,r24
+ 2124 0b00 D91F      		adc r29,r25
+ 2125 0b02 0150      		subi r16,1
+ 2126 0b04 1109      		sbc r17,__zero_reg__
+ 2127               	.LBE6:
+ 323:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     for (int i = 0; i < 10; i++) {
+ 2129               	.LM189:
+ 2130 0b06 0115      		cp r16,__zero_reg__
+ 2131 0b08 1105      		cpc r17,__zero_reg__
+ 2132 0b0a 01F4      		brne .L72
+ 2133               	.LBE5:
+ 326:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     }
+ 327:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     return avg / 10;
+ 2135               	.LM190:
+ 2136 0b0c CE01      		movw r24,r28
+ 2137 0b0e 6AE0      		ldi r22,lo8(10)
+ 2138 0b10 70E0      		ldi r23,0
+ 2139 0b12 0E94 0000 		call __divmodhi4
+ 2140 0b16 CB01      		movw r24,r22
+ 2141               	/* epilogue start */
+ 328:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** }
+ 2143               	.LM191:
+ 2144 0b18 DF91      		pop r29
+ 2145 0b1a CF91      		pop r28
+ 2146 0b1c 1F91      		pop r17
+ 2147 0b1e 0F91      		pop r16
+ 2148 0b20 FF90      		pop r15
+ 2149 0b22 EF90      		pop r14
+ 2150 0b24 0895      		ret
+ 2155               	.Lscope17:
+ 2158               	.global	foodunit_drain
+ 2160               	foodunit_drain:
+ 329:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** 
+ 330:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** void foodunit_drain(foodunit* f) {
+ 2162               	.LM192:
+ 2163               	.LFBB18:
+ 2164 0b26 8F92      		push r8
+ 2165 0b28 9F92      		push r9
+ 2166 0b2a AF92      		push r10
+ 2167 0b2c BF92      		push r11
+ 2168 0b2e CF92      		push r12
+ 2169 0b30 DF92      		push r13
+ 2170 0b32 EF92      		push r14
+ 2171 0b34 FF92      		push r15
+ 2172 0b36 0F93      		push r16
+ 2173 0b38 1F93      		push r17
+ 2174 0b3a CF93      		push r28
+ 2175 0b3c DF93      		push r29
+ 2176 0b3e CDB7      		in r28,__SP_L__
+ 2177 0b40 DEB7      		in r29,__SP_H__
+ 2178 0b42 2897      		sbiw r28,8
+ 2179 0b44 0FB6      		in __tmp_reg__,__SREG__
+ 2180 0b46 F894      		cli
+ 2181 0b48 DEBF      		out __SP_H__,r29
+ 2182 0b4a 0FBE      		out __SREG__,__tmp_reg__
+ 2183 0b4c CDBF      		out __SP_L__,r28
+ 2184               	/* prologue: function */
+ 2185               	/* frame size = 8 */
+ 2186               	/* stack size = 20 */
+ 2187               	.L__stack_usage = 20
+ 2188 0b4e 4C01      		movw r8,r24
+ 331:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     f->draining = true;
+ 2190               	.LM193:
+ 2191 0b50 FC01      		movw r30,r24
+ 2192 0b52 EB57      		subi r30,123
+ 2193 0b54 FF4F      		sbci r31,-1
+ 2194 0b56 81E0      		ldi r24,lo8(1)
+ 2195 0b58 8083      		st Z,r24
+ 332:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     clear_pin(f->pump_relay);
+ 2197               	.LM194:
+ 2198 0b5a F401      		movw r30,r8
+ 2199 0b5c 2781      		ldd r18,Z+7
+ 2200 0b5e 3085      		ldd r19,Z+8
+ 2201 0b60 4185      		ldd r20,Z+9
+ 2202 0b62 5285      		ldd r21,Z+10
+ 2203 0b64 6385      		ldd r22,Z+11
+ 2204 0b66 7485      		ldd r23,Z+12
+ 2205 0b68 8585      		ldd r24,Z+13
+ 2206 0b6a 0E94 0000 		call clear_pin
+ 333:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     time to_drain = time_make(0, 0, f->drain_seconds, 0);
+ 2208               	.LM195:
+ 2209 0b6e F401      		movw r30,r8
+ 2210 0b70 EA57      		subi r30,122
+ 2211 0b72 FF4F      		sbci r31,-1
+ 2212 0b74 4081      		ld r20,Z
+ 2213 0b76 5181      		ldd r21,Z+1
+ 2214 0b78 20E0      		ldi r18,0
+ 2215 0b7a 30E0      		ldi r19,0
+ 2216 0b7c 60E0      		ldi r22,0
+ 2217 0b7e 70E0      		ldi r23,0
+ 2218 0b80 80E0      		ldi r24,0
+ 2219 0b82 90E0      		ldi r25,0
+ 2220 0b84 0E94 0000 		call time_make
+ 2221 0b88 2983      		std Y+1,r18
+ 2222 0b8a 3A83      		std Y+2,r19
+ 2223 0b8c 4B83      		std Y+3,r20
+ 2224 0b8e 5C83      		std Y+4,r21
+ 2225 0b90 6D83      		std Y+5,r22
+ 2226 0b92 7E83      		std Y+6,r23
+ 2227 0b94 8F83      		std Y+7,r24
+ 2228 0b96 9887      		std Y+8,r25
+ 334:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     f->when_drain_ends = time_add(timer, to_drain);
+ 2230               	.LM196:
+ 2231 0b98 F5E7      		ldi r31,117
+ 2232 0b9a 8F0E      		add r8,r31
+ 2233 0b9c 911C      		adc r9,__zero_reg__
+ 2234 0b9e 5901      		movw r10,r18
+ 2235 0ba0 6A01      		movw r12,r20
+ 2236 0ba2 7B01      		movw r14,r22
+ 2237 0ba4 8C01      		movw r16,r24
+ 2238 0ba6 2091 0000 		lds r18,timer
+ 2239 0baa 3091 0000 		lds r19,timer+1
+ 2240 0bae 4091 0000 		lds r20,timer+2
+ 2241 0bb2 5091 0000 		lds r21,timer+3
+ 2242 0bb6 6091 0000 		lds r22,timer+4
+ 2243 0bba 7091 0000 		lds r23,timer+5
+ 2244 0bbe 8091 0000 		lds r24,timer+6
+ 2245 0bc2 9091 0000 		lds r25,timer+7
+ 2246 0bc6 0E94 0000 		call time_add
+ 2247 0bca F401      		movw r30,r8
+ 2248 0bcc 2083      		st Z,r18
+ 2249 0bce 3183      		std Z+1,r19
+ 2250 0bd0 4283      		std Z+2,r20
+ 2251 0bd2 5383      		std Z+3,r21
+ 2252 0bd4 6483      		std Z+4,r22
+ 2253 0bd6 7583      		std Z+5,r23
+ 2254 0bd8 8683      		std Z+6,r24
+ 2255 0bda 9783      		std Z+7,r25
+ 2256               	/* epilogue start */
+ 335:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** }
+ 2258               	.LM197:
+ 2259 0bdc 2896      		adiw r28,8
+ 2260 0bde 0FB6      		in __tmp_reg__,__SREG__
+ 2261 0be0 F894      		cli
+ 2262 0be2 DEBF      		out __SP_H__,r29
+ 2263 0be4 0FBE      		out __SREG__,__tmp_reg__
+ 2264 0be6 CDBF      		out __SP_L__,r28
+ 2265 0be8 DF91      		pop r29
+ 2266 0bea CF91      		pop r28
+ 2267 0bec 1F91      		pop r17
+ 2268 0bee 0F91      		pop r16
+ 2269 0bf0 FF90      		pop r15
+ 2270 0bf2 EF90      		pop r14
+ 2271 0bf4 DF90      		pop r13
+ 2272 0bf6 CF90      		pop r12
+ 2273 0bf8 BF90      		pop r11
+ 2274 0bfa AF90      		pop r10
+ 2275 0bfc 9F90      		pop r9
+ 2276 0bfe 8F90      		pop r8
+ 2277 0c00 0895      		ret
+ 2282               	.Lscope18:
+ 2285               	.global	foodunit_update_h2o_check
+ 2287               	foodunit_update_h2o_check:
+ 336:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** 
+ 337:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** void foodunit_update_h2o_check(foodunit* f) {
+ 2289               	.LM198:
+ 2290               	.LFBB19:
+ 2291 0c02 8F92      		push r8
+ 2292 0c04 9F92      		push r9
+ 2293 0c06 AF92      		push r10
+ 2294 0c08 BF92      		push r11
+ 2295 0c0a CF92      		push r12
+ 2296 0c0c DF92      		push r13
+ 2297 0c0e EF92      		push r14
+ 2298 0c10 FF92      		push r15
+ 2299 0c12 0F93      		push r16
+ 2300 0c14 1F93      		push r17
+ 2301 0c16 CF93      		push r28
+ 2302 0c18 DF93      		push r29
+ 2303 0c1a CDB7      		in r28,__SP_L__
+ 2304 0c1c DEB7      		in r29,__SP_H__
+ 2305 0c1e 2897      		sbiw r28,8
+ 2306 0c20 0FB6      		in __tmp_reg__,__SREG__
+ 2307 0c22 F894      		cli
+ 2308 0c24 DEBF      		out __SP_H__,r29
+ 2309 0c26 0FBE      		out __SREG__,__tmp_reg__
+ 2310 0c28 CDBF      		out __SP_L__,r28
+ 2311               	/* prologue: function */
+ 2312               	/* frame size = 8 */
+ 2313               	/* stack size = 20 */
+ 2314               	.L__stack_usage = 20
+ 2315 0c2a 4C01      		movw r8,r24
+ 338:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     f->next_h2o_check = time_add(timer, time_make(0, 100, 0, 0));
+ 2317               	.LM199:
+ 2318 0c2c 20E0      		ldi r18,0
+ 2319 0c2e 30E0      		ldi r19,0
+ 2320 0c30 40E0      		ldi r20,0
+ 2321 0c32 50E0      		ldi r21,0
+ 2322 0c34 64E6      		ldi r22,lo8(100)
+ 2323 0c36 70E0      		ldi r23,0
+ 2324 0c38 80E0      		ldi r24,0
+ 2325 0c3a 90E0      		ldi r25,0
+ 2326 0c3c 0E94 0000 		call time_make
+ 2327 0c40 2983      		std Y+1,r18
+ 2328 0c42 3A83      		std Y+2,r19
+ 2329 0c44 4B83      		std Y+3,r20
+ 2330 0c46 5C83      		std Y+4,r21
+ 2331 0c48 6D83      		std Y+5,r22
+ 2332 0c4a 7E83      		std Y+6,r23
+ 2333 0c4c 8F83      		std Y+7,r24
+ 2334 0c4e 9887      		std Y+8,r25
+ 2335 0c50 EDE7      		ldi r30,125
+ 2336 0c52 8E0E      		add r8,r30
+ 2337 0c54 911C      		adc r9,__zero_reg__
+ 2338 0c56 5901      		movw r10,r18
+ 2339 0c58 6A01      		movw r12,r20
+ 2340 0c5a 7B01      		movw r14,r22
+ 2341 0c5c 8C01      		movw r16,r24
+ 2342 0c5e 2091 0000 		lds r18,timer
+ 2343 0c62 3091 0000 		lds r19,timer+1
+ 2344 0c66 4091 0000 		lds r20,timer+2
+ 2345 0c6a 5091 0000 		lds r21,timer+3
+ 2346 0c6e 6091 0000 		lds r22,timer+4
+ 2347 0c72 7091 0000 		lds r23,timer+5
+ 2348 0c76 8091 0000 		lds r24,timer+6
+ 2349 0c7a 9091 0000 		lds r25,timer+7
+ 2350 0c7e 0E94 0000 		call time_add
+ 2351 0c82 F401      		movw r30,r8
+ 2352 0c84 2083      		st Z,r18
+ 2353 0c86 3183      		std Z+1,r19
+ 2354 0c88 4283      		std Z+2,r20
+ 2355 0c8a 5383      		std Z+3,r21
+ 2356 0c8c 6483      		std Z+4,r22
+ 2357 0c8e 7583      		std Z+5,r23
+ 2358 0c90 8683      		std Z+6,r24
+ 2359 0c92 9783      		std Z+7,r25
+ 2360               	/* epilogue start */
+ 339:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** }
+ 2362               	.LM200:
+ 2363 0c94 2896      		adiw r28,8
+ 2364 0c96 0FB6      		in __tmp_reg__,__SREG__
+ 2365 0c98 F894      		cli
+ 2366 0c9a DEBF      		out __SP_H__,r29
+ 2367 0c9c 0FBE      		out __SREG__,__tmp_reg__
+ 2368 0c9e CDBF      		out __SP_L__,r28
+ 2369 0ca0 DF91      		pop r29
+ 2370 0ca2 CF91      		pop r28
+ 2371 0ca4 1F91      		pop r17
+ 2372 0ca6 0F91      		pop r16
+ 2373 0ca8 FF90      		pop r15
+ 2374 0caa EF90      		pop r14
+ 2375 0cac DF90      		pop r13
+ 2376 0cae CF90      		pop r12
+ 2377 0cb0 BF90      		pop r11
+ 2378 0cb2 AF90      		pop r10
+ 2379 0cb4 9F90      		pop r9
+ 2380 0cb6 8F90      		pop r8
+ 2381 0cb8 0895      		ret
+ 2383               	.Lscope19:
+ 2386               	.global	foodunit_fill
+ 2388               	foodunit_fill:
+ 340:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** 
+ 341:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** void foodunit_fill(foodunit* f) {
+ 2390               	.LM201:
+ 2391               	.LFBB20:
+ 2392 0cba CF93      		push r28
+ 2393 0cbc DF93      		push r29
+ 2394               	/* prologue: function */
+ 2395               	/* frame size = 0 */
+ 2396               	/* stack size = 2 */
+ 2397               	.L__stack_usage = 2
+ 2398 0cbe EC01      		movw r28,r24
+ 342:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     f->draining = false;
+ 2400               	.LM202:
+ 2401 0cc0 FC01      		movw r30,r24
+ 2402 0cc2 EB57      		subi r30,123
+ 2403 0cc4 FF4F      		sbci r31,-1
+ 2404 0cc6 1082      		st Z,__zero_reg__
+ 343:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     set_pin(f->pump_relay);
+ 2406               	.LM203:
+ 2407 0cc8 2F81      		ldd r18,Y+7
+ 2408 0cca 3885      		ldd r19,Y+8
+ 2409 0ccc 4985      		ldd r20,Y+9
+ 2410 0cce 5A85      		ldd r21,Y+10
+ 2411 0cd0 6B85      		ldd r22,Y+11
+ 2412 0cd2 7C85      		ldd r23,Y+12
+ 2413 0cd4 8D85      		ldd r24,Y+13
+ 2414 0cd6 0E94 0000 		call set_pin
+ 344:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     foodunit_update_h2o_check(f);
+ 2416               	.LM204:
+ 2417 0cda CE01      		movw r24,r28
+ 2418               	/* epilogue start */
+ 345:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** }
+ 2420               	.LM205:
+ 2421 0cdc DF91      		pop r29
+ 2422 0cde CF91      		pop r28
+ 344:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     foodunit_update_h2o_check(f);
+ 2424               	.LM206:
+ 2425 0ce0 0C94 0000 		jmp foodunit_update_h2o_check
+ 2427               	.Lscope20:
+ 2430               	.global	foodunit_update
+ 2432               	foodunit_update:
+ 346:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** 
+ 347:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** void foodunit_update(foodunit* f) {
+ 2434               	.LM207:
+ 2435               	.LFBB21:
+ 2436 0ce4 6F92      		push r6
+ 2437 0ce6 7F92      		push r7
+ 2438 0ce8 8F92      		push r8
+ 2439 0cea 9F92      		push r9
+ 2440 0cec AF92      		push r10
+ 2441 0cee BF92      		push r11
+ 2442 0cf0 CF92      		push r12
+ 2443 0cf2 DF92      		push r13
+ 2444 0cf4 EF92      		push r14
+ 2445 0cf6 FF92      		push r15
+ 2446 0cf8 0F93      		push r16
+ 2447 0cfa 1F93      		push r17
+ 2448 0cfc CF93      		push r28
+ 2449 0cfe DF93      		push r29
+ 2450 0d00 CDB7      		in r28,__SP_L__
+ 2451 0d02 DEB7      		in r29,__SP_H__
+ 2452 0d04 6897      		sbiw r28,24
+ 2453 0d06 0FB6      		in __tmp_reg__,__SREG__
+ 2454 0d08 F894      		cli
+ 2455 0d0a DEBF      		out __SP_H__,r29
+ 2456 0d0c 0FBE      		out __SREG__,__tmp_reg__
+ 2457 0d0e CDBF      		out __SP_L__,r28
+ 2458               	/* prologue: function */
+ 2459               	/* frame size = 24 */
+ 2460               	/* stack size = 38 */
+ 2461               	.L__stack_usage = 38
+ 2462 0d10 3C01      		movw r6,r24
+ 348:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     encoder_update(&f->enc);
+ 2464               	.LM208:
+ 2465 0d12 845A      		subi r24,-92
+ 2466 0d14 9F4F      		sbci r25,-1
+ 2467 0d16 0E94 0000 		call encoder_update
+ 349:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     foodunit_display(f, f->screen);
+ 2469               	.LM209:
+ 2470 0d1a F301      		movw r30,r6
+ 2471 0d1c EC58      		subi r30,-116
+ 2472 0d1e FF4F      		sbci r31,-1
+ 2473 0d20 6081      		ld r22,Z
+ 2474 0d22 C301      		movw r24,r6
+ 2475 0d24 0E94 0000 		call foodunit_display
+ 350:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     
+ 351:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     if (f->draining) {
+ 2477               	.LM210:
+ 2478 0d28 F301      		movw r30,r6
+ 2479 0d2a EB57      		subi r30,123
+ 2480 0d2c FF4F      		sbci r31,-1
+ 2481 0d2e 8081      		ld r24,Z
+ 2482 0d30 8823      		tst r24
+ 2483 0d32 01F4      		brne .+2
+ 2484 0d34 00C0      		rjmp .L77
+ 352:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         if (time_is_greater(timer, f->when_drain_ends)) {
+ 2486               	.LM211:
+ 2487 0d36 4301      		movw r8,r6
+ 2488 0d38 85E7      		ldi r24,117
+ 2489 0d3a 880E      		add r8,r24
+ 2490 0d3c 911C      		adc r9,__zero_reg__
+ 2491 0d3e F401      		movw r30,r8
+ 2492 0d40 A080      		ld r10,Z
+ 2493 0d42 B180      		ldd r11,Z+1
+ 2494 0d44 C280      		ldd r12,Z+2
+ 2495 0d46 D380      		ldd r13,Z+3
+ 2496 0d48 E480      		ldd r14,Z+4
+ 2497 0d4a F580      		ldd r15,Z+5
+ 2498 0d4c 0681      		ldd r16,Z+6
+ 2499 0d4e 1781      		ldd r17,Z+7
+ 2500 0d50 2091 0000 		lds r18,timer
+ 2501 0d54 3091 0000 		lds r19,timer+1
+ 2502 0d58 4091 0000 		lds r20,timer+2
+ 2503 0d5c 5091 0000 		lds r21,timer+3
+ 2504 0d60 6091 0000 		lds r22,timer+4
+ 2505 0d64 7091 0000 		lds r23,timer+5
+ 2506 0d68 8091 0000 		lds r24,timer+6
+ 2507 0d6c 9091 0000 		lds r25,timer+7
+ 2508 0d70 0E94 0000 		call time_is_greater
+ 2509 0d74 8823      		tst r24
+ 2510 0d76 01F0      		breq .L78
+ 353:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             foodunit_fill(f);
+ 2512               	.LM212:
+ 2513 0d78 C301      		movw r24,r6
+ 2514 0d7a 0E94 0000 		call foodunit_fill
+ 2515 0d7e 00C0      		rjmp .L76
+ 2516               	.L78:
+ 2517               	.LBB7:
+ 354:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         } else {
+ 355:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             // Update the drain display
+ 356:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             time t = time_diff(timer, f->when_drain_ends);
+ 2519               	.LM213:
+ 2520 0d80 F401      		movw r30,r8
+ 2521 0d82 A080      		ld r10,Z
+ 2522 0d84 B180      		ldd r11,Z+1
+ 2523 0d86 C280      		ldd r12,Z+2
+ 2524 0d88 D380      		ldd r13,Z+3
+ 2525 0d8a E480      		ldd r14,Z+4
+ 2526 0d8c F580      		ldd r15,Z+5
+ 2527 0d8e 0681      		ldd r16,Z+6
+ 2528 0d90 1781      		ldd r17,Z+7
+ 2529 0d92 2091 0000 		lds r18,timer
+ 2530 0d96 3091 0000 		lds r19,timer+1
+ 2531 0d9a 4091 0000 		lds r20,timer+2
+ 2532 0d9e 5091 0000 		lds r21,timer+3
+ 2533 0da2 6091 0000 		lds r22,timer+4
+ 2534 0da6 7091 0000 		lds r23,timer+5
+ 2535 0daa 8091 0000 		lds r24,timer+6
+ 2536 0dae 9091 0000 		lds r25,timer+7
+ 2537 0db2 0E94 0000 		call time_diff
+ 357:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             char t1[16];
+ 358:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             time_str(t1, t);
+ 2539               	.LM214:
+ 2540 0db6 8901      		movw r16,r18
+ 2541 0db8 9A01      		movw r18,r20
+ 2542 0dba AB01      		movw r20,r22
+ 2543 0dbc BC01      		movw r22,r24
+ 2544 0dbe CE01      		movw r24,r28
+ 2545 0dc0 0196      		adiw r24,1
+ 2546 0dc2 0E94 0000 		call time_str
+ 359:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             lcd_xy(&f->lcd, 0, 1);
+ 2548               	.LM215:
+ 2549 0dc6 FEE0      		ldi r31,14
+ 2550 0dc8 6F0E      		add r6,r31
+ 2551 0dca 711C      		adc r7,__zero_reg__
+ 2552 0dcc 41E0      		ldi r20,lo8(1)
+ 2553 0dce 60E0      		ldi r22,0
+ 2554 0dd0 C301      		movw r24,r6
+ 2555 0dd2 0E94 0000 		call lcd_xy
+ 360:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             lcd_write(&f->lcd, t1);
+ 2557               	.LM216:
+ 2558 0dd6 BE01      		movw r22,r28
+ 2559 0dd8 6F5F      		subi r22,-1
+ 2560 0dda 7F4F      		sbci r23,-1
+ 2561 0ddc C301      		movw r24,r6
+ 2562 0dde 0E94 0000 		call lcd_write
+ 2563 0de2 00C0      		rjmp .L76
+ 2564               	.L77:
+ 2565               	.LBE7:
+ 361:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         }
+ 362:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     } else {
+ 363:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         if (time_is_greater(timer, f->next_h2o_check)){
+ 2567               	.LM217:
+ 2568 0de4 F301      		movw r30,r6
+ 2569 0de6 E358      		subi r30,-125
+ 2570 0de8 FF4F      		sbci r31,-1
+ 2571 0dea A080      		ld r10,Z
+ 2572 0dec B180      		ldd r11,Z+1
+ 2573 0dee C280      		ldd r12,Z+2
+ 2574 0df0 D380      		ldd r13,Z+3
+ 2575 0df2 E480      		ldd r14,Z+4
+ 2576 0df4 F580      		ldd r15,Z+5
+ 2577 0df6 0681      		ldd r16,Z+6
+ 2578 0df8 1781      		ldd r17,Z+7
+ 2579 0dfa 2091 0000 		lds r18,timer
+ 2580 0dfe 3091 0000 		lds r19,timer+1
+ 2581 0e02 4091 0000 		lds r20,timer+2
+ 2582 0e06 5091 0000 		lds r21,timer+3
+ 2583 0e0a 6091 0000 		lds r22,timer+4
+ 2584 0e0e 7091 0000 		lds r23,timer+5
+ 2585 0e12 8091 0000 		lds r24,timer+6
+ 2586 0e16 9091 0000 		lds r25,timer+7
+ 2587 0e1a 0E94 0000 		call time_is_greater
+ 2588 0e1e 8823      		tst r24
+ 2589 0e20 01F0      		breq .L76
+ 2590               	.LBB8:
+ 364:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             foodunit_update_h2o_check(f);
+ 2592               	.LM218:
+ 2593 0e22 C301      		movw r24,r6
+ 2594 0e24 0E94 0000 		call foodunit_update_h2o_check
+ 365:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             uint16_t lvl = water_level(&f->h2o_sensor);
+ 2596               	.LM219:
+ 2597 0e28 C301      		movw r24,r6
+ 2598 0e2a 0E94 0000 		call water_level
+ 366:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             if (lvl < f->h2o_threshold) {
+ 2600               	.LM220:
+ 2601 0e2e F301      		movw r30,r6
+ 2602 0e30 E857      		subi r30,120
+ 2603 0e32 FF4F      		sbci r31,-1
+ 2604 0e34 2081      		ld r18,Z
+ 2605 0e36 3181      		ldd r19,Z+1
+ 2606 0e38 8217      		cp r24,r18
+ 2607 0e3a 9307      		cpc r25,r19
+ 2608 0e3c 00F4      		brsh .L76
+ 367:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****                 foodunit_drain(f);
+ 2610               	.LM221:
+ 2611 0e3e C301      		movw r24,r6
+ 2612 0e40 0E94 0000 		call foodunit_drain
+ 2613               	.L76:
+ 2614               	/* epilogue start */
+ 2615               	.LBE8:
+ 368:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****             }
+ 369:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         }
+ 370:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     }
+ 371:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     
+ 372:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** }
+ 2617               	.LM222:
+ 2618 0e44 6896      		adiw r28,24
+ 2619 0e46 0FB6      		in __tmp_reg__,__SREG__
+ 2620 0e48 F894      		cli
+ 2621 0e4a DEBF      		out __SP_H__,r29
+ 2622 0e4c 0FBE      		out __SREG__,__tmp_reg__
+ 2623 0e4e CDBF      		out __SP_L__,r28
+ 2624 0e50 DF91      		pop r29
+ 2625 0e52 CF91      		pop r28
+ 2626 0e54 1F91      		pop r17
+ 2627 0e56 0F91      		pop r16
+ 2628 0e58 FF90      		pop r15
+ 2629 0e5a EF90      		pop r14
+ 2630 0e5c DF90      		pop r13
+ 2631 0e5e CF90      		pop r12
+ 2632 0e60 BF90      		pop r11
+ 2633 0e62 AF90      		pop r10
+ 2634 0e64 9F90      		pop r9
+ 2635 0e66 8F90      		pop r8
+ 2636 0e68 7F90      		pop r7
+ 2637 0e6a 6F90      		pop r6
+ 2638 0e6c 0895      		ret
+ 2644               	.Lscope21:
+ 2645               		.section	.text.startup,"ax",@progbits
+ 2647               	.global	main
+ 2649               	main:
+ 373:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** 
+ 374:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c **** int main(void) {
+ 2651               	.LM223:
+ 2652               	.LFBB22:
+ 2653 0000 CF93      		push r28
+ 2654 0002 DF93      		push r29
+ 2655 0004 CDB7      		in r28,__SP_L__
+ 2656 0006 DEB7      		in r29,__SP_H__
+ 2657 0008 CA58      		subi r28,-118
+ 2658 000a D109      		sbc r29,__zero_reg__
+ 2659 000c 0FB6      		in __tmp_reg__,__SREG__
+ 2660 000e F894      		cli
+ 2661 0010 DEBF      		out __SP_H__,r29
+ 2662 0012 0FBE      		out __SREG__,__tmp_reg__
+ 2663 0014 CDBF      		out __SP_L__,r28
+ 2664               	/* prologue: function */
+ 2665               	/* frame size = 138 */
+ 2666               	/* stack size = 140 */
+ 2667               	.L__stack_usage = 140
+ 375:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     CPU_PRESCALE(CPU_16MHz);
+ 2669               	.LM224:
+ 2670 0016 80E8      		ldi r24,lo8(-128)
+ 2671 0018 8093 6100 		sts 97,r24
+ 2672 001c 1092 6100 		sts 97,__zero_reg__
+ 376:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     usb_init();
+ 2674               	.LM225:
+ 2675 0020 0E94 0000 		call usb_init
+ 2676               	.L84:
+ 377:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     while (!usb_configured()) {
+ 2678               	.LM226:
+ 2679 0024 0E94 0000 		call usb_configured
+ 2680 0028 8823      		tst r24
+ 2681 002a 01F0      		breq .L84
+ 378:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         continue;
+ 379:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     }
+ 380:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     timer = time_make(0, 0, 0, 0);
+ 2683               	.LM227:
+ 2684 002c 20E0      		ldi r18,0
+ 2685 002e 30E0      		ldi r19,0
+ 2686 0030 40E0      		ldi r20,0
+ 2687 0032 50E0      		ldi r21,0
+ 2688 0034 60E0      		ldi r22,0
+ 2689 0036 70E0      		ldi r23,0
+ 2690 0038 80E0      		ldi r24,0
+ 2691 003a 90E0      		ldi r25,0
+ 2692 003c 0E94 0000 		call time_make
+ 2693 0040 2093 0000 		sts timer,r18
+ 2694 0044 3093 0000 		sts timer+1,r19
+ 2695 0048 4093 0000 		sts timer+2,r20
+ 2696 004c 5093 0000 		sts timer+3,r21
+ 2697 0050 6093 0000 		sts timer+4,r22
+ 2698 0054 7093 0000 		sts timer+5,r23
+ 2699 0058 8093 0000 		sts timer+6,r24
+ 2700 005c 9093 0000 		sts timer+7,r25
+ 381:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     timer_start();
+ 2702               	.LM228:
+ 2703 0060 0E94 0000 		call timer_start
+ 382:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     
+ 383:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     foodunit f;
+ 384:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     foodunit_init(&f);
+ 2705               	.LM229:
+ 2706 0064 CE01      		movw r24,r28
+ 2707 0066 0196      		adiw r24,1
+ 2708 0068 0E94 0000 		call foodunit_init
+ 2709               	.L85:
+ 385:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****     while (1) {
+ 386:/Users/schell/Code/teensy/FoodUnit/FoodUnit/main.c ****         foodunit_update(&f);
+ 2711               	.LM230:
+ 2712 006c CE01      		movw r24,r28
+ 2713 006e 0196      		adiw r24,1
+ 2714 0070 0E94 0000 		call foodunit_update
+ 2715 0074 00C0      		rjmp .L85
+ 2720               	.Lscope22:
+ 2721               		.comm	timer,8,1
+ 2723               		.text
+ 2725               	.Letext0:
+ 2726               		.ident	"GCC: (GNU) 4.8.1"
+ 2727               	.global __do_copy_data
+ 2728               	.global __do_clear_bss
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc2oyIGj.s:2      *ABS*:0000003e __SP_H__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc2oyIGj.s:3      *ABS*:0000003d __SP_L__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc2oyIGj.s:4      *ABS*:0000003f __SREG__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc2oyIGj.s:5      *ABS*:0000003b __RAMPZ__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc2oyIGj.s:6      *ABS*:00000000 __tmp_reg__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc2oyIGj.s:7      *ABS*:00000001 __zero_reg__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc2oyIGj.s:132    .text:00000000 time_is_greater
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc2oyIGj.s:264    .text:000000ba time_update
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc2oyIGj.s:388    .text:00000160 time_make
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc2oyIGj.s:463    .text:000001ba time_add
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc2oyIGj.s:587    .text:00000280 time_diff_internal
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc2oyIGj.s:905    .text:00000426 time_diff
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc2oyIGj.s:1060   .text:00000526 time_str
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc2oyIGj.s:1129   .text:0000058e __vector_23
+                            *COM*:00000008 timer
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc2oyIGj.s:1210   .text:0000061e timer_start
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc2oyIGj.s:1256   .text:0000064e timer_stop
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc2oyIGj.s:1300   .text:0000067c time_set_global
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc2oyIGj.s:1341   .text:000006b0 lcd_clear
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc2oyIGj.s:1406   .text:000006f6 foodunit_update_current_screen
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc2oyIGj.s:1428   .text:000006f8 foodunit_read_user
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc2oyIGj.s:1596   .text:000007da foodunit_display
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc2oyIGj.s:1728   .text:00000884 foodunit_init
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc2oyIGj.s:2090   .text:00000ae0 water_level
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc2oyIGj.s:2160   .text:00000b26 foodunit_drain
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc2oyIGj.s:2287   .text:00000c02 foodunit_update_h2o_check
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc2oyIGj.s:2388   .text:00000cba foodunit_fill
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc2oyIGj.s:2432   .text:00000ce4 foodunit_update
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc2oyIGj.s:2649   .text.startup:00000000 main
+
+UNDEFINED SYMBOLS
+sprintf
+lcd_display_clear_flags
+lcd_send_command
+lcd_return_home_flags
+lcd_write
+encoder_btn_up_edge
+encoder_update
+lcd_xy
+encoder_clear
+analogReference
+pin_make
+input_pin
+output_pin
+clear_pin
+lcd_init
+lcd_display_toggle_flags
+encoder_init
+set_pin
+adc_read
+__divmodhi4
+usb_init
+usb_configured
+__do_copy_data
+__do_clear_bss

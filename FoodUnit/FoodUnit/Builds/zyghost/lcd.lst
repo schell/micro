@@ -1,0 +1,1477 @@
+   1               		.file	"lcd.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__RAMPZ__ = 0x3b
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+   9               		.text
+  10               	.Ltext0:
+ 117               	.global	flip_bit
+ 119               	flip_bit:
+   1:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** //
+   2:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** //  lcd.c
+   3:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** //
+   4:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** //  Created by Schell Scivally on 1/28/15.
+   5:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** //  Copyright (c) 2015 zyghost. All rights reserved.
+   6:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** //
+   7:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** 
+   8:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** #include <avr/pgmspace.h>
+   9:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** #include <util/delay.h>
+  10:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** #include "lcd.h"
+  11:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** 
+  12:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** 
+  13:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** // Flips a flag at a bit position either on or off.
+  14:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** void flip_bit(uint8_t* val, uint8_t bit, bool high) {
+ 121               	.LM0:
+ 122               	.LFBB1:
+ 123               	/* prologue: function */
+ 124               	/* frame size = 0 */
+ 125               	/* stack size = 0 */
+ 126               	.L__stack_usage = 0
+ 127 0000 FC01      		movw r30,r24
+ 128 0002 2081      		ld r18,Z
+  15:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     if (high) {
+  16:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         *val |= _BV(bit);
+ 130               	.LM1:
+ 131 0004 81E0      		ldi r24,lo8(1)
+ 132 0006 90E0      		ldi r25,0
+ 133 0008 062E      		mov r0,r22
+ 134 000a 00C0      		rjmp 2f
+ 135               		1:
+ 136 000c 880F      		lsl r24
+ 137               		2:
+ 138 000e 0A94      		dec r0
+ 139 0010 02F4      		brpl 1b
+  15:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     if (high) {
+ 141               	.LM2:
+ 142 0012 4423      		tst r20
+ 143 0014 01F0      		breq .L2
+ 145               	.LM3:
+ 146 0016 822B      		or r24,r18
+ 147 0018 00C0      		rjmp .L4
+ 148               	.L2:
+ 149               	.LBB23:
+ 150               	.LBB24:
+  17:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     } else {
+  18:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         *val &= ~_BV(bit);
+ 152               	.LM4:
+ 153 001a 8095      		com r24
+ 154 001c 8223      		and r24,r18
+ 155               	.L4:
+ 156 001e 8083      		st Z,r24
+ 157 0020 0895      		ret
+ 158               	.LBE24:
+ 159               	.LBE23:
+ 161               	.Lscope1:
+ 166               	.global	lcd_function_set_flags
+ 168               	lcd_function_set_flags:
+  19:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     }
+  20:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** }
+  21:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** 
+  22:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** /** Constructs flags for interface data length (dl), number of display lines (n) 
+  23:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  * and character font (f).
+  24:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  
+  25:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  DL: Sets the interface data length. Data is sent or received in 8-bit lengths 
+  26:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****      (DB7 to DB0) when DL is 1, and in 4-bit lengths (DB7 to DB4) when DL is 0.
+  27:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****      When 4-bit length is selected, data must be sent or received twice.
+  28:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  DL = 1: 8 bits,      DL = 0: 4 bits
+  29:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  
+  30:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  N: Sets the number of display lines.
+  31:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  N  = 1: 2 lines,     N  = 0: 1 line
+  32:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  
+  33:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  F: Sets the character font.
+  34:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  F  = 1: 5 × 10 dots, F  = 0: 5 × 8 dots
+  35:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  
+  36:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  Note: Perform the function at the head of the program before executing any 
+  37:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  instructions (except for the read busy flag and address instruction). From this 
+  38:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  point, the function set instruction cannot be executed unless the interface 
+  39:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  data length is changed.
+  40:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  */
+  41:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** uint8_t lcd_function_set_flags(bool dl, bool n, bool f) {
+ 170               	.LM5:
+ 171               	.LFBB2:
+ 172 0022 0F93      		push r16
+ 173 0024 1F93      		push r17
+ 174 0026 CF93      		push r28
+ 175 0028 DF93      		push r29
+ 176 002a 1F92      		push __zero_reg__
+ 177 002c CDB7      		in r28,__SP_L__
+ 178 002e DEB7      		in r29,__SP_H__
+ 179               	/* prologue: function */
+ 180               	/* frame size = 1 */
+ 181               	/* stack size = 5 */
+ 182               	.L__stack_usage = 5
+ 183 0030 062F      		mov r16,r22
+ 184 0032 142F      		mov r17,r20
+ 185               	.LBB29:
+ 186               	.LBB30:
+  16:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         *val |= _BV(bit);
+ 188               	.LM6:
+ 189 0034 90E2      		ldi r25,lo8(32)
+ 190 0036 9983      		std Y+1,r25
+ 191               	.LBE30:
+ 192               	.LBE29:
+  42:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     uint8_t flags = 0;
+  43:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     flip_bit(&flags, 5, 1);
+  44:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     flip_bit(&flags, 4, dl);
+ 194               	.LM7:
+ 195 0038 482F      		mov r20,r24
+ 196 003a 64E0      		ldi r22,lo8(4)
+ 197 003c CE01      		movw r24,r28
+ 198 003e 0196      		adiw r24,1
+ 199 0040 0E94 0000 		call flip_bit
+  45:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     flip_bit(&flags, 3, n);
+ 201               	.LM8:
+ 202 0044 402F      		mov r20,r16
+ 203 0046 63E0      		ldi r22,lo8(3)
+ 204 0048 CE01      		movw r24,r28
+ 205 004a 0196      		adiw r24,1
+ 206 004c 0E94 0000 		call flip_bit
+  46:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     flip_bit(&flags, 2, f);
+ 208               	.LM9:
+ 209 0050 412F      		mov r20,r17
+ 210 0052 62E0      		ldi r22,lo8(2)
+ 211 0054 CE01      		movw r24,r28
+ 212 0056 0196      		adiw r24,1
+ 213 0058 0E94 0000 		call flip_bit
+  47:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     return flags;
+  48:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** }
+ 215               	.LM10:
+ 216 005c 8981      		ldd r24,Y+1
+ 217               	/* epilogue start */
+ 218 005e 0F90      		pop __tmp_reg__
+ 219 0060 DF91      		pop r29
+ 220 0062 CF91      		pop r28
+ 221 0064 1F91      		pop r17
+ 222 0066 0F91      		pop r16
+ 223 0068 0895      		ret
+ 228               	.Lscope2:
+ 233               	.global	lcd_display_toggle_flags
+ 235               	lcd_display_toggle_flags:
+  49:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** 
+  50:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** /** Constructs flags for display on/off control.
+  51:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  D: The display is on when D is 1 and off when D is 0. When off, the display 
+  52:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     data remains in DDRAM, but can be displayed instantly by setting D to 1.
+  53:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  C: The cursor is displayed when C is 1 and not displayed when C is 0. Even if 
+  54:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     the cursor disappears, the function of I/D or other specifications will not
+  55:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     change during display data write. The cursor is displayed using 5 dots in 
+  56:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     the 8th line for 5 × 8 dot character font selection and in the 11th line for
+  57:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     the 5 × 10 dot character font selection (Figure 13).
+  58:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  B: The character indicated by the cursor blinks when B is 1 (Figure 13). The 
+  59:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     blinking is displayed as switching between all blank dots and displayed 
+  60:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     characters at a speed of 409.6-ms intervals when fcp or fOSC is 250 kHz. 
+  61:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     The cursor and blinking can be set to display simultaneously. (The blinking 
+  62:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     frequency changes according to fOSC or the reciprocal of fcp. For example, 
+  63:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     when fcp is 270 kHz, 409.6 × 250/270 = 379.2 ms.)
+  64:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  */
+  65:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** uint8_t lcd_display_toggle_flags(bool d, bool c, bool b) {
+ 237               	.LM11:
+ 238               	.LFBB3:
+ 239 006a 0F93      		push r16
+ 240 006c 1F93      		push r17
+ 241 006e CF93      		push r28
+ 242 0070 DF93      		push r29
+ 243 0072 1F92      		push __zero_reg__
+ 244 0074 CDB7      		in r28,__SP_L__
+ 245 0076 DEB7      		in r29,__SP_H__
+ 246               	/* prologue: function */
+ 247               	/* frame size = 1 */
+ 248               	/* stack size = 5 */
+ 249               	.L__stack_usage = 5
+ 250 0078 062F      		mov r16,r22
+ 251 007a 142F      		mov r17,r20
+ 252               	.LBB35:
+ 253               	.LBB36:
+  16:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         *val |= _BV(bit);
+ 255               	.LM12:
+ 256 007c 98E0      		ldi r25,lo8(8)
+ 257 007e 9983      		std Y+1,r25
+ 258               	.LBE36:
+ 259               	.LBE35:
+  66:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     uint8_t flags = 0;
+  67:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     flip_bit(&flags, 3, 1);
+  68:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     flip_bit(&flags, 2, d);
+ 261               	.LM13:
+ 262 0080 482F      		mov r20,r24
+ 263 0082 62E0      		ldi r22,lo8(2)
+ 264 0084 CE01      		movw r24,r28
+ 265 0086 0196      		adiw r24,1
+ 266 0088 0E94 0000 		call flip_bit
+  69:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     flip_bit(&flags, 1, c);
+ 268               	.LM14:
+ 269 008c 402F      		mov r20,r16
+ 270 008e 61E0      		ldi r22,lo8(1)
+ 271 0090 CE01      		movw r24,r28
+ 272 0092 0196      		adiw r24,1
+ 273 0094 0E94 0000 		call flip_bit
+  70:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     flip_bit(&flags, 0, b);
+ 275               	.LM15:
+ 276 0098 412F      		mov r20,r17
+ 277 009a 60E0      		ldi r22,0
+ 278 009c CE01      		movw r24,r28
+ 279 009e 0196      		adiw r24,1
+ 280 00a0 0E94 0000 		call flip_bit
+  71:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     return flags;
+  72:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** }
+ 282               	.LM16:
+ 283 00a4 8981      		ldd r24,Y+1
+ 284               	/* epilogue start */
+ 285 00a6 0F90      		pop __tmp_reg__
+ 286 00a8 DF91      		pop r29
+ 287 00aa CF91      		pop r28
+ 288 00ac 1F91      		pop r17
+ 289 00ae 0F91      		pop r16
+ 290 00b0 0895      		ret
+ 295               	.Lscope3:
+ 297               	.global	lcd_display_clear_flags
+ 299               	lcd_display_clear_flags:
+  73:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** 
+  74:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** /** Constructs flags for clearing the display.
+  75:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  
+  76:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  Clear display writes space code 20H (character pattern for character code 20H 
+  77:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  must be a blank pattern) into all DDRAM addresses. It then sets DDRAM address 0 
+  78:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  into the address counter, and returns the display to its original status if it 
+  79:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  was shifted. In other words, the display disappears and the cursor or blinking 
+  80:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  goes to the left edge of the display (in the first line if 2 lines are 
+  81:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  displayed). It also sets I/D to 1 (increment mode) in entry mode. S of entry 
+  82:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  mode does not change.
+  83:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  */
+  84:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** uint8_t lcd_display_clear_flags(void) {
+ 301               	.LM17:
+ 302               	.LFBB4:
+ 303               	/* prologue: function */
+ 304               	/* frame size = 0 */
+ 305               	/* stack size = 0 */
+ 306               	.L__stack_usage = 0
+  85:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     return 1;
+  86:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** }
+ 308               	.LM18:
+ 309 00b2 81E0      		ldi r24,lo8(1)
+ 310 00b4 0895      		ret
+ 312               	.Lscope4:
+ 316               	.global	lcd_entry_mode_set_flags
+ 318               	lcd_entry_mode_set_flags:
+  87:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** 
+  88:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** /** Constructs flags for setting the entry mode.
+  89:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  
+  90:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  I/D: Increments (I/D = 1) or decrements (I/D = 0) the DDRAM address by 1 when a 
+  91:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****       character code is written into or read from DDRAM. The cursor or blinking 
+  92:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****       moves to the right when incremented by 1 and to the left when decremented 
+  93:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****       by 1. The same applies to writing and reading of CGRAM.
+  94:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  S: Shifts the entire display either to the right (I/D = 0) or to the left 
+  95:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     (I/D = 1) when S is 1. The display does not shift if S is 0.
+  96:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     If S is 1, it will seem as if the cursor does not move but the display does. 
+  97:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     The display does not shift when reading from DDRAM. Also, writing into or 
+  98:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     reading out from CGRAM does not shift the display.
+  99:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  */
+ 100:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** uint8_t lcd_entry_mode_set_flags(bool id, bool s) {
+ 320               	.LM19:
+ 321               	.LFBB5:
+ 322 00b6 1F93      		push r17
+ 323 00b8 CF93      		push r28
+ 324 00ba DF93      		push r29
+ 325 00bc 1F92      		push __zero_reg__
+ 326 00be CDB7      		in r28,__SP_L__
+ 327 00c0 DEB7      		in r29,__SP_H__
+ 328               	/* prologue: function */
+ 329               	/* frame size = 1 */
+ 330               	/* stack size = 4 */
+ 331               	.L__stack_usage = 4
+ 332 00c2 162F      		mov r17,r22
+ 333               	.LBB41:
+ 334               	.LBB42:
+  16:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         *val |= _BV(bit);
+ 336               	.LM20:
+ 337 00c4 94E0      		ldi r25,lo8(4)
+ 338 00c6 9983      		std Y+1,r25
+ 339               	.LBE42:
+ 340               	.LBE41:
+ 101:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     uint8_t flags = 0;
+ 102:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     flip_bit(&flags, 2, 1);
+ 103:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     flip_bit(&flags, 1, id);
+ 342               	.LM21:
+ 343 00c8 482F      		mov r20,r24
+ 344 00ca 61E0      		ldi r22,lo8(1)
+ 345 00cc CE01      		movw r24,r28
+ 346 00ce 0196      		adiw r24,1
+ 347 00d0 0E94 0000 		call flip_bit
+ 104:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     flip_bit(&flags, 0, s);
+ 349               	.LM22:
+ 350 00d4 412F      		mov r20,r17
+ 351 00d6 60E0      		ldi r22,0
+ 352 00d8 CE01      		movw r24,r28
+ 353 00da 0196      		adiw r24,1
+ 354 00dc 0E94 0000 		call flip_bit
+ 105:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     return flags;
+ 106:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** }
+ 356               	.LM23:
+ 357 00e0 8981      		ldd r24,Y+1
+ 358               	/* epilogue start */
+ 359 00e2 0F90      		pop __tmp_reg__
+ 360 00e4 DF91      		pop r29
+ 361 00e6 CF91      		pop r28
+ 362 00e8 1F91      		pop r17
+ 363 00ea 0895      		ret
+ 368               	.Lscope5:
+ 370               	.global	lcd_return_home_flags
+ 372               	lcd_return_home_flags:
+ 107:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** 
+ 108:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** uint8_t lcd_return_home_flags(void) {
+ 374               	.LM24:
+ 375               	.LFBB6:
+ 376               	/* prologue: function */
+ 377               	/* frame size = 0 */
+ 378               	/* stack size = 0 */
+ 379               	.L__stack_usage = 0
+ 109:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     uint8_t flags = 0;
+ 110:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     flip_bit(&flags, 1, 1);
+ 111:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     return flags;
+ 112:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** }
+ 381               	.LM25:
+ 382 00ec 82E0      		ldi r24,lo8(2)
+ 383 00ee 0895      		ret
+ 385               	.Lscope6:
+ 388               	.global	lcd_set_ddram_addr
+ 390               	lcd_set_ddram_addr:
+ 113:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** 
+ 114:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** /**
+ 115:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  Set DDRAM address sets the DDRAM address binary AAAAAAA into the address counter.
+ 116:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  Data is then written to or read from the MPU for DDRAM.
+ 117:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  However, when N is 0 (1-line display), AAAAAAA can be 00H to 4FH. When N is 1 (2-line display),
+ 118:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  AAAAAAA can be 00H to 27H for the first line, and 40H to 67H for the second line.
+ 119:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  */
+ 120:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** uint8_t lcd_set_ddram_addr(uint8_t address) {
+ 392               	.LM26:
+ 393               	.LFBB7:
+ 394               	/* prologue: function */
+ 395               	/* frame size = 0 */
+ 396               	/* stack size = 0 */
+ 397               	.L__stack_usage = 0
+ 121:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     uint8_t flags = 0x80 + address;
+ 122:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     return flags;
+ 123:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** }
+ 399               	.LM27:
+ 400 00f0 8058      		subi r24,lo8(-(-128))
+ 401 00f2 0895      		ret
+ 403               	.Lscope7:
+ 407               	.global	lcd_select_register
+ 409               	lcd_select_register:
+ 124:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** 
+ 125:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** /** Selects between the instruction (command) and data registers on the given
+ 126:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  lcd.
+ 127:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****  */
+ 128:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** void lcd_select_register(hd44780 *lcd, bool selected_register) {
+ 411               	.LM28:
+ 412               	.LFBB8:
+ 413               	/* prologue: function */
+ 414               	/* frame size = 0 */
+ 415               	/* stack size = 0 */
+ 416               	.L__stack_usage = 0
+ 417 00f4 FC01      		movw r30,r24
+ 129:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     if (selected_register == LCD_COMMAND_REGISTER) {
+ 130:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         //clear_bit(PORTD, 7);
+ 131:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         clear_pin(lcd->rs);
+ 419               	.LM29:
+ 420 00f6 2081      		ld r18,Z
+ 421 00f8 3181      		ldd r19,Z+1
+ 422 00fa 4281      		ldd r20,Z+2
+ 423 00fc 5381      		ldd r21,Z+3
+ 129:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     if (selected_register == LCD_COMMAND_REGISTER) {
+ 425               	.LM30:
+ 426 00fe 6111      		cpse r22,__zero_reg__
+ 427 0100 00C0      		rjmp .L13
+ 429               	.LM31:
+ 430 0102 6481      		ldd r22,Z+4
+ 431 0104 7581      		ldd r23,Z+5
+ 432 0106 8681      		ldd r24,Z+6
+ 433 0108 0C94 0000 		jmp clear_pin
+ 434               	.L13:
+ 132:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     } else {
+ 133:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         //set_bit(PORTD, 7);
+ 134:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         set_pin(lcd->rs);
+ 436               	.LM32:
+ 437 010c 6481      		ldd r22,Z+4
+ 438 010e 7581      		ldd r23,Z+5
+ 439 0110 8681      		ldd r24,Z+6
+ 440 0112 0C94 0000 		jmp set_pin
+ 442               	.Lscope8:
+ 446               	.global	lcd_toggle_send_register
+ 448               	lcd_toggle_send_register:
+ 135:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     }
+ 136:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** }
+ 137:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** 
+ 138:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** void lcd_toggle_send_register(hd44780* lcd, bool lcd_register) {
+ 450               	.LM33:
+ 451               	.LFBB9:
+ 452 0116 1F93      		push r17
+ 453 0118 CF93      		push r28
+ 454 011a DF93      		push r29
+ 455               	/* prologue: function */
+ 456               	/* frame size = 0 */
+ 457               	/* stack size = 3 */
+ 458               	.L__stack_usage = 3
+ 459 011c EC01      		movw r28,r24
+ 460 011e 162F      		mov r17,r22
+ 139:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     // Set the E wire
+ 140:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     set_pin(lcd->e);
+ 462               	.LM34:
+ 463 0120 2E85      		ldd r18,Y+14
+ 464 0122 3F85      		ldd r19,Y+15
+ 465 0124 4889      		ldd r20,Y+16
+ 466 0126 5989      		ldd r21,Y+17
+ 467 0128 6A89      		ldd r22,Y+18
+ 468 012a 7B89      		ldd r23,Y+19
+ 469 012c 8C89      		ldd r24,Y+20
+ 470 012e 0E94 0000 		call set_pin
+ 141:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     // Select register
+ 142:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     lcd_select_register(lcd, lcd_register);
+ 472               	.LM35:
+ 473 0132 612F      		mov r22,r17
+ 474 0134 CE01      		movw r24,r28
+ 475 0136 0E94 0000 		call lcd_select_register
+ 143:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     // Set RW to write
+ 144:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     clear_pin(lcd->rw);
+ 477               	.LM36:
+ 478 013a 2F81      		ldd r18,Y+7
+ 479 013c 3885      		ldd r19,Y+8
+ 480 013e 4985      		ldd r20,Y+9
+ 481 0140 5A85      		ldd r21,Y+10
+ 482 0142 6B85      		ldd r22,Y+11
+ 483 0144 7C85      		ldd r23,Y+12
+ 484 0146 8D85      		ldd r24,Y+13
+ 485 0148 0E94 0000 		call clear_pin
+ 145:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     // Clear E
+ 146:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     clear_pin(lcd->e);
+ 487               	.LM37:
+ 488 014c 2E85      		ldd r18,Y+14
+ 489 014e 3F85      		ldd r19,Y+15
+ 490 0150 4889      		ldd r20,Y+16
+ 491 0152 5989      		ldd r21,Y+17
+ 492 0154 6A89      		ldd r22,Y+18
+ 493 0156 7B89      		ldd r23,Y+19
+ 494 0158 8C89      		ldd r24,Y+20
+ 495 015a 0E94 0000 		call clear_pin
+ 496               	.LBB47:
+ 497               	.LBB48:
+ 499               	.Ltext1:
+   1:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** /* Copyright (c) 2002, Marek Michalkiewicz
+   2:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****    Copyright (c) 2004,2005,2007 Joerg Wunsch
+   3:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****    Copyright (c) 2007  Florin-Viorel Petrov
+   4:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****    All rights reserved.
+   5:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 
+   6:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****    Redistribution and use in source and binary forms, with or without
+   7:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****    modification, are permitted provided that the following conditions are met:
+   8:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 
+   9:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****    * Redistributions of source code must retain the above copyright
+  10:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****      notice, this list of conditions and the following disclaimer.
+  11:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 
+  12:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****    * Redistributions in binary form must reproduce the above copyright
+  13:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****      notice, this list of conditions and the following disclaimer in
+  14:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****      the documentation and/or other materials provided with the
+  15:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****      distribution.
+  16:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 
+  17:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****    * Neither the name of the copyright holders nor the names of
+  18:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****      contributors may be used to endorse or promote products derived
+  19:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****      from this software without specific prior written permission.
+  20:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 
+  21:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  22:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  23:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  24:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****   ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+  25:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****   LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  26:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****   CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  27:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****   SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  28:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****   INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  29:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  30:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  31:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****   POSSIBILITY OF SUCH DAMAGE. */
+  32:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 
+  33:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** /* $Id$ */
+  34:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 
+  35:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** #ifndef _UTIL_DELAY_H_
+  36:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** #define _UTIL_DELAY_H_ 1
+  37:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 
+  38:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** #ifndef __HAS_DELAY_CYCLES
+  39:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** #define __HAS_DELAY_CYCLES 1
+  40:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** #endif
+  41:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 
+  42:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** #include <inttypes.h>
+  43:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** #include <util/delay_basic.h>
+  44:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** #include <math.h>
+  45:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 
+  46:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** /** \file */
+  47:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** /** \defgroup util_delay <util/delay.h>: Convenience functions for busy-wait delay loops
+  48:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****     \code
+  49:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****     #define F_CPU 1000000UL  // 1 MHz
+  50:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****     //#define F_CPU 14.7456E6
+  51:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****     #include <util/delay.h>
+  52:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****     \endcode
+  53:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 
+  54:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****     \note As an alternative method, it is possible to pass the
+  55:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****     F_CPU macro down to the compiler from the Makefile.
+  56:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****     Obviously, in that case, no \c \#define statement should be
+  57:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****     used.
+  58:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 
+  59:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****     The functions in this header file are wrappers around the basic
+  60:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****     busy-wait functions from <util/delay_basic.h>.  They are meant as
+  61:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****     convenience functions where actual time values can be specified
+  62:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****     rather than a number of cycles to wait for.  The idea behind is
+  63:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****     that compile-time constant expressions will be eliminated by
+  64:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****     compiler optimization so floating-point expressions can be used
+  65:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****     to calculate the number of delay cycles needed based on the CPU
+  66:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****     frequency passed by the macro F_CPU.
+  67:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 
+  68:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****     \note In order for these functions to work as intended, compiler
+  69:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****     optimizations <em>must</em> be enabled, and the delay time
+  70:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****     <em>must</em> be an expression that is a known constant at
+  71:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****     compile-time.  If these requirements are not met, the resulting
+  72:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****     delay will be much longer (and basically unpredictable), and
+  73:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****     applications that otherwise do not use floating-point calculations
+  74:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****     will experience severe code bloat by the floating-point library
+  75:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****     routines linked into the application.
+  76:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 
+  77:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****     The functions available allow the specification of microsecond, and
+  78:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****     millisecond delays directly, using the application-supplied macro
+  79:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****     F_CPU as the CPU clock frequency (in Hertz).
+  80:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 
+  81:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** */
+  82:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 
+  83:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** #if !defined(__DOXYGEN__)
+  84:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** static inline void _delay_us(double __us) __attribute__((always_inline));
+  85:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** static inline void _delay_ms(double __ms) __attribute__((always_inline));
+  86:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** #endif
+  87:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 
+  88:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** #ifndef F_CPU
+  89:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** /* prevent compiler error by supplying a default */
+  90:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** # warning "F_CPU not defined for <util/delay.h>"
+  91:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** # define F_CPU 1000000UL
+  92:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** #endif
+  93:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 
+  94:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** #ifndef __OPTIMIZE__
+  95:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** # warning "Compiler optimizations disabled; functions from <util/delay.h> won't work as designed"
+  96:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** #endif
+  97:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 
+  98:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** #if __HAS_DELAY_CYCLES && defined(__OPTIMIZE__) && \
+  99:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****   !defined(__DELAY_BACKWARD_COMPATIBLE__) &&	   \
+ 100:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****   __STDC_HOSTED__
+ 101:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** #  include <math.h>
+ 102:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** #endif
+ 103:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 
+ 104:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** /**
+ 105:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****    \ingroup util_delay
+ 106:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 
+ 107:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****    Perform a delay of \c __ms milliseconds, using _delay_loop_2().
+ 108:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 
+ 109:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****    The macro F_CPU is supposed to be defined to a
+ 110:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****    constant defining the CPU clock frequency (in Hertz).
+ 111:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 
+ 112:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****    The maximal possible delay is 262.14 ms / F_CPU in MHz.
+ 113:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 
+ 114:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****    When the user request delay which exceed the maximum possible one,
+ 115:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****    _delay_ms() provides a decreased resolution functionality. In this
+ 116:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****    mode _delay_ms() will work with a resolution of 1/10 ms, providing
+ 117:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****    delays up to 6.5535 seconds (independent from CPU frequency).  The
+ 118:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****    user will not be informed about decreased resolution.
+ 119:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 
+ 120:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****    If the avr-gcc toolchain has __builtin_avr_delay_cycles(unsigned long)
+ 121:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****    support, maximal possible delay is 4294967.295 ms/ F_CPU in MHz. For
+ 122:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****    values greater than the maximal possible delay, overflows results in
+ 123:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****    no delay i.e., 0ms.
+ 124:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 
+ 125:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****    Conversion of __us into clock cycles may not always result in integer.
+ 126:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****    By default, the clock cycles rounded up to next integer. This ensures that
+ 127:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****    the user gets atleast __us microseconds of delay.
+ 128:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 
+ 129:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****    Alternatively, user can define __DELAY_ROUND_DOWN__ and __DELAY_ROUND_CLOSEST__
+ 130:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****    to round down and round to closest integer.
+ 131:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 
+ 132:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****    Note: The new implementation of _delay_ms(double __ms) with 
+ 133:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****     __builtin_avr_delay_cycles(unsigned long) support is not backward compatible. 
+ 134:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****    User can define __DELAY_BACKWARD_COMPATIBLE__ to get a backward compatible delay.
+ 135:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****    Also, the backward compatible
+ 136:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****    algorithm will be chosen if the code is compiled in a <em>freestanding
+ 137:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****    environment</em> (GCC option \c -ffreestanding), as the math functions
+ 138:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****    required for rounding are not available to the compiler then.
+ 139:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 
+ 140:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****  */
+ 141:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** void
+ 142:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** _delay_ms(double __ms)
+ 143:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** {
+ 144:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 	double __tmp ; 
+ 145:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** #if __HAS_DELAY_CYCLES && defined(__OPTIMIZE__) && \
+ 146:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****   !defined(__DELAY_BACKWARD_COMPATIBLE__) &&	   \
+ 147:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****   __STDC_HOSTED__
+ 148:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 	uint32_t __ticks_dc;
+ 149:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 	extern void __builtin_avr_delay_cycles(unsigned long);
+ 150:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 	__tmp = ((F_CPU) / 1e3) * __ms;
+ 151:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 
+ 152:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 	#if defined(__DELAY_ROUND_DOWN__)
+ 153:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)fabs(__tmp);
+ 154:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 
+ 155:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 	#elif defined(__DELAY_ROUND_CLOSEST__)
+ 156:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)(fabs(__tmp)+0.5);
+ 157:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 
+ 158:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 	#else
+ 159:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 		//round up by default
+ 160:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+ 161:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 	#endif
+ 162:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 
+ 163:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 	__builtin_avr_delay_cycles(__ticks_dc);
+ 501               	.LM38:
+ 502 015e 8FED      		ldi r24,lo8(11999)
+ 503 0160 9EE2      		ldi r25,hi8(11999)
+ 504 0162 0197      		1: sbiw r24,1
+ 505 0164 01F4      		brne 1b
+ 506 0166 00C0      		rjmp .
+ 507 0168 0000      		nop
+ 508               	/* epilogue start */
+ 509               	.LBE48:
+ 510               	.LBE47:
+ 512               	.Ltext2:
+ 147:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     // Wait a bit
+ 148:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     _delay_ms(3);
+ 149:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** }
+ 514               	.LM39:
+ 515 016a DF91      		pop r29
+ 516 016c CF91      		pop r28
+ 517 016e 1F91      		pop r17
+ 518 0170 0895      		ret
+ 520               	.Lscope9:
+ 524               	.global	pin_set_bit
+ 526               	pin_set_bit:
+ 150:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** 
+ 151:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** void pin_set_bit(pin p, bool high) {
+ 528               	.LM40:
+ 529               	.LFBB10:
+ 530 0172 0F93      		push r16
+ 531 0174 CF93      		push r28
+ 532 0176 DF93      		push r29
+ 533 0178 CDB7      		in r28,__SP_L__
+ 534 017a DEB7      		in r29,__SP_H__
+ 535 017c 2797      		sbiw r28,7
+ 536 017e 0FB6      		in __tmp_reg__,__SREG__
+ 537 0180 F894      		cli
+ 538 0182 DEBF      		out __SP_H__,r29
+ 539 0184 0FBE      		out __SREG__,__tmp_reg__
+ 540 0186 CDBF      		out __SP_L__,r28
+ 541               	/* prologue: function */
+ 542               	/* frame size = 7 */
+ 543               	/* stack size = 10 */
+ 544               	.L__stack_usage = 10
+ 545 0188 2983      		std Y+1,r18
+ 546 018a 3A83      		std Y+2,r19
+ 547 018c 4B83      		std Y+3,r20
+ 548 018e 5C83      		std Y+4,r21
+ 549 0190 6D83      		std Y+5,r22
+ 550 0192 7E83      		std Y+6,r23
+ 551 0194 8F83      		std Y+7,r24
+ 152:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     if (high) {
+ 553               	.LM41:
+ 554 0196 0023      		tst r16
+ 555 0198 01F0      		breq .L16
+ 556               	/* epilogue start */
+ 153:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         set_pin(p);
+ 154:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     } else {
+ 155:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         clear_pin(p);
+ 156:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     }
+ 157:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** }
+ 558               	.LM42:
+ 559 019a 2796      		adiw r28,7
+ 560 019c 0FB6      		in __tmp_reg__,__SREG__
+ 561 019e F894      		cli
+ 562 01a0 DEBF      		out __SP_H__,r29
+ 563 01a2 0FBE      		out __SREG__,__tmp_reg__
+ 564 01a4 CDBF      		out __SP_L__,r28
+ 565 01a6 DF91      		pop r29
+ 566 01a8 CF91      		pop r28
+ 567 01aa 0F91      		pop r16
+ 153:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         set_pin(p);
+ 569               	.LM43:
+ 570 01ac 0C94 0000 		jmp set_pin
+ 571               	.L16:
+ 155:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         clear_pin(p);
+ 573               	.LM44:
+ 574 01b0 2981      		ldd r18,Y+1
+ 575 01b2 3A81      		ldd r19,Y+2
+ 576 01b4 4B81      		ldd r20,Y+3
+ 577 01b6 5C81      		ldd r21,Y+4
+ 578 01b8 6D81      		ldd r22,Y+5
+ 579 01ba 7E81      		ldd r23,Y+6
+ 580 01bc 8F81      		ldd r24,Y+7
+ 581               	/* epilogue start */
+ 583               	.LM45:
+ 584 01be 2796      		adiw r28,7
+ 585 01c0 0FB6      		in __tmp_reg__,__SREG__
+ 586 01c2 F894      		cli
+ 587 01c4 DEBF      		out __SP_H__,r29
+ 588 01c6 0FBE      		out __SREG__,__tmp_reg__
+ 589 01c8 CDBF      		out __SP_L__,r28
+ 590 01ca DF91      		pop r29
+ 591 01cc CF91      		pop r28
+ 592 01ce 0F91      		pop r16
+ 155:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         clear_pin(p);
+ 594               	.LM46:
+ 595 01d0 0C94 0000 		jmp clear_pin
+ 597               	.Lscope10:
+ 602               	.global	lcd_send_nibble8
+ 604               	lcd_send_nibble8:
+ 158:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** 
+ 159:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** void lcd_send_nibble8(hd44780 *lcd, char nibble, bool lcd_register) {
+ 606               	.LM47:
+ 607               	.LFBB11:
+ 608 01d4 CF92      		push r12
+ 609 01d6 DF92      		push r13
+ 610 01d8 EF92      		push r14
+ 611 01da FF92      		push r15
+ 612 01dc 0F93      		push r16
+ 613 01de 1F93      		push r17
+ 614 01e0 CF93      		push r28
+ 615 01e2 DF93      		push r29
+ 616               	/* prologue: function */
+ 617               	/* frame size = 0 */
+ 618               	/* stack size = 8 */
+ 619               	.L__stack_usage = 8
+ 620 01e4 8C01      		movw r16,r24
+ 621 01e6 C42E      		mov r12,r20
+ 622               	.LBB49:
+ 160:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     // Put the nibble (or byte) on the port lines.
+ 161:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     //_SFR_BYTE(*lcd->db[0].port) = nibble;
+ 162:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     for (int i = 0; i < 8; i++) {
+ 624               	.LM48:
+ 625 01e8 C0E0      		ldi r28,0
+ 626 01ea D0E0      		ldi r29,0
+ 627               	.LBB50:
+ 163:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         bool high = (nibble >> i) & 0x01;
+ 629               	.LM49:
+ 630 01ec E62E      		mov r14,r22
+ 631 01ee F12C      		mov r15,__zero_reg__
+ 164:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         if (high) {
+ 165:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****             set_pin(lcd->db[i]);
+ 166:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         } else {
+ 167:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****             clear_pin(lcd->db[i]);
+ 633               	.LM50:
+ 634 01f0 87E0      		ldi r24,lo8(7)
+ 635 01f2 D82E      		mov r13,r24
+ 636               	.L21:
+ 163:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         bool high = (nibble >> i) & 0x01;
+ 638               	.LM51:
+ 639 01f4 C701      		movw r24,r14
+ 640 01f6 0C2E      		mov r0,r28
+ 641 01f8 00C0      		rjmp 2f
+ 642               		1:
+ 643 01fa 9595      		asr r25
+ 644 01fc 8795      		ror r24
+ 645               		2:
+ 646 01fe 0A94      		dec r0
+ 647 0200 02F4      		brpl 1b
+ 165:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****             set_pin(lcd->db[i]);
+ 649               	.LM52:
+ 650 0202 DC9E      		mul r13,r28
+ 651 0204 D001      		movw r26,r0
+ 652 0206 DD9E      		mul r13,r29
+ 653 0208 B00D      		add r27,r0
+ 654 020a 1124      		clr __zero_reg__
+ 655 020c A00F      		add r26,r16
+ 656 020e B11F      		adc r27,r17
+ 657 0210 FD01      		movw r30,r26
+ 658 0212 7596      		adiw r30,21
+ 659 0214 5596      		adiw r26,21
+ 660 0216 2C91      		ld r18,X
+ 661 0218 3181      		ldd r19,Z+1
+ 662 021a 4281      		ldd r20,Z+2
+ 663 021c 5381      		ldd r21,Z+3
+ 664 021e 6481      		ldd r22,Z+4
+ 665 0220 7581      		ldd r23,Z+5
+ 164:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         if (high) {
+ 667               	.LM53:
+ 668 0222 80FF      		sbrs r24,0
+ 669 0224 00C0      		rjmp .L18
+ 165:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****             set_pin(lcd->db[i]);
+ 671               	.LM54:
+ 672 0226 8681      		ldd r24,Z+6
+ 673 0228 0E94 0000 		call set_pin
+ 674 022c 00C0      		rjmp .L19
+ 675               	.L18:
+ 677               	.LM55:
+ 678 022e 8681      		ldd r24,Z+6
+ 679 0230 0E94 0000 		call clear_pin
+ 680               	.L19:
+ 681               	.LBE50:
+ 162:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     for (int i = 0; i < 8; i++) {
+ 683               	.LM56:
+ 684 0234 2196      		adiw r28,1
+ 685 0236 C830      		cpi r28,8
+ 686 0238 D105      		cpc r29,__zero_reg__
+ 687 023a 01F4      		brne .L21
+ 688               	.LBE49:
+ 168:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         }
+ 169:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     }
+ 170:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     
+ 171:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     lcd_toggle_send_register(lcd, lcd_register);
+ 690               	.LM57:
+ 691 023c 6C2D      		mov r22,r12
+ 692 023e C801      		movw r24,r16
+ 693               	/* epilogue start */
+ 172:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** }
+ 695               	.LM58:
+ 696 0240 DF91      		pop r29
+ 697 0242 CF91      		pop r28
+ 698 0244 1F91      		pop r17
+ 699 0246 0F91      		pop r16
+ 700 0248 FF90      		pop r15
+ 701 024a EF90      		pop r14
+ 702 024c DF90      		pop r13
+ 703 024e CF90      		pop r12
+ 171:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     lcd_toggle_send_register(lcd, lcd_register);
+ 705               	.LM59:
+ 706 0250 0C94 0000 		jmp lcd_toggle_send_register
+ 711               	.Lscope11:
+ 716               	.global	lcd_send_nibble4
+ 718               	lcd_send_nibble4:
+ 173:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** 
+ 174:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** void lcd_send_nibble4(hd44780* lcd, char nibble, bool lcd_register) {
+ 720               	.LM60:
+ 721               	.LFBB12:
+ 722 0254 CF92      		push r12
+ 723 0256 DF92      		push r13
+ 724 0258 EF92      		push r14
+ 725 025a FF92      		push r15
+ 726 025c 0F93      		push r16
+ 727 025e 1F93      		push r17
+ 728 0260 CF93      		push r28
+ 729 0262 DF93      		push r29
+ 730               	/* prologue: function */
+ 731               	/* frame size = 0 */
+ 732               	/* stack size = 8 */
+ 733               	.L__stack_usage = 8
+ 734 0264 8C01      		movw r16,r24
+ 735 0266 C42E      		mov r12,r20
+ 737               	.LM61:
+ 738 0268 C4E0      		ldi r28,lo8(4)
+ 739 026a D0E0      		ldi r29,0
+ 740               	.LBB51:
+ 741               	.LBB52:
+ 175:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     for (int i = 0; i < 4; i++) {
+ 176:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         bool high = (nibble >> i) & 0x01;
+ 743               	.LM62:
+ 744 026c E62E      		mov r14,r22
+ 745 026e F12C      		mov r15,__zero_reg__
+ 177:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         if (high) {
+ 178:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****             set_pin(lcd->db[i + 4]);
+ 179:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         } else {
+ 180:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****             clear_pin(lcd->db[i + 4]);
+ 747               	.LM63:
+ 748 0270 97E0      		ldi r25,lo8(7)
+ 749 0272 D92E      		mov r13,r25
+ 750               	.L26:
+ 751 0274 CE01      		movw r24,r28
+ 752 0276 0497      		sbiw r24,4
+ 176:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         bool high = (nibble >> i) & 0x01;
+ 754               	.LM64:
+ 755 0278 9701      		movw r18,r14
+ 756 027a 00C0      		rjmp 2f
+ 757               		1:
+ 758 027c 3595      		asr r19
+ 759 027e 2795      		ror r18
+ 760               		2:
+ 761 0280 8A95      		dec r24
+ 762 0282 02F4      		brpl 1b
+ 763 0284 C901      		movw r24,r18
+ 178:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****             set_pin(lcd->db[i + 4]);
+ 765               	.LM65:
+ 766 0286 DC9E      		mul r13,r28
+ 767 0288 D001      		movw r26,r0
+ 768 028a DD9E      		mul r13,r29
+ 769 028c B00D      		add r27,r0
+ 770 028e 1124      		clr __zero_reg__
+ 771 0290 A00F      		add r26,r16
+ 772 0292 B11F      		adc r27,r17
+ 773 0294 FD01      		movw r30,r26
+ 774 0296 7596      		adiw r30,21
+ 775 0298 5596      		adiw r26,21
+ 776 029a 2C91      		ld r18,X
+ 777 029c 3181      		ldd r19,Z+1
+ 778 029e 4281      		ldd r20,Z+2
+ 779 02a0 5381      		ldd r21,Z+3
+ 780 02a2 6481      		ldd r22,Z+4
+ 781 02a4 7581      		ldd r23,Z+5
+ 177:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         if (high) {
+ 783               	.LM66:
+ 784 02a6 80FF      		sbrs r24,0
+ 785 02a8 00C0      		rjmp .L23
+ 178:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****             set_pin(lcd->db[i + 4]);
+ 787               	.LM67:
+ 788 02aa 8681      		ldd r24,Z+6
+ 789 02ac 0E94 0000 		call set_pin
+ 790 02b0 00C0      		rjmp .L24
+ 791               	.L23:
+ 793               	.LM68:
+ 794 02b2 8681      		ldd r24,Z+6
+ 795 02b4 0E94 0000 		call clear_pin
+ 796               	.L24:
+ 797 02b8 2196      		adiw r28,1
+ 798               	.LBE52:
+ 175:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     for (int i = 0; i < 4; i++) {
+ 800               	.LM69:
+ 801 02ba C830      		cpi r28,8
+ 802 02bc D105      		cpc r29,__zero_reg__
+ 803 02be 01F4      		brne .L26
+ 804               	.LBE51:
+ 181:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         }
+ 182:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     }
+ 183:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** 
+ 184:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     lcd_toggle_send_register(lcd, lcd_register);
+ 806               	.LM70:
+ 807 02c0 6C2D      		mov r22,r12
+ 808 02c2 C801      		movw r24,r16
+ 809               	/* epilogue start */
+ 185:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** }
+ 811               	.LM71:
+ 812 02c4 DF91      		pop r29
+ 813 02c6 CF91      		pop r28
+ 814 02c8 1F91      		pop r17
+ 815 02ca 0F91      		pop r16
+ 816 02cc FF90      		pop r15
+ 817 02ce EF90      		pop r14
+ 818 02d0 DF90      		pop r13
+ 819 02d2 CF90      		pop r12
+ 184:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     lcd_toggle_send_register(lcd, lcd_register);
+ 821               	.LM72:
+ 822 02d4 0C94 0000 		jmp lcd_toggle_send_register
+ 824               	.Lscope12:
+ 829               	.global	lcd_send_byte
+ 831               	lcd_send_byte:
+ 186:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** 
+ 187:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** void lcd_send_byte(hd44780 *lcd, char byte, bool lcd_register) {
+ 833               	.LM73:
+ 834               	.LFBB13:
+ 835 02d8 0F93      		push r16
+ 836 02da 1F93      		push r17
+ 837 02dc CF93      		push r28
+ 838 02de DF93      		push r29
+ 839               	/* prologue: function */
+ 840               	/* frame size = 0 */
+ 841               	/* stack size = 4 */
+ 842               	.L__stack_usage = 4
+ 843 02e0 EC01      		movw r28,r24
+ 844 02e2 162F      		mov r17,r22
+ 845 02e4 042F      		mov r16,r20
+ 188:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     if (lcd->mode == LCD_4BITS) {
+ 847               	.LM74:
+ 848 02e6 FC01      		movw r30,r24
+ 849 02e8 E35B      		subi r30,-77
+ 850 02ea FF4F      		sbci r31,-1
+ 851 02ec 8081      		ld r24,Z
+ 852 02ee 8111      		cpse r24,__zero_reg__
+ 853 02f0 00C0      		rjmp .L28
+ 854               	.LBB55:
+ 855               	.LBB56:
+ 189:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         lcd_send_nibble4(lcd, byte >> 4, lcd_register);
+ 857               	.LM75:
+ 858 02f2 6295      		swap r22
+ 859 02f4 6F70      		andi r22,lo8(15)
+ 860 02f6 CE01      		movw r24,r28
+ 861 02f8 0E94 0000 		call lcd_send_nibble4
+ 190:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         lcd_send_nibble4(lcd, byte, lcd_register);
+ 863               	.LM76:
+ 864 02fc 402F      		mov r20,r16
+ 865 02fe 612F      		mov r22,r17
+ 866 0300 CE01      		movw r24,r28
+ 867               	/* epilogue start */
+ 868               	.LBE56:
+ 869               	.LBE55:
+ 191:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     } else {
+ 192:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         lcd_send_nibble8(lcd, byte, lcd_register);
+ 193:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     }
+ 194:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** }
+ 871               	.LM77:
+ 872 0302 DF91      		pop r29
+ 873 0304 CF91      		pop r28
+ 874 0306 1F91      		pop r17
+ 875 0308 0F91      		pop r16
+ 876               	.LBB58:
+ 877               	.LBB57:
+ 190:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         lcd_send_nibble4(lcd, byte, lcd_register);
+ 879               	.LM78:
+ 880 030a 0C94 0000 		jmp lcd_send_nibble4
+ 881               	.L28:
+ 882               	.LBE57:
+ 883               	.LBE58:
+ 192:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         lcd_send_nibble8(lcd, byte, lcd_register);
+ 885               	.LM79:
+ 886 030e CE01      		movw r24,r28
+ 887               	/* epilogue start */
+ 889               	.LM80:
+ 890 0310 DF91      		pop r29
+ 891 0312 CF91      		pop r28
+ 892 0314 1F91      		pop r17
+ 893 0316 0F91      		pop r16
+ 192:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         lcd_send_nibble8(lcd, byte, lcd_register);
+ 895               	.LM81:
+ 896 0318 0C94 0000 		jmp lcd_send_nibble8
+ 898               	.Lscope13:
+ 902               	.global	lcd_send_data
+ 904               	lcd_send_data:
+ 195:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** 
+ 196:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** void lcd_send_data(hd44780 *lcd, char byte) {
+ 906               	.LM82:
+ 907               	.LFBB14:
+ 908               	/* prologue: function */
+ 909               	/* frame size = 0 */
+ 910               	/* stack size = 0 */
+ 911               	.L__stack_usage = 0
+ 197:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     lcd_send_byte(lcd, byte, LCD_DATA_REGISTER);
+ 913               	.LM83:
+ 914 031c 41E0      		ldi r20,lo8(1)
+ 915 031e 0C94 0000 		jmp lcd_send_byte
+ 917               	.Lscope14:
+ 921               	.global	lcd_send_command
+ 923               	lcd_send_command:
+ 198:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** }
+ 199:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** 
+ 200:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** void lcd_send_command(hd44780* lcd, char byte) {
+ 925               	.LM84:
+ 926               	.LFBB15:
+ 927               	/* prologue: function */
+ 928               	/* frame size = 0 */
+ 929               	/* stack size = 0 */
+ 930               	.L__stack_usage = 0
+ 201:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     lcd_send_byte(lcd, byte, LCD_COMMAND_REGISTER);
+ 932               	.LM85:
+ 933 0322 40E0      		ldi r20,0
+ 934 0324 0C94 0000 		jmp lcd_send_byte
+ 936               	.Lscope15:
+ 939               	.global	lcd_init
+ 941               	lcd_init:
+ 202:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** }
+ 203:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** 
+ 204:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** void lcd_init(hd44780* lcd) {
+ 943               	.LM86:
+ 944               	.LFBB16:
+ 945 0328 DF92      		push r13
+ 946 032a EF92      		push r14
+ 947 032c FF92      		push r15
+ 948 032e 0F93      		push r16
+ 949 0330 1F93      		push r17
+ 950 0332 CF93      		push r28
+ 951 0334 DF93      		push r29
+ 952               	/* prologue: function */
+ 953               	/* frame size = 0 */
+ 954               	/* stack size = 7 */
+ 955               	.L__stack_usage = 7
+ 956 0336 EC01      		movw r28,r24
+ 205:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     // Set the pin outputs just in case that hasn't happend yet.
+ 206:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     output_pin(lcd->rs);
+ 958               	.LM87:
+ 959 0338 2881      		ld r18,Y
+ 960 033a 3981      		ldd r19,Y+1
+ 961 033c 4A81      		ldd r20,Y+2
+ 962 033e 5B81      		ldd r21,Y+3
+ 963 0340 6C81      		ldd r22,Y+4
+ 964 0342 7D81      		ldd r23,Y+5
+ 965 0344 8E81      		ldd r24,Y+6
+ 966 0346 0E94 0000 		call output_pin
+ 207:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     output_pin(lcd->rw);
+ 968               	.LM88:
+ 969 034a 2F81      		ldd r18,Y+7
+ 970 034c 3885      		ldd r19,Y+8
+ 971 034e 4985      		ldd r20,Y+9
+ 972 0350 5A85      		ldd r21,Y+10
+ 973 0352 6B85      		ldd r22,Y+11
+ 974 0354 7C85      		ldd r23,Y+12
+ 975 0356 8D85      		ldd r24,Y+13
+ 976 0358 0E94 0000 		call output_pin
+ 208:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     output_pin(lcd->e);
+ 978               	.LM89:
+ 979 035c 2E85      		ldd r18,Y+14
+ 980 035e 3F85      		ldd r19,Y+15
+ 981 0360 4889      		ldd r20,Y+16
+ 982 0362 5989      		ldd r21,Y+17
+ 983 0364 6A89      		ldd r22,Y+18
+ 984 0366 7B89      		ldd r23,Y+19
+ 985 0368 8C89      		ldd r24,Y+20
+ 986 036a 0E94 0000 		call output_pin
+ 987               	.LBB59:
+ 209:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     for (int i = 0; i < 8; i++) {
+ 989               	.LM90:
+ 990 036e 00E0      		ldi r16,0
+ 991 0370 10E0      		ldi r17,0
+ 210:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         if (lcd->mode == LCD_4BITS && i < 4) {
+ 993               	.LM91:
+ 994 0372 7E01      		movw r14,r28
+ 995 0374 2DE4      		ldi r18,77
+ 996 0376 E20E      		add r14,r18
+ 997 0378 F11C      		adc r15,__zero_reg__
+ 211:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****             continue;
+ 212:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         }
+ 213:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         output_pin(lcd->db[i]);
+ 999               	.LM92:
+ 1000 037a 27E0      		ldi r18,lo8(7)
+ 1001 037c D22E      		mov r13,r18
+ 1002               	.L35:
+ 210:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         if (lcd->mode == LCD_4BITS && i < 4) {
+ 1004               	.LM93:
+ 1005 037e F701      		movw r30,r14
+ 1006 0380 8081      		ld r24,Z
+ 1007 0382 8111      		cpse r24,__zero_reg__
+ 1008 0384 00C0      		rjmp .L32
+ 210:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         if (lcd->mode == LCD_4BITS && i < 4) {
+ 1010               	.LM94:
+ 1011 0386 0430      		cpi r16,4
+ 1012 0388 1105      		cpc r17,__zero_reg__
+ 1013 038a 04F0      		brlt .L33
+ 1014               	.L32:
+ 1016               	.LM95:
+ 1017 038c D09E      		mul r13,r16
+ 1018 038e D001      		movw r26,r0
+ 1019 0390 D19E      		mul r13,r17
+ 1020 0392 B00D      		add r27,r0
+ 1021 0394 1124      		clr __zero_reg__
+ 1022 0396 AC0F      		add r26,r28
+ 1023 0398 BD1F      		adc r27,r29
+ 1024 039a FD01      		movw r30,r26
+ 1025 039c 7596      		adiw r30,21
+ 1026 039e 5596      		adiw r26,21
+ 1027 03a0 2C91      		ld r18,X
+ 1028 03a2 3181      		ldd r19,Z+1
+ 1029 03a4 4281      		ldd r20,Z+2
+ 1030 03a6 5381      		ldd r21,Z+3
+ 1031 03a8 6481      		ldd r22,Z+4
+ 1032 03aa 7581      		ldd r23,Z+5
+ 1033 03ac 8681      		ldd r24,Z+6
+ 1034 03ae 0E94 0000 		call output_pin
+ 1035               	.L33:
+ 209:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     for (int i = 0; i < 8; i++) {
+ 1037               	.LM96:
+ 1038 03b2 0F5F      		subi r16,-1
+ 1039 03b4 1F4F      		sbci r17,-1
+ 1040 03b6 0830      		cpi r16,8
+ 1041 03b8 1105      		cpc r17,__zero_reg__
+ 1042 03ba 01F4      		brne .L35
+ 1043               	.LBE59:
+ 1044               	.LBB60:
+ 1045               	.LBB61:
+ 1047               	.Ltext3:
+ 1049               	.LM97:
+ 1050 03bc FFEF      		ldi r31,lo8(63999)
+ 1051 03be 29EF      		ldi r18,hi8(63999)
+ 1052 03c0 80E0      		ldi r24,hlo8(63999)
+ 1053 03c2 F150      		1: subi r31,1
+ 1054 03c4 2040      		sbci r18,0
+ 1055 03c6 8040      		sbci r24,0
+ 1056 03c8 01F4      		brne 1b
+ 1057 03ca 00C0      		rjmp .
+ 1058 03cc 0000      		nop
+ 1059               	.LBE61:
+ 1060               	.LBE60:
+ 1062               	.Ltext4:
+ 214:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     }
+ 215:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     
+ 216:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     _delay_ms(20);				    // display reset takes 20ms
+ 217:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     
+ 218:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     uint8_t op = lcd_function_set_flags(LCD_8BITS, 0, 0);
+ 1064               	.LM98:
+ 1065 03ce 40E0      		ldi r20,0
+ 1066 03d0 60E0      		ldi r22,0
+ 1067 03d2 81E0      		ldi r24,lo8(1)
+ 1068 03d4 0E94 0000 		call lcd_function_set_flags
+ 1069 03d8 182F      		mov r17,r24
+ 219:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     lcd_send_nibble8(lcd, op, LCD_COMMAND_REGISTER);
+ 1071               	.LM99:
+ 1072 03da 40E0      		ldi r20,0
+ 1073 03dc 682F      		mov r22,r24
+ 1074 03de CE01      		movw r24,r28
+ 1075 03e0 0E94 0000 		call lcd_send_nibble8
+ 1076               	.LBB62:
+ 1077               	.LBB63:
+ 1079               	.Ltext5:
+ 1081               	.LM100:
+ 1082 03e4 EFE1      		ldi r30,lo8(19999)
+ 1083 03e6 FEE4      		ldi r31,hi8(19999)
+ 1084 03e8 3197      		1: sbiw r30,1
+ 1085 03ea 01F4      		brne 1b
+ 1086 03ec 00C0      		rjmp .
+ 1087 03ee 0000      		nop
+ 1088               	.LBE63:
+ 1089               	.LBE62:
+ 1091               	.Ltext6:
+ 220:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     
+ 221:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     _delay_ms(5);
+ 222:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     
+ 223:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     lcd_send_nibble8(lcd, op, LCD_COMMAND_REGISTER);
+ 1093               	.LM101:
+ 1094 03f0 40E0      		ldi r20,0
+ 1095 03f2 612F      		mov r22,r17
+ 1096 03f4 CE01      		movw r24,r28
+ 1097 03f6 0E94 0000 		call lcd_send_nibble8
+ 1098               	.LBB64:
+ 1099               	.LBB65:
+ 1101               	.Ltext7:
+ 1103               	.LM102:
+ 1104 03fa 8FE9      		ldi r24,lo8(3999)
+ 1105 03fc 9FE0      		ldi r25,hi8(3999)
+ 1106 03fe 0197      		1: sbiw r24,1
+ 1107 0400 01F4      		brne 1b
+ 1108 0402 00C0      		rjmp .
+ 1109 0404 0000      		nop
+ 1110               	.LBE65:
+ 1111               	.LBE64:
+ 1113               	.Ltext8:
+ 224:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     
+ 225:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     _delay_ms(1);
+ 226:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** 
+ 227:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     lcd_send_nibble8(lcd, op, LCD_COMMAND_REGISTER);
+ 1115               	.LM103:
+ 1116 0406 40E0      		ldi r20,0
+ 1117 0408 612F      		mov r22,r17
+ 1118 040a CE01      		movw r24,r28
+ 1119 040c 0E94 0000 		call lcd_send_nibble8
+ 1120               	.LBB66:
+ 1121               	.LBB67:
+ 1123               	.Ltext9:
+ 1125               	.LM104:
+ 1126 0410 EFE9      		ldi r30,lo8(3999)
+ 1127 0412 FFE0      		ldi r31,hi8(3999)
+ 1128 0414 3197      		1: sbiw r30,1
+ 1129 0416 01F4      		brne 1b
+ 1130 0418 00C0      		rjmp .
+ 1131 041a 0000      		nop
+ 1132               	.LBE67:
+ 1133               	.LBE66:
+ 1135               	.Ltext10:
+ 228:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     
+ 229:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     _delay_ms(1);
+ 230:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     
+ 231:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     // set interface to mode
+ 232:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     uint8_t funset = lcd_function_set_flags(lcd->mode, 0, 0);
+ 1137               	.LM105:
+ 1138 041c 40E0      		ldi r20,0
+ 1139 041e 60E0      		ldi r22,0
+ 1140 0420 F701      		movw r30,r14
+ 1141 0422 8081      		ld r24,Z
+ 1142 0424 0E94 0000 		call lcd_function_set_flags
+ 233:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     lcd_send_nibble8(lcd, funset, LCD_COMMAND_REGISTER);
+ 1144               	.LM106:
+ 1145 0428 40E0      		ldi r20,0
+ 1146 042a 682F      		mov r22,r24
+ 1147 042c CE01      		movw r24,r28
+ 1148 042e 0E94 0000 		call lcd_send_nibble8
+ 234:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     
+ 235:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     // Basic initialization is done and we can start talking in our target mode.
+ 236:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     // Set display lines and font
+ 237:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     funset = lcd_function_set_flags(lcd->mode, LCD_2LINES, LCD_5x8DOTS);
+ 1150               	.LM107:
+ 1151 0432 40E0      		ldi r20,0
+ 1152 0434 61E0      		ldi r22,lo8(1)
+ 1153 0436 F701      		movw r30,r14
+ 1154 0438 8081      		ld r24,Z
+ 1155 043a 0E94 0000 		call lcd_function_set_flags
+ 238:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     lcd_send_command(lcd, funset);
+ 1157               	.LM108:
+ 1158 043e 682F      		mov r22,r24
+ 1159 0440 CE01      		movw r24,r28
+ 1160 0442 0E94 0000 		call lcd_send_command
+ 239:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     
+ 240:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     // Set display, cursor and cursor blinking
+ 241:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     uint8_t display = lcd_display_toggle_flags(LCD_DISPLAYON, LCD_CURSORON, LCD_CURSORBLINKON);
+ 1162               	.LM109:
+ 1163 0446 41E0      		ldi r20,lo8(1)
+ 1164 0448 61E0      		ldi r22,lo8(1)
+ 1165 044a 81E0      		ldi r24,lo8(1)
+ 1166 044c 0E94 0000 		call lcd_display_toggle_flags
+ 242:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     lcd_send_command(lcd, display);
+ 1168               	.LM110:
+ 1169 0450 682F      		mov r22,r24
+ 1170 0452 CE01      		movw r24,r28
+ 1171 0454 0E94 0000 		call lcd_send_command
+ 243:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     
+ 244:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     // Clear it
+ 245:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     lcd_send_command(lcd, lcd_display_clear_flags());
+ 1173               	.LM111:
+ 1174 0458 61E0      		ldi r22,lo8(1)
+ 1175 045a CE01      		movw r24,r28
+ 1176 045c 0E94 0000 		call lcd_send_command
+ 246:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     
+ 247:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     // Set increment and shifting
+ 248:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     uint8_t entry = lcd_entry_mode_set_flags(LCD_ENTRYINC, LCD_ENTRYSHIFTOFF);
+ 1178               	.LM112:
+ 1179 0460 60E0      		ldi r22,0
+ 1180 0462 81E0      		ldi r24,lo8(1)
+ 1181 0464 0E94 0000 		call lcd_entry_mode_set_flags
+ 249:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     lcd_send_command(lcd, entry);
+ 1183               	.LM113:
+ 1184 0468 682F      		mov r22,r24
+ 1185 046a CE01      		movw r24,r28
+ 1186               	/* epilogue start */
+ 250:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** }
+ 1188               	.LM114:
+ 1189 046c DF91      		pop r29
+ 1190 046e CF91      		pop r28
+ 1191 0470 1F91      		pop r17
+ 1192 0472 0F91      		pop r16
+ 1193 0474 FF90      		pop r15
+ 1194 0476 EF90      		pop r14
+ 1195 0478 DF90      		pop r13
+ 249:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     lcd_send_command(lcd, entry);
+ 1197               	.LM115:
+ 1198 047a 0C94 0000 		jmp lcd_send_command
+ 1208               	.Lscope16:
+ 1212               	.global	lcd_write
+ 1214               	lcd_write:
+ 251:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** 
+ 252:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** static const uint8_t __line_address[] = {0, 0x40, 0x14, 0x54};
+ 253:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** 
+ 254:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** /** Writes the given string to the lcd. */
+ 255:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** void lcd_write(hd44780 *lcd, const char *str) {
+ 1216               	.LM116:
+ 1217               	.LFBB17:
+ 1218 047e FF92      		push r15
+ 1219 0480 0F93      		push r16
+ 1220 0482 1F93      		push r17
+ 1221 0484 CF93      		push r28
+ 1222 0486 DF93      		push r29
+ 1223               	/* prologue: function */
+ 1224               	/* frame size = 0 */
+ 1225               	/* stack size = 5 */
+ 1226               	.L__stack_usage = 5
+ 1227 0488 EC01      		movw r28,r24
+ 1228 048a 8B01      		movw r16,r22
+ 256:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     uint8_t line = 0;
+ 1230               	.LM117:
+ 1231 048c F12C      		mov r15,__zero_reg__
+ 1232               	.L37:
+ 257:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     while (*str) {
+ 1234               	.LM118:
+ 1235 048e F801      		movw r30,r16
+ 1236 0490 6191      		ld r22,Z+
+ 1237 0492 8F01      		movw r16,r30
+ 1238 0494 6623      		tst r22
+ 1239 0496 01F0      		breq .L41
+ 1240               	.LBB68:
+ 258:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         char c = *str++;
+ 259:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         if (c == '\n') {
+ 1242               	.LM119:
+ 1243 0498 6A30      		cpi r22,lo8(10)
+ 1244 049a 01F4      		brne .L38
+ 1245               	.LBB69:
+ 260:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****             line += 1;
+ 1247               	.LM120:
+ 1248 049c F394      		inc r15
+ 261:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****             uint8_t addr = __line_address[line % 4];
+ 1250               	.LM121:
+ 1251 049e EF2D      		mov r30,r15
+ 1252 04a0 E370      		andi r30,lo8(3)
+ 1253 04a2 F0E0      		ldi r31,0
+ 1254 04a4 E050      		subi r30,lo8(-(__line_address))
+ 1255 04a6 F040      		sbci r31,hi8(-(__line_address))
+ 1256               	.LBB70:
+ 1257               	.LBB71:
+ 121:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     uint8_t flags = 0x80 + address;
+ 1259               	.LM122:
+ 1260 04a8 6081      		ld r22,Z
+ 1261 04aa 6058      		subi r22,lo8(-(-128))
+ 1262               	.LBE71:
+ 1263               	.LBE70:
+ 262:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****             uint8_t flags = lcd_set_ddram_addr(addr);
+ 263:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****             lcd_send_command(lcd, flags);
+ 1265               	.LM123:
+ 1266 04ac CE01      		movw r24,r28
+ 1267 04ae 0E94 0000 		call lcd_send_command
+ 264:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****             continue;
+ 1269               	.LM124:
+ 1270 04b2 00C0      		rjmp .L37
+ 1271               	.L38:
+ 1272               	.LBE69:
+ 265:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         }
+ 266:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****         lcd_send_data(lcd, c);
+ 1274               	.LM125:
+ 1275 04b4 CE01      		movw r24,r28
+ 1276 04b6 0E94 0000 		call lcd_send_data
+ 1277 04ba 00C0      		rjmp .L37
+ 1278               	.L41:
+ 1279               	/* epilogue start */
+ 1280               	.LBE68:
+ 267:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     }
+ 268:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** }
+ 1282               	.LM126:
+ 1283 04bc DF91      		pop r29
+ 1284 04be CF91      		pop r28
+ 1285 04c0 1F91      		pop r17
+ 1286 04c2 0F91      		pop r16
+ 1287 04c4 FF90      		pop r15
+ 1288 04c6 0895      		ret
+ 1293               	.Lscope17:
+ 1298               	.global	lcd_xy
+ 1300               	lcd_xy:
+ 269:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** 
+ 270:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c **** void lcd_xy(hd44780 *lcd, uint8_t x, uint8_t y) {
+ 1302               	.LM127:
+ 1303               	.LFBB18:
+ 1304               	/* prologue: function */
+ 1305               	/* frame size = 0 */
+ 1306               	/* stack size = 0 */
+ 1307               	.L__stack_usage = 0
+ 271:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     uint8_t addr = lcd_set_ddram_addr(__line_address[y % 4] + x);
+ 1309               	.LM128:
+ 1310 04c8 6058      		subi r22,lo8(-(-128))
+ 1311 04ca 4370      		andi r20,lo8(3)
+ 1312 04cc E42F      		mov r30,r20
+ 1313 04ce F0E0      		ldi r31,0
+ 1314 04d0 E050      		subi r30,lo8(-(__line_address))
+ 1315 04d2 F040      		sbci r31,hi8(-(__line_address))
+ 1316               	.LBB72:
+ 1317               	.LBB73:
+ 121:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     uint8_t flags = 0x80 + address;
+ 1319               	.LM129:
+ 1320 04d4 2081      		ld r18,Z
+ 1321 04d6 620F      		add r22,r18
+ 1322               	.LBE73:
+ 1323               	.LBE72:
+ 272:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/lcd.c ****     lcd_send_command(lcd, addr);
+ 1325               	.LM130:
+ 1326 04d8 0C94 0000 		jmp lcd_send_command
+ 1328               	.Lscope18:
+ 1329               		.section	.rodata
+ 1332               	__line_address:
+ 1333 0000 00        		.byte	0
+ 1334 0001 40        		.byte	64
+ 1335 0002 14        		.byte	20
+ 1336 0003 54        		.byte	84
+ 1338               		.text
+ 1340               	.Letext0:
+ 1341               		.ident	"GCC: (GNU) 4.8.1"
+ 1342               	.global __do_copy_data
+DEFINED SYMBOLS
+                            *ABS*:00000000 lcd.c
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc8IwO4s.s:2      *ABS*:0000003e __SP_H__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc8IwO4s.s:3      *ABS*:0000003d __SP_L__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc8IwO4s.s:4      *ABS*:0000003f __SREG__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc8IwO4s.s:5      *ABS*:0000003b __RAMPZ__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc8IwO4s.s:6      *ABS*:00000000 __tmp_reg__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc8IwO4s.s:7      *ABS*:00000001 __zero_reg__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc8IwO4s.s:119    .text:00000000 flip_bit
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc8IwO4s.s:168    .text:00000022 lcd_function_set_flags
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc8IwO4s.s:235    .text:0000006a lcd_display_toggle_flags
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc8IwO4s.s:299    .text:000000b2 lcd_display_clear_flags
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc8IwO4s.s:318    .text:000000b6 lcd_entry_mode_set_flags
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc8IwO4s.s:372    .text:000000ec lcd_return_home_flags
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc8IwO4s.s:390    .text:000000f0 lcd_set_ddram_addr
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc8IwO4s.s:409    .text:000000f4 lcd_select_register
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc8IwO4s.s:448    .text:00000116 lcd_toggle_send_register
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc8IwO4s.s:526    .text:00000172 pin_set_bit
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc8IwO4s.s:604    .text:000001d4 lcd_send_nibble8
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc8IwO4s.s:718    .text:00000254 lcd_send_nibble4
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc8IwO4s.s:831    .text:000002d8 lcd_send_byte
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc8IwO4s.s:904    .text:0000031c lcd_send_data
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc8IwO4s.s:923    .text:00000322 lcd_send_command
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc8IwO4s.s:941    .text:00000328 lcd_init
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc8IwO4s.s:1214   .text:0000047e lcd_write
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc8IwO4s.s:1332   .rodata:00000000 __line_address
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//cc8IwO4s.s:1300   .text:000004c8 lcd_xy
+
+UNDEFINED SYMBOLS
+clear_pin
+set_pin
+output_pin
+__do_copy_data

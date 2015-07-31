@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:FoodUnit/FoodUnit.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:lcd/../../../Downloads/Alarm Clock/Alarm Clock.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:test/test.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:lcd/lcd.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "container:../teensytest2/teensytest2.xcodeproj">
+   </FileRef>
+</Workspace>

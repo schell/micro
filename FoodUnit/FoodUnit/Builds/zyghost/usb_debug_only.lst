@@ -1,0 +1,1693 @@
+   1               		.file	"usb_debug_only.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__RAMPZ__ = 0x3b
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+   9               		.text
+  10               	.Ltext0:
+ 113               	usb_wait_in_ready:
+   1:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** /* USB Debug Channel Example for Teensy USB Development Board
+   2:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  * http://www.pjrc.com/teensy/
+   3:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  * Copyright (c) 2008 PJRC.COM, LLC
+   4:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  *
+   5:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  * of this software and associated documentation files (the "Software"), to deal
+   7:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  * in the Software without restriction, including without limitation the rights
+   8:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  * copies of the Software, and to permit persons to whom the Software is
+  10:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  * furnished to do so, subject to the following conditions:
+  11:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  *
+  12:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  * The above copyright notice and this permission notice shall be included in
+  13:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  * all copies or substantial portions of the Software.
+  14:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  *
+  15:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  * THE SOFTWARE.
+  22:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  */
+  23:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+  24:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // Version 1.0: Initial Release
+  25:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // Version 1.1: Add support for Teensy 2.0
+  26:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+  27:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** #define USB_SERIAL_PRIVATE_INCLUDE
+  28:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** #include "usb_debug_only.h"
+  29:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+  30:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** /**************************************************************************
+  31:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  *
+  32:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  *  Configurable Options
+  33:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  *
+  34:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  **************************************************************************/
+  35:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+  36:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // You can change these to give your code its own name.  On Windows,
+  37:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // these are only used before an INF file (driver install) is loaded.
+  38:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** #define STR_MANUFACTURER	L"Your Name"
+  39:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** #define STR_PRODUCT		L"Your USB Device"
+  40:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+  41:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+  42:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // Mac OS-X and Linux automatically load the correct drivers.  On
+  43:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // Windows, even though the driver is supplied by Microsoft, an
+  44:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // INF file is needed to load the driver.  These numbers need to
+  45:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // match the INF file.
+  46:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** #define VENDOR_ID		0x16C0
+  47:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** #define PRODUCT_ID		0x0479
+  48:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+  49:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+  50:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // USB devices are supposed to implment a halt feature, which is
+  51:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // rarely (if ever) used.  If you comment this line out, the halt
+  52:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // code will be removed, saving 102 bytes of space (gcc 4.3.0).
+  53:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // This is not strictly USB compliant, but works with all major
+  54:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // operating systems.
+  55:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** #define SUPPORT_ENDPOINT_HALT
+  56:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+  57:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+  58:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+  59:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** /**************************************************************************
+  60:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  *
+  61:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  *  Endpoint Buffer Configuration
+  62:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  *
+  63:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  **************************************************************************/
+  64:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+  65:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // you might want to change the buffer size, up to 64 bytes.
+  66:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // The host reserves your bandwidth because this is an interrupt
+  67:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // endpoint, so it won't be available to other interrupt or isync
+  68:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // endpoints in other devices on the bus.
+  69:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+  70:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** #define ENDPOINT0_SIZE		32
+  71:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** #define DEBUG_TX_ENDPOINT	3
+  72:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** #define DEBUG_TX_SIZE		32
+  73:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** #define DEBUG_TX_BUFFER		EP_DOUBLE_BUFFER
+  74:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+  75:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** static const uint8_t PROGMEM endpoint_config_table[] = {
+  76:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	0,
+  77:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	0,
+  78:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	1, EP_TYPE_INTERRUPT_IN,  EP_SIZE(DEBUG_TX_SIZE) | DEBUG_TX_BUFFER,
+  79:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	0
+  80:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** };
+  81:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+  82:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+  83:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** /**************************************************************************
+  84:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  *
+  85:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  *  Descriptor Data
+  86:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  *
+  87:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  **************************************************************************/
+  88:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+  89:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // Descriptors are the data that your computer reads when it auto-detects
+  90:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // this USB device (called "enumeration" in USB lingo).  The most commonly
+  91:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // changed items are editable at the top of this file.  Changing things
+  92:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // in here should only be done by those who've read chapter 9 of the USB
+  93:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // spec and relevant portions of any USB class specifications!
+  94:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+  95:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+  96:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** static const uint8_t PROGMEM device_descriptor[] = {
+  97:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	18,					// bLength
+  98:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	1,					// bDescriptorType
+  99:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	0x00, 0x02,				// bcdUSB
+ 100:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	0,					// bDeviceClass
+ 101:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	0,					// bDeviceSubClass
+ 102:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	0,					// bDeviceProtocol
+ 103:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	ENDPOINT0_SIZE,				// bMaxPacketSize0
+ 104:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	LSB(VENDOR_ID), MSB(VENDOR_ID),		// idVendor
+ 105:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	LSB(PRODUCT_ID), MSB(PRODUCT_ID),	// idProduct
+ 106:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	0x00, 0x01,				// bcdDevice
+ 107:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	1,					// iManufacturer
+ 108:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	2,					// iProduct
+ 109:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	0,					// iSerialNumber
+ 110:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	1					// bNumConfigurations
+ 111:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** };
+ 112:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+ 113:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** static const uint8_t PROGMEM hid_report_descriptor[] = {
+ 114:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	0x06, 0x31, 0xFF,			// Usage Page 0xFF31 (vendor defined)
+ 115:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	0x09, 0x74,				// Usage 0x74
+ 116:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	0xA1, 0x53,				// Collection 0x53
+ 117:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	0x75, 0x08,				// report size = 8 bits
+ 118:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	0x15, 0x00,				// logical minimum = 0
+ 119:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	0x26, 0xFF, 0x00,			// logical maximum = 255
+ 120:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	0x95, DEBUG_TX_SIZE,			// report count
+ 121:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	0x09, 0x75,				// usage
+ 122:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	0x81, 0x02,				// Input (array)
+ 123:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	0xC0					// end collection
+ 124:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** };
+ 125:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+ 126:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** #define CONFIG1_DESC_SIZE (9+9+9+7)
+ 127:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** #define HID_DESC2_OFFSET  (9+9)
+ 128:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** static const uint8_t PROGMEM config1_descriptor[CONFIG1_DESC_SIZE] = {
+ 129:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	// configuration descriptor, USB spec 9.6.3, page 264-266, Table 9-10
+ 130:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	9, 					// bLength;
+ 131:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	2,					// bDescriptorType;
+ 132:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	LSB(CONFIG1_DESC_SIZE),			// wTotalLength
+ 133:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	MSB(CONFIG1_DESC_SIZE),
+ 134:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	1,					// bNumInterfaces
+ 135:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	1,					// bConfigurationValue
+ 136:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	0,					// iConfiguration
+ 137:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	0xC0,					// bmAttributes
+ 138:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	50,					// bMaxPower
+ 139:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	// interface descriptor, USB spec 9.6.5, page 267-269, Table 9-12
+ 140:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	9,					// bLength
+ 141:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	4,					// bDescriptorType
+ 142:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	0,					// bInterfaceNumber
+ 143:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	0,					// bAlternateSetting
+ 144:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	1,					// bNumEndpoints
+ 145:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	0x03,					// bInterfaceClass (0x03 = HID)
+ 146:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	0x00,					// bInterfaceSubClass
+ 147:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	0x00,					// bInterfaceProtocol
+ 148:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	0,					// iInterface
+ 149:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	// HID interface descriptor, HID 1.11 spec, section 6.2.1
+ 150:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	9,					// bLength
+ 151:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	0x21,					// bDescriptorType
+ 152:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	0x11, 0x01,				// bcdHID
+ 153:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	0,					// bCountryCode
+ 154:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	1,					// bNumDescriptors
+ 155:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	0x22,					// bDescriptorType
+ 156:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	sizeof(hid_report_descriptor),		// wDescriptorLength
+ 157:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	0,
+ 158:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	// endpoint descriptor, USB spec 9.6.6, page 269-271, Table 9-13
+ 159:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	7,					// bLength
+ 160:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	5,					// bDescriptorType
+ 161:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	DEBUG_TX_ENDPOINT | 0x80,		// bEndpointAddress
+ 162:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	0x03,					// bmAttributes (0x03=intr)
+ 163:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	DEBUG_TX_SIZE, 0,			// wMaxPacketSize
+ 164:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	1					// bInterval
+ 165:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** };
+ 166:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+ 167:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // If you're desperate for a little extra code memory, these strings
+ 168:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // can be completely removed if iManufacturer, iProduct, iSerialNumber
+ 169:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // in the device desciptor are changed to zeros.
+ 170:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** struct usb_string_descriptor_struct {
+ 171:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	uint8_t bLength;
+ 172:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	uint8_t bDescriptorType;
+ 173:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	int16_t wString[];
+ 174:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** };
+ 175:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** static const struct usb_string_descriptor_struct PROGMEM string0 = {
+ 176:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	4,
+ 177:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	3,
+ 178:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	{0x0409}
+ 179:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** };
+ 180:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** static const struct usb_string_descriptor_struct PROGMEM string1 = {
+ 181:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	sizeof(STR_MANUFACTURER),
+ 182:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	3,
+ 183:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	STR_MANUFACTURER
+ 184:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** };
+ 185:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** static const struct usb_string_descriptor_struct PROGMEM string2 = {
+ 186:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	sizeof(STR_PRODUCT),
+ 187:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	3,
+ 188:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	STR_PRODUCT
+ 189:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** };
+ 190:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+ 191:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // This table defines which descriptor data is sent for each specific
+ 192:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // request from the host (in wValue and wIndex).
+ 193:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** static const struct descriptor_list_struct {
+ 194:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	uint16_t	wValue;
+ 195:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	uint16_t	wIndex;
+ 196:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	const uint8_t	*addr;
+ 197:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	uint8_t		length;
+ 198:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** } PROGMEM descriptor_list[] = {
+ 199:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	{0x0100, 0x0000, device_descriptor, sizeof(device_descriptor)},
+ 200:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	{0x0200, 0x0000, config1_descriptor, sizeof(config1_descriptor)},
+ 201:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	{0x2200, 0x0000, hid_report_descriptor, sizeof(hid_report_descriptor)},
+ 202:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	{0x2100, 0x0000, config1_descriptor+HID_DESC2_OFFSET, 9},
+ 203:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	{0x0300, 0x0000, (const uint8_t *)&string0, 4},
+ 204:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	{0x0301, 0x0409, (const uint8_t *)&string1, sizeof(STR_MANUFACTURER)},
+ 205:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	{0x0302, 0x0409, (const uint8_t *)&string2, sizeof(STR_PRODUCT)}
+ 206:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** };
+ 207:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** #define NUM_DESC_LIST (sizeof(descriptor_list)/sizeof(struct descriptor_list_struct))
+ 208:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+ 209:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+ 210:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** /**************************************************************************
+ 211:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  *
+ 212:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  *  Variables - these are the only non-stack RAM usage
+ 213:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  *
+ 214:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  **************************************************************************/
+ 215:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+ 216:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // zero when we are not configured, non-zero when enumerated
+ 217:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** static volatile uint8_t usb_configuration=0;
+ 218:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+ 219:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // the time remaining before we transmit any partially full
+ 220:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // packet, or send a zero length packet.
+ 221:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** static volatile uint8_t debug_flush_timer=0;
+ 222:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+ 223:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+ 224:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** /**************************************************************************
+ 225:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  *
+ 226:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  *  Public Functions - these are the API intended for the user
+ 227:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  *
+ 228:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  **************************************************************************/
+ 229:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+ 230:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+ 231:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // initialize USB
+ 232:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** void usb_init(void)
+ 233:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** {
+ 234:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	HW_CONFIG();
+ 235:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	USB_FREEZE();				// enable USB
+ 236:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	PLL_CONFIG();				// config PLL
+ 237:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****         while (!(PLLCSR & (1<<PLOCK))) ;	// wait for PLL lock
+ 238:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****         USB_CONFIG();				// start USB clock
+ 239:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****         UDCON = 0;				// enable attach resistor
+ 240:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	usb_configuration = 0;
+ 241:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****         UDIEN = (1<<EORSTE)|(1<<SOFE);
+ 242:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	sei();
+ 243:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** }
+ 244:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+ 245:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // return 0 if the USB is not configured, or the configuration
+ 246:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // number selected by the HOST
+ 247:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** uint8_t usb_configured(void)
+ 248:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** {
+ 249:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	return usb_configuration;
+ 250:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** }
+ 251:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+ 252:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // transmit a character.  0 returned on success, -1 on error
+ 253:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** int8_t usb_debug_putchar(uint8_t c)
+ 254:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** {
+ 255:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	static uint8_t previous_timeout=0;
+ 256:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	uint8_t timeout, intr_state;
+ 257:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+ 258:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	// if we're not online (enumerated and configured), error
+ 259:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	if (!usb_configuration) return -1;
+ 260:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	// interrupts are disabled so these functions can be
+ 261:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	// used from the main program or interrupt context,
+ 262:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	// even both in the same program!
+ 263:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	intr_state = SREG;
+ 264:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	cli();
+ 265:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	UENUM = DEBUG_TX_ENDPOINT;
+ 266:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	// if we gave up due to timeout before, don't wait again
+ 267:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	if (previous_timeout) {
+ 268:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		if (!(UEINTX & (1<<RWAL))) {
+ 269:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			SREG = intr_state;
+ 270:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			return -1;
+ 271:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		}
+ 272:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		previous_timeout = 0;
+ 273:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	}
+ 274:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	// wait for the FIFO to be ready to accept data
+ 275:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	timeout = UDFNUML + 4;
+ 276:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	while (1) {
+ 277:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		// are we ready to transmit?
+ 278:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		if (UEINTX & (1<<RWAL)) break;
+ 279:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		SREG = intr_state;
+ 280:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		// have we waited too long?
+ 281:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		if (UDFNUML == timeout) {
+ 282:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			previous_timeout = 1;
+ 283:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			return -1;
+ 284:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		}
+ 285:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		// has the USB gone offline?
+ 286:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		if (!usb_configuration) return -1;
+ 287:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		// get ready to try checking again
+ 288:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		intr_state = SREG;
+ 289:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		cli();
+ 290:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		UENUM = DEBUG_TX_ENDPOINT;
+ 291:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	}
+ 292:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	// actually write the byte into the FIFO
+ 293:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	UEDATX = c;
+ 294:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	// if this completed a packet, transmit it now!
+ 295:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	if (!(UEINTX & (1<<RWAL))) {
+ 296:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		UEINTX = 0x3A;
+ 297:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		debug_flush_timer = 0;
+ 298:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	} else {
+ 299:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		debug_flush_timer = 2;
+ 300:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	}
+ 301:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	SREG = intr_state;
+ 302:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	return 0;
+ 303:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** }
+ 304:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+ 305:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** int8_t usb_debug_putstr(char* str) {
+ 306:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****     for (uint8_t i = 0; str[i] != '\0'; i++) {
+ 307:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****         if (usb_debug_putchar(str[i]) < 0) {
+ 308:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****             return -1;
+ 309:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****         }
+ 310:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****     }
+ 311:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****     return 0;
+ 312:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** }
+ 313:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+ 314:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+ 315:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // immediately transmit any buffered output.
+ 316:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** void usb_debug_flush_output(void)
+ 317:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** {
+ 318:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	uint8_t intr_state;
+ 319:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+ 320:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	intr_state = SREG;
+ 321:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	cli();
+ 322:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	if (debug_flush_timer) {
+ 323:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		UENUM = DEBUG_TX_ENDPOINT;
+ 324:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		while ((UEINTX & (1<<RWAL))) {
+ 325:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			UEDATX = 0;
+ 326:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		}
+ 327:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		UEINTX = 0x3A;
+ 328:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		debug_flush_timer = 0;
+ 329:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	}
+ 330:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	SREG = intr_state;
+ 331:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** }
+ 332:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+ 333:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+ 334:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+ 335:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** /**************************************************************************
+ 336:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  *
+ 337:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  *  Private Functions - not intended for general user consumption....
+ 338:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  *
+ 339:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****  **************************************************************************/
+ 340:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+ 341:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+ 342:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+ 343:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // USB Device Interrupt - handle all device-level events
+ 344:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // the transmit buffer flushing is triggered by the start of frame
+ 345:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** //
+ 346:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** ISR(USB_GEN_vect)
+ 347:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** {
+ 348:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	uint8_t intbits, t;
+ 349:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+ 350:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****         intbits = UDINT;
+ 351:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****         UDINT = 0;
+ 352:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****         if (intbits & (1<<EORSTI)) {
+ 353:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		UENUM = 0;
+ 354:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		UECONX = 1;
+ 355:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		UECFG0X = EP_TYPE_CONTROL;
+ 356:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		UECFG1X = EP_SIZE(ENDPOINT0_SIZE) | EP_SINGLE_BUFFER;
+ 357:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		UEIENX = (1<<RXSTPE);
+ 358:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		usb_configuration = 0;
+ 359:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****         }
+ 360:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	if (intbits & (1<<SOFI)) {
+ 361:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		if (usb_configuration) {
+ 362:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			t = debug_flush_timer;
+ 363:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			if (t) {
+ 364:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				debug_flush_timer = -- t;
+ 365:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				if (!t) {
+ 366:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 					UENUM = DEBUG_TX_ENDPOINT;
+ 367:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 					while ((UEINTX & (1<<RWAL))) {
+ 368:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 						UEDATX = 0;
+ 369:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 					}
+ 370:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 					UEINTX = 0x3A;
+ 371:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				}
+ 372:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			}
+ 373:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		}
+ 374:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	}
+ 375:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** }
+ 376:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+ 377:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+ 378:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // Misc functions to wait for ready and send/receive packets
+ 379:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** static inline void usb_wait_in_ready(void)
+ 380:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** {
+ 115               	.LM0:
+ 116               	.LFBB1:
+ 117               	/* prologue: function */
+ 118               	/* frame size = 0 */
+ 119               	/* stack size = 0 */
+ 120               	.L__stack_usage = 0
+ 121               	.L3:
+ 381:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	while (!(UEINTX & (1<<TXINI))) ;
+ 123               	.LM1:
+ 124 0000 8091 E800 		lds r24,232
+ 125 0004 80FF      		sbrs r24,0
+ 126 0006 00C0      		rjmp .L3
+ 127               	/* epilogue start */
+ 382:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** }
+ 129               	.LM2:
+ 130 0008 0895      		ret
+ 132               	.Lscope1:
+ 134               	.global	usb_init
+ 136               	usb_init:
+ 233:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** {
+ 138               	.LM3:
+ 139               	.LFBB2:
+ 140               	/* prologue: function */
+ 141               	/* frame size = 0 */
+ 142               	/* stack size = 0 */
+ 143               	.L__stack_usage = 0
+ 234:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	HW_CONFIG();
+ 145               	.LM4:
+ 146 000a 81E8      		ldi r24,lo8(-127)
+ 147 000c 8093 D700 		sts 215,r24
+ 235:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	USB_FREEZE();				// enable USB
+ 149               	.LM5:
+ 150 0010 80EA      		ldi r24,lo8(-96)
+ 151 0012 8093 D800 		sts 216,r24
+ 236:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	PLL_CONFIG();				// config PLL
+ 153               	.LM6:
+ 154 0016 86E1      		ldi r24,lo8(22)
+ 155 0018 89BD      		out 0x29,r24
+ 156               	.L7:
+ 237:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****         while (!(PLLCSR & (1<<PLOCK))) ;	// wait for PLL lock
+ 158               	.LM7:
+ 159 001a 09B4      		in __tmp_reg__,0x29
+ 160 001c 00FE      		sbrs __tmp_reg__,0
+ 161 001e 00C0      		rjmp .L7
+ 238:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****         USB_CONFIG();				// start USB clock
+ 163               	.LM8:
+ 164 0020 80E9      		ldi r24,lo8(-112)
+ 165 0022 8093 D800 		sts 216,r24
+ 239:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****         UDCON = 0;				// enable attach resistor
+ 167               	.LM9:
+ 168 0026 1092 E000 		sts 224,__zero_reg__
+ 240:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	usb_configuration = 0;
+ 170               	.LM10:
+ 171 002a 1092 0000 		sts usb_configuration,__zero_reg__
+ 241:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****         UDIEN = (1<<EORSTE)|(1<<SOFE);
+ 173               	.LM11:
+ 174 002e 8CE0      		ldi r24,lo8(12)
+ 175 0030 8093 E200 		sts 226,r24
+ 242:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	sei();
+ 177               	.LM12:
+ 178               	/* #APP */
+ 179               	 ;  242 "/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c" 1
+ 180 0034 7894      		sei
+ 181               	 ;  0 "" 2
+ 182               	/* #NOAPP */
+ 183 0036 0895      		ret
+ 185               	.Lscope2:
+ 187               	.global	usb_configured
+ 189               	usb_configured:
+ 248:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** {
+ 191               	.LM13:
+ 192               	.LFBB3:
+ 193               	/* prologue: function */
+ 194               	/* frame size = 0 */
+ 195               	/* stack size = 0 */
+ 196               	.L__stack_usage = 0
+ 249:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	return usb_configuration;
+ 198               	.LM14:
+ 199 0038 8091 0000 		lds r24,usb_configuration
+ 250:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** }
+ 201               	.LM15:
+ 202 003c 0895      		ret
+ 204               	.Lscope3:
+ 207               	.global	usb_debug_putchar
+ 209               	usb_debug_putchar:
+ 254:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** {
+ 211               	.LM16:
+ 212               	.LFBB4:
+ 213               	/* prologue: function */
+ 214               	/* frame size = 0 */
+ 215               	/* stack size = 0 */
+ 216               	.L__stack_usage = 0
+ 259:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	if (!usb_configuration) return -1;
+ 218               	.LM17:
+ 219 003e 9091 0000 		lds r25,usb_configuration
+ 220 0042 9923      		tst r25
+ 221 0044 01F0      		breq .L26
+ 263:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	intr_state = SREG;
+ 223               	.LM18:
+ 224 0046 9FB7      		in r25,__SREG__
+ 264:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	cli();
+ 226               	.LM19:
+ 227               	/* #APP */
+ 228               	 ;  264 "/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c" 1
+ 229 0048 F894      		cli
+ 230               	 ;  0 "" 2
+ 265:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	UENUM = DEBUG_TX_ENDPOINT;
+ 232               	.LM20:
+ 233               	/* #NOAPP */
+ 234 004a 23E0      		ldi r18,lo8(3)
+ 235 004c 2093 E900 		sts 233,r18
+ 267:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	if (previous_timeout) {
+ 237               	.LM21:
+ 238 0050 2091 0000 		lds r18,previous_timeout.1664
+ 239 0054 2223      		tst r18
+ 240 0056 01F0      		breq .L12
+ 268:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		if (!(UEINTX & (1<<RWAL))) {
+ 242               	.LM22:
+ 243 0058 2091 E800 		lds r18,232
+ 244 005c 25FD      		sbrc r18,5
+ 245 005e 00C0      		rjmp .L13
+ 269:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			SREG = intr_state;
+ 247               	.LM23:
+ 248 0060 9FBF      		out __SREG__,r25
+ 249               	.L26:
+ 270:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			return -1;
+ 251               	.LM24:
+ 252 0062 8FEF      		ldi r24,lo8(-1)
+ 253 0064 0895      		ret
+ 254               	.L13:
+ 272:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		previous_timeout = 0;
+ 256               	.LM25:
+ 257 0066 1092 0000 		sts previous_timeout.1664,__zero_reg__
+ 258               	.L12:
+ 275:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	timeout = UDFNUML + 4;
+ 260               	.LM26:
+ 261 006a 2091 E400 		lds r18,228
+ 262 006e 2C5F      		subi r18,lo8(-(4))
+ 290:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		UENUM = DEBUG_TX_ENDPOINT;
+ 264               	.LM27:
+ 265 0070 33E0      		ldi r19,lo8(3)
+ 266               	.L17:
+ 278:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		if (UEINTX & (1<<RWAL)) break;
+ 268               	.LM28:
+ 269 0072 4091 E800 		lds r20,232
+ 270 0076 45FD      		sbrc r20,5
+ 271 0078 00C0      		rjmp .L14
+ 279:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		SREG = intr_state;
+ 273               	.LM29:
+ 274 007a 9FBF      		out __SREG__,r25
+ 281:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		if (UDFNUML == timeout) {
+ 276               	.LM30:
+ 277 007c 9091 E400 		lds r25,228
+ 278 0080 9213      		cpse r25,r18
+ 279 0082 00C0      		rjmp .L15
+ 282:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			previous_timeout = 1;
+ 281               	.LM31:
+ 282 0084 81E0      		ldi r24,lo8(1)
+ 283 0086 8093 0000 		sts previous_timeout.1664,r24
+ 284 008a 00C0      		rjmp .L26
+ 285               	.L15:
+ 286:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		if (!usb_configuration) return -1;
+ 287               	.LM32:
+ 288 008c 9091 0000 		lds r25,usb_configuration
+ 289 0090 9923      		tst r25
+ 290 0092 01F0      		breq .L26
+ 288:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		intr_state = SREG;
+ 292               	.LM33:
+ 293 0094 9FB7      		in r25,__SREG__
+ 289:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		cli();
+ 295               	.LM34:
+ 296               	/* #APP */
+ 297               	 ;  289 "/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c" 1
+ 298 0096 F894      		cli
+ 299               	 ;  0 "" 2
+ 290:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		UENUM = DEBUG_TX_ENDPOINT;
+ 301               	.LM35:
+ 302               	/* #NOAPP */
+ 303 0098 3093 E900 		sts 233,r19
+ 291:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	}
+ 305               	.LM36:
+ 306 009c 00C0      		rjmp .L17
+ 307               	.L14:
+ 293:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	UEDATX = c;
+ 309               	.LM37:
+ 310 009e 8093 F100 		sts 241,r24
+ 295:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	if (!(UEINTX & (1<<RWAL))) {
+ 312               	.LM38:
+ 313 00a2 8091 E800 		lds r24,232
+ 314 00a6 85FD      		sbrc r24,5
+ 315 00a8 00C0      		rjmp .L18
+ 296:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		UEINTX = 0x3A;
+ 317               	.LM39:
+ 318 00aa 8AE3      		ldi r24,lo8(58)
+ 319 00ac 8093 E800 		sts 232,r24
+ 297:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		debug_flush_timer = 0;
+ 321               	.LM40:
+ 322 00b0 1092 0000 		sts debug_flush_timer,__zero_reg__
+ 323 00b4 00C0      		rjmp .L19
+ 324               	.L18:
+ 299:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		debug_flush_timer = 2;
+ 326               	.LM41:
+ 327 00b6 82E0      		ldi r24,lo8(2)
+ 328 00b8 8093 0000 		sts debug_flush_timer,r24
+ 329               	.L19:
+ 301:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	SREG = intr_state;
+ 331               	.LM42:
+ 332 00bc 9FBF      		out __SREG__,r25
+ 302:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	return 0;
+ 334               	.LM43:
+ 335 00be 80E0      		ldi r24,0
+ 303:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** }
+ 337               	.LM44:
+ 338 00c0 0895      		ret
+ 345               	.Lscope4:
+ 348               	.global	usb_debug_putstr
+ 350               	usb_debug_putstr:
+ 305:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** int8_t usb_debug_putstr(char* str) {
+ 352               	.LM45:
+ 353               	.LFBB5:
+ 354 00c2 1F93      		push r17
+ 355 00c4 CF93      		push r28
+ 356 00c6 DF93      		push r29
+ 357               	/* prologue: function */
+ 358               	/* frame size = 0 */
+ 359               	/* stack size = 3 */
+ 360               	.L__stack_usage = 3
+ 361 00c8 EC01      		movw r28,r24
+ 362               	.LBB24:
+ 306:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****     for (uint8_t i = 0; str[i] != '\0'; i++) {
+ 364               	.LM46:
+ 365 00ca 10E0      		ldi r17,0
+ 366               	.L28:
+ 306:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****     for (uint8_t i = 0; str[i] != '\0'; i++) {
+ 368               	.LM47:
+ 369 00cc FE01      		movw r30,r28
+ 370 00ce E10F      		add r30,r17
+ 371 00d0 F11D      		adc r31,__zero_reg__
+ 372 00d2 8081      		ld r24,Z
+ 373 00d4 8823      		tst r24
+ 374 00d6 01F0      		breq .L29
+ 307:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****         if (usb_debug_putchar(str[i]) < 0) {
+ 376               	.LM48:
+ 377 00d8 0E94 0000 		call usb_debug_putchar
+ 378 00dc 87FD      		sbrc r24,7
+ 379 00de 00C0      		rjmp .L31
+ 306:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****     for (uint8_t i = 0; str[i] != '\0'; i++) {
+ 381               	.LM49:
+ 382 00e0 1F5F      		subi r17,lo8(-(1))
+ 383 00e2 00C0      		rjmp .L28
+ 384               	.L31:
+ 308:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****             return -1;
+ 386               	.LM50:
+ 387 00e4 8FEF      		ldi r24,lo8(-1)
+ 388               	.L29:
+ 389               	/* epilogue start */
+ 390               	.LBE24:
+ 312:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** }
+ 392               	.LM51:
+ 393 00e6 DF91      		pop r29
+ 394 00e8 CF91      		pop r28
+ 395 00ea 1F91      		pop r17
+ 396 00ec 0895      		ret
+ 401               	.Lscope5:
+ 403               	.global	usb_debug_flush_output
+ 405               	usb_debug_flush_output:
+ 317:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** {
+ 407               	.LM52:
+ 408               	.LFBB6:
+ 409               	/* prologue: function */
+ 410               	/* frame size = 0 */
+ 411               	/* stack size = 0 */
+ 412               	.L__stack_usage = 0
+ 320:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	intr_state = SREG;
+ 414               	.LM53:
+ 415 00ee 8FB7      		in r24,__SREG__
+ 321:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	cli();
+ 417               	.LM54:
+ 418               	/* #APP */
+ 419               	 ;  321 "/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c" 1
+ 420 00f0 F894      		cli
+ 421               	 ;  0 "" 2
+ 322:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	if (debug_flush_timer) {
+ 423               	.LM55:
+ 424               	/* #NOAPP */
+ 425 00f2 9091 0000 		lds r25,debug_flush_timer
+ 426 00f6 9923      		tst r25
+ 427 00f8 01F0      		breq .L33
+ 323:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		UENUM = DEBUG_TX_ENDPOINT;
+ 429               	.LM56:
+ 430 00fa 93E0      		ldi r25,lo8(3)
+ 431 00fc 9093 E900 		sts 233,r25
+ 432               	.L34:
+ 324:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		while ((UEINTX & (1<<RWAL))) {
+ 434               	.LM57:
+ 435 0100 9091 E800 		lds r25,232
+ 436 0104 95FF      		sbrs r25,5
+ 437 0106 00C0      		rjmp .L39
+ 325:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			UEDATX = 0;
+ 439               	.LM58:
+ 440 0108 1092 F100 		sts 241,__zero_reg__
+ 441 010c 00C0      		rjmp .L34
+ 442               	.L39:
+ 327:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		UEINTX = 0x3A;
+ 444               	.LM59:
+ 445 010e 9AE3      		ldi r25,lo8(58)
+ 446 0110 9093 E800 		sts 232,r25
+ 328:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		debug_flush_timer = 0;
+ 448               	.LM60:
+ 449 0114 1092 0000 		sts debug_flush_timer,__zero_reg__
+ 450               	.L33:
+ 330:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	SREG = intr_state;
+ 452               	.LM61:
+ 453 0118 8FBF      		out __SREG__,r24
+ 454 011a 0895      		ret
+ 459               	.Lscope6:
+ 461               	.global	__vector_10
+ 463               	__vector_10:
+ 347:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** {
+ 465               	.LM62:
+ 466               	.LFBB7:
+ 467 011c 1F92      		push r1
+ 468 011e 0F92      		push r0
+ 469 0120 0FB6      		in r0,__SREG__
+ 470 0122 0F92      		push r0
+ 471 0124 1124      		clr __zero_reg__
+ 472 0126 8F93      		push r24
+ 473 0128 9F93      		push r25
+ 474               	/* prologue: Signal */
+ 475               	/* frame size = 0 */
+ 476               	/* stack size = 5 */
+ 477               	.L__stack_usage = 5
+ 350:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****         intbits = UDINT;
+ 479               	.LM63:
+ 480 012a 8091 E100 		lds r24,225
+ 351:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****         UDINT = 0;
+ 482               	.LM64:
+ 483 012e 1092 E100 		sts 225,__zero_reg__
+ 352:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****         if (intbits & (1<<EORSTI)) {
+ 485               	.LM65:
+ 486 0132 83FF      		sbrs r24,3
+ 487 0134 00C0      		rjmp .L41
+ 353:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		UENUM = 0;
+ 489               	.LM66:
+ 490 0136 1092 E900 		sts 233,__zero_reg__
+ 354:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		UECONX = 1;
+ 492               	.LM67:
+ 493 013a 91E0      		ldi r25,lo8(1)
+ 494 013c 9093 EB00 		sts 235,r25
+ 355:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		UECFG0X = EP_TYPE_CONTROL;
+ 496               	.LM68:
+ 497 0140 1092 EC00 		sts 236,__zero_reg__
+ 356:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		UECFG1X = EP_SIZE(ENDPOINT0_SIZE) | EP_SINGLE_BUFFER;
+ 499               	.LM69:
+ 500 0144 92E2      		ldi r25,lo8(34)
+ 501 0146 9093 ED00 		sts 237,r25
+ 357:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		UEIENX = (1<<RXSTPE);
+ 503               	.LM70:
+ 504 014a 98E0      		ldi r25,lo8(8)
+ 505 014c 9093 F000 		sts 240,r25
+ 358:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		usb_configuration = 0;
+ 507               	.LM71:
+ 508 0150 1092 0000 		sts usb_configuration,__zero_reg__
+ 509               	.L41:
+ 360:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	if (intbits & (1<<SOFI)) {
+ 511               	.LM72:
+ 512 0154 82FF      		sbrs r24,2
+ 513 0156 00C0      		rjmp .L40
+ 361:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		if (usb_configuration) {
+ 515               	.LM73:
+ 516 0158 8091 0000 		lds r24,usb_configuration
+ 517 015c 8823      		tst r24
+ 518 015e 01F0      		breq .L40
+ 362:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			t = debug_flush_timer;
+ 520               	.LM74:
+ 521 0160 8091 0000 		lds r24,debug_flush_timer
+ 363:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			if (t) {
+ 523               	.LM75:
+ 524 0164 8823      		tst r24
+ 525 0166 01F0      		breq .L40
+ 364:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				debug_flush_timer = -- t;
+ 527               	.LM76:
+ 528 0168 8150      		subi r24,lo8(-(-1))
+ 529 016a 8093 0000 		sts debug_flush_timer,r24
+ 365:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				if (!t) {
+ 531               	.LM77:
+ 532 016e 8111      		cpse r24,__zero_reg__
+ 533 0170 00C0      		rjmp .L40
+ 366:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 					UENUM = DEBUG_TX_ENDPOINT;
+ 535               	.LM78:
+ 536 0172 83E0      		ldi r24,lo8(3)
+ 537 0174 8093 E900 		sts 233,r24
+ 538               	.L45:
+ 367:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 					while ((UEINTX & (1<<RWAL))) {
+ 540               	.LM79:
+ 541 0178 8091 E800 		lds r24,232
+ 542 017c 85FF      		sbrs r24,5
+ 543 017e 00C0      		rjmp .L56
+ 368:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 						UEDATX = 0;
+ 545               	.LM80:
+ 546 0180 1092 F100 		sts 241,__zero_reg__
+ 547 0184 00C0      		rjmp .L45
+ 548               	.L56:
+ 370:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 					UEINTX = 0x3A;
+ 550               	.LM81:
+ 551 0186 8AE3      		ldi r24,lo8(58)
+ 552 0188 8093 E800 		sts 232,r24
+ 553               	.L40:
+ 554               	/* epilogue start */
+ 375:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** }
+ 556               	.LM82:
+ 557 018c 9F91      		pop r25
+ 558 018e 8F91      		pop r24
+ 559 0190 0F90      		pop r0
+ 560 0192 0FBE      		out __SREG__,r0
+ 561 0194 0F90      		pop r0
+ 562 0196 1F90      		pop r1
+ 563 0198 1895      		reti
+ 568               	.Lscope7:
+ 570               	.global	__vector_11
+ 572               	__vector_11:
+ 383:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** static inline void usb_send_in(void)
+ 384:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** {
+ 385:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	UEINTX = ~(1<<TXINI);
+ 386:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** }
+ 387:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** static inline void usb_wait_receive_out(void)
+ 388:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** {
+ 389:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	while (!(UEINTX & (1<<RXOUTI))) ;
+ 390:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** }
+ 391:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** static inline void usb_ack_out(void)
+ 392:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** {
+ 393:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	UEINTX = ~(1<<RXOUTI);
+ 394:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** }
+ 395:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+ 396:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+ 397:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+ 398:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // USB Endpoint Interrupt - endpoint 0 is handled here.  The
+ 399:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // other endpoints are manipulated by the user-callable
+ 400:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** // functions, and the start-of-frame interrupt.
+ 401:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** //
+ 402:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** ISR(USB_COM_vect)
+ 403:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** {
+ 574               	.LM83:
+ 575               	.LFBB8:
+ 576 019a 1F92      		push r1
+ 577 019c 0F92      		push r0
+ 578 019e 0FB6      		in r0,__SREG__
+ 579 01a0 0F92      		push r0
+ 580 01a2 1124      		clr __zero_reg__
+ 581 01a4 0BB6      		in r0,__RAMPZ__
+ 582 01a6 0F92      		push r0
+ 583 01a8 EF92      		push r14
+ 584 01aa FF92      		push r15
+ 585 01ac 0F93      		push r16
+ 586 01ae 1F93      		push r17
+ 587 01b0 2F93      		push r18
+ 588 01b2 3F93      		push r19
+ 589 01b4 4F93      		push r20
+ 590 01b6 5F93      		push r21
+ 591 01b8 6F93      		push r22
+ 592 01ba 7F93      		push r23
+ 593 01bc 8F93      		push r24
+ 594 01be 9F93      		push r25
+ 595 01c0 AF93      		push r26
+ 596 01c2 BF93      		push r27
+ 597 01c4 EF93      		push r30
+ 598 01c6 FF93      		push r31
+ 599 01c8 CF93      		push r28
+ 600 01ca DF93      		push r29
+ 601 01cc 1F92      		push __zero_reg__
+ 602 01ce CDB7      		in r28,__SP_L__
+ 603 01d0 DEB7      		in r29,__SP_H__
+ 604               	/* prologue: Signal */
+ 605               	/* frame size = 1 */
+ 606               	/* stack size = 23 */
+ 607               	.L__stack_usage = 23
+ 404:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****         uint8_t intbits;
+ 405:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	const uint8_t *list;
+ 406:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****         const uint8_t *cfg;
+ 407:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	uint8_t i, n, len, en;
+ 408:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	uint8_t bmRequestType;
+ 409:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	uint8_t bRequest;
+ 410:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	uint16_t wValue;
+ 411:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	uint16_t wIndex;
+ 412:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	uint16_t wLength;
+ 413:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	uint16_t desc_val;
+ 414:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	const uint8_t *desc_addr;
+ 415:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	uint8_t	desc_length;
+ 416:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+ 417:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****         UENUM = 0;
+ 609               	.LM84:
+ 610 01d2 1092 E900 		sts 233,__zero_reg__
+ 418:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****         intbits = UEINTX;
+ 612               	.LM85:
+ 613 01d6 8091 E800 		lds r24,232
+ 419:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****         if (intbits & (1<<RXSTPI)) {
+ 615               	.LM86:
+ 616 01da 83FF      		sbrs r24,3
+ 617 01dc 00C0      		rjmp .L58
+ 420:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****                 bmRequestType = UEDATX;
+ 619               	.LM87:
+ 620 01de 9091 F100 		lds r25,241
+ 421:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****                 bRequest = UEDATX;
+ 622               	.LM88:
+ 623 01e2 8091 F100 		lds r24,241
+ 422:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****                 wValue = UEDATX;
+ 625               	.LM89:
+ 626 01e6 0091 F100 		lds r16,241
+ 423:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****                 wValue |= (UEDATX << 8);
+ 628               	.LM90:
+ 629 01ea 2091 F100 		lds r18,241
+ 630 01ee 10E0      		ldi r17,0
+ 631 01f0 122B      		or r17,r18
+ 424:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****                 wIndex = UEDATX;
+ 633               	.LM91:
+ 634 01f2 3091 F100 		lds r19,241
+ 425:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****                 wIndex |= (UEDATX << 8);
+ 636               	.LM92:
+ 637 01f6 2091 F100 		lds r18,241
+ 638 01fa E32E      		mov r14,r19
+ 639 01fc F12C      		mov r15,__zero_reg__
+ 640 01fe F22A      		or r15,r18
+ 426:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****                 wLength = UEDATX;
+ 642               	.LM93:
+ 643 0200 2091 F100 		lds r18,241
+ 427:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****                 wLength |= (UEDATX << 8);
+ 645               	.LM94:
+ 646 0204 4091 F100 		lds r20,241
+ 647 0208 30E0      		ldi r19,0
+ 648 020a 342B      		or r19,r20
+ 428:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****                 UEINTX = ~((1<<RXSTPI) | (1<<RXOUTI) | (1<<TXINI));
+ 650               	.LM95:
+ 651 020c 42EF      		ldi r20,lo8(-14)
+ 652 020e 4093 E800 		sts 232,r20
+ 429:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****                 if (bRequest == GET_DESCRIPTOR) {
+ 654               	.LM96:
+ 655 0212 8630      		cpi r24,lo8(6)
+ 656 0214 01F0      		breq .+2
+ 657 0216 00C0      		rjmp .L108
+ 658 0218 67E0      		ldi r22,lo8(7)
+ 659 021a 80E0      		ldi r24,lo8(descriptor_list)
+ 660 021c 90E0      		ldi r25,hi8(descriptor_list)
+ 661               	.L69:
+ 662               	.LBB25:
+ 430:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			list = (const uint8_t *)descriptor_list;
+ 431:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			for (i=0; ; i++) {
+ 432:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				if (i >= NUM_DESC_LIST) {
+ 433:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 					UECONX = (1<<STALLRQ)|(1<<EPEN);  //stall
+ 434:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 					return;
+ 435:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				}
+ 436:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				desc_val = pgm_read_word(list);
+ 664               	.LM97:
+ 665 021e FC01      		movw r30,r24
+ 666               	/* #APP */
+ 667               	 ;  436 "/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c" 1
+ 668 0220 4591      		lpm r20, Z+
+ 669 0222 5491      		lpm r21, Z
+ 670               		
+ 671               	 ;  0 "" 2
+ 672               	/* #NOAPP */
+ 673               	.LBE25:
+ 437:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				if (desc_val != wValue) {
+ 675               	.LM98:
+ 676 0224 4017      		cp r20,r16
+ 677 0226 5107      		cpc r21,r17
+ 678 0228 01F4      		brne .L109
+ 438:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 					list += sizeof(struct descriptor_list_struct);
+ 439:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 					continue;
+ 440:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				}
+ 441:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				list += 2;
+ 680               	.LM99:
+ 681 022a FC01      		movw r30,r24
+ 682 022c 3296      		adiw r30,2
+ 683               	.LBB26:
+ 442:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				desc_val = pgm_read_word(list);
+ 685               	.LM100:
+ 686               	/* #APP */
+ 687               	 ;  442 "/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c" 1
+ 688 022e 4591      		lpm r20, Z+
+ 689 0230 5491      		lpm r21, Z
+ 690               		
+ 691               	 ;  0 "" 2
+ 692               	/* #NOAPP */
+ 693               	.LBE26:
+ 443:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				if (desc_val != wIndex) {
+ 695               	.LM101:
+ 696 0232 4E15      		cp r20,r14
+ 697 0234 5F05      		cpc r21,r15
+ 698 0236 01F0      		breq .L64
+ 699               	.L109:
+ 444:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 					list += sizeof(struct descriptor_list_struct)-2;
+ 701               	.LM102:
+ 702 0238 0796      		adiw r24,7
+ 703 023a 6150      		subi r22,lo8(-(-1))
+ 432:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				if (i >= NUM_DESC_LIST) {
+ 705               	.LM103:
+ 706 023c 01F4      		brne .L69
+ 707 023e 00C0      		rjmp .L58
+ 708               	.L64:
+ 445:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 					continue;
+ 446:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				}
+ 447:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				list += 2;
+ 710               	.LM104:
+ 711 0240 FC01      		movw r30,r24
+ 712 0242 3496      		adiw r30,4
+ 448:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				desc_addr = (const uint8_t *)pgm_read_word(list);
+ 714               	.LM105:
+ 715               	/* #APP */
+ 716               	 ;  448 "/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c" 1
+ 717 0244 4591      		lpm r20, Z+
+ 718 0246 5491      		lpm r21, Z
+ 719               		
+ 720               	 ;  0 "" 2
+ 449:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				list += 2;
+ 722               	.LM106:
+ 723               	/* #NOAPP */
+ 724 0248 FC01      		movw r30,r24
+ 725 024a 3696      		adiw r30,6
+ 726               	.LBB27:
+ 450:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				desc_length = pgm_read_byte(list);
+ 728               	.LM107:
+ 729               	/* #APP */
+ 730               	 ;  450 "/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c" 1
+ 731 024c 8491      		lpm r24, Z
+ 732               		
+ 733               	 ;  0 "" 2
+ 734               	/* #NOAPP */
+ 735               	.LBE27:
+ 451:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				break;
+ 452:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			}
+ 453:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			len = (wLength < 256) ? wLength : 255;
+ 737               	.LM108:
+ 738 024e 2F3F      		cpi r18,-1
+ 739 0250 3105      		cpc r19,__zero_reg__
+ 740 0252 01F0      		breq .L65
+ 741 0254 00F0      		brlo .L65
+ 742 0256 2FEF      		ldi r18,lo8(-1)
+ 743 0258 30E0      		ldi r19,0
+ 744               	.L65:
+ 745 025a 2817      		cp r18,r24
+ 746 025c 00F4      		brsh .L66
+ 747 025e 822F      		mov r24,r18
+ 748               	.L66:
+ 749               	.LBB28:
+ 750               	.LBB29:
+ 385:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	UEINTX = ~(1<<TXINI);
+ 752               	.LM109:
+ 753 0260 3EEF      		ldi r19,lo8(-2)
+ 754               	.L71:
+ 755               	.LBE29:
+ 756               	.LBE28:
+ 454:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			if (len > desc_length) len = desc_length;
+ 455:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			do {
+ 456:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				// wait for host ready for IN packet
+ 457:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				do {
+ 458:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 					i = UEINTX;
+ 758               	.LM110:
+ 759 0262 9091 E800 		lds r25,232
+ 459:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				} while (!(i & ((1<<TXINI)|(1<<RXOUTI))));
+ 761               	.LM111:
+ 762 0266 292F      		mov r18,r25
+ 763 0268 2570      		andi r18,lo8(5)
+ 764 026a 01F0      		breq .L71
+ 460:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				if (i & (1<<RXOUTI)) return;	// abort
+ 766               	.LM112:
+ 767 026c 92FD      		sbrc r25,2
+ 768 026e 00C0      		rjmp .L57
+ 461:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				// send IN packet
+ 462:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				n = len < ENDPOINT0_SIZE ? len : ENDPOINT0_SIZE;
+ 770               	.LM113:
+ 771 0270 982F      		mov r25,r24
+ 772 0272 8132      		cpi r24,lo8(33)
+ 773 0274 00F0      		brlo .L73
+ 774 0276 90E2      		ldi r25,lo8(32)
+ 775               	.L73:
+ 463:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				for (i = n; i; i--) {
+ 777               	.LM114:
+ 778 0278 FA01      		movw r30,r20
+ 779 027a 292F      		mov r18,r25
+ 780               	.L74:
+ 782               	.LM115:
+ 783 027c 2223      		tst r18
+ 784 027e 01F0      		breq .L112
+ 785               	.LBB31:
+ 464:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 					UEDATX = pgm_read_byte(desc_addr++);
+ 787               	.LM116:
+ 788               	/* #APP */
+ 789               	 ;  464 "/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c" 1
+ 790 0280 6491      		lpm r22, Z
+ 791               		
+ 792               	 ;  0 "" 2
+ 793               	/* #NOAPP */
+ 794               	.LBE31:
+ 795 0282 6093 F100 		sts 241,r22
+ 463:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				for (i = n; i; i--) {
+ 797               	.LM117:
+ 798 0286 2150      		subi r18,lo8(-(-1))
+ 799 0288 3196      		adiw r30,1
+ 800 028a 00C0      		rjmp .L74
+ 801               	.L112:
+ 802 028c 490F      		add r20,r25
+ 803 028e 511D      		adc r21,__zero_reg__
+ 465:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				}
+ 466:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				len -= n;
+ 805               	.LM118:
+ 806 0290 891B      		sub r24,r25
+ 807               	.LBB32:
+ 808               	.LBB30:
+ 385:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	UEINTX = ~(1<<TXINI);
+ 810               	.LM119:
+ 811 0292 3093 E800 		sts 232,r19
+ 812               	.LBE30:
+ 813               	.LBE32:
+ 467:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				usb_send_in();
+ 468:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			} while (len || n == ENDPOINT0_SIZE);
+ 815               	.LM120:
+ 816 0296 8111      		cpse r24,__zero_reg__
+ 817 0298 00C0      		rjmp .L71
+ 819               	.LM121:
+ 820 029a 9032      		cpi r25,lo8(32)
+ 821 029c 01F0      		breq .L71
+ 822 029e 00C0      		rjmp .L57
+ 823               	.L108:
+ 469:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			return;
+ 470:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****                 }
+ 471:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		if (bRequest == SET_ADDRESS) {
+ 825               	.LM122:
+ 826 02a0 8530      		cpi r24,lo8(5)
+ 827 02a2 01F4      		brne .L78
+ 828               	.LBB33:
+ 829               	.LBB34:
+ 385:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	UEINTX = ~(1<<TXINI);
+ 831               	.LM123:
+ 832 02a4 8EEF      		ldi r24,lo8(-2)
+ 833 02a6 8093 E800 		sts 232,r24
+ 834               	.LBE34:
+ 835               	.LBE33:
+ 472:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			usb_send_in();
+ 473:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			usb_wait_in_ready();
+ 837               	.LM124:
+ 838 02aa 0E94 0000 		call usb_wait_in_ready
+ 474:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			UDADDR = wValue | (1<<ADDEN);
+ 840               	.LM125:
+ 841 02ae 0068      		ori r16,lo8(-128)
+ 842 02b0 0093 E300 		sts 227,r16
+ 475:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			return;
+ 844               	.LM126:
+ 845 02b4 00C0      		rjmp .L57
+ 846               	.L78:
+ 476:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		}
+ 477:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		if (bRequest == SET_CONFIGURATION && bmRequestType == 0) {
+ 848               	.LM127:
+ 849 02b6 8930      		cpi r24,lo8(9)
+ 850 02b8 01F4      		brne .L79
+ 852               	.LM128:
+ 853 02ba 9111      		cpse r25,__zero_reg__
+ 854 02bc 00C0      		rjmp .L80
+ 478:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			usb_configuration = wValue;
+ 856               	.LM129:
+ 857 02be 0093 0000 		sts usb_configuration,r16
+ 858               	.LBB35:
+ 859               	.LBB36:
+ 385:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	UEINTX = ~(1<<TXINI);
+ 861               	.LM130:
+ 862 02c2 8EEF      		ldi r24,lo8(-2)
+ 863 02c4 8093 E800 		sts 232,r24
+ 864               	.LBE36:
+ 865               	.LBE35:
+ 479:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			usb_send_in();
+ 480:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			cfg = endpoint_config_table;
+ 481:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			for (i=1; i<5; i++) {
+ 867               	.LM131:
+ 868 02c8 41E0      		ldi r20,lo8(1)
+ 480:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			cfg = endpoint_config_table;
+ 870               	.LM132:
+ 871 02ca 80E0      		ldi r24,lo8(endpoint_config_table)
+ 872 02cc 90E0      		ldi r25,hi8(endpoint_config_table)
+ 873               	.L83:
+ 482:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				UENUM = i;
+ 875               	.LM133:
+ 876 02ce 4093 E900 		sts 233,r20
+ 877               	.LBB37:
+ 483:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				en = pgm_read_byte(cfg++);
+ 879               	.LM134:
+ 880 02d2 9C01      		movw r18,r24
+ 881 02d4 2F5F      		subi r18,-1
+ 882 02d6 3F4F      		sbci r19,-1
+ 883 02d8 FC01      		movw r30,r24
+ 884               	/* #APP */
+ 885               	 ;  483 "/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c" 1
+ 886 02da 5491      		lpm r21, Z
+ 887               		
+ 888               	 ;  0 "" 2
+ 889               	/* #NOAPP */
+ 890               	.LBE37:
+ 484:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				UECONX = en;
+ 892               	.LM135:
+ 893 02dc 5093 EB00 		sts 235,r21
+ 485:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				if (en) {
+ 895               	.LM136:
+ 896 02e0 5523      		tst r21
+ 897 02e2 01F0      		breq .L81
+ 898               	.LBB38:
+ 486:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 					UECFG0X = pgm_read_byte(cfg++);
+ 900               	.LM137:
+ 901 02e4 F901      		movw r30,r18
+ 902               	/* #APP */
+ 903               	 ;  486 "/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c" 1
+ 904 02e6 2491      		lpm r18, Z
+ 905               		
+ 906               	 ;  0 "" 2
+ 907               	/* #NOAPP */
+ 908               	.LBE38:
+ 909 02e8 2093 EC00 		sts 236,r18
+ 910               	.LBB39:
+ 487:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 					UECFG1X = pgm_read_byte(cfg++);
+ 912               	.LM138:
+ 913 02ec 9C01      		movw r18,r24
+ 914 02ee 2D5F      		subi r18,-3
+ 915 02f0 3F4F      		sbci r19,-1
+ 916 02f2 3196      		adiw r30,1
+ 917               	/* #APP */
+ 918               	 ;  487 "/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c" 1
+ 919 02f4 8491      		lpm r24, Z
+ 920               		
+ 921               	 ;  0 "" 2
+ 922               	/* #NOAPP */
+ 923               	.LBE39:
+ 924 02f6 8093 ED00 		sts 237,r24
+ 925               	.L81:
+ 481:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			for (i=1; i<5; i++) {
+ 927               	.LM139:
+ 928 02fa 4F5F      		subi r20,lo8(-(1))
+ 929 02fc 4530      		cpi r20,lo8(5)
+ 930 02fe 01F0      		breq .L82
+ 931 0300 C901      		movw r24,r18
+ 932 0302 00C0      		rjmp .L83
+ 933               	.L82:
+ 488:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				}
+ 489:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			}
+ 490:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****         		UERST = 0x1E;
+ 935               	.LM140:
+ 936 0304 8EE1      		ldi r24,lo8(30)
+ 937 0306 00C0      		rjmp .L110
+ 938               	.L79:
+ 491:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****         		UERST = 0;
+ 492:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			return;
+ 493:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		}
+ 494:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		if (bRequest == GET_CONFIGURATION && bmRequestType == 0x80) {
+ 940               	.LM141:
+ 941 0308 8830      		cpi r24,lo8(8)
+ 942 030a 01F4      		brne .L84
+ 944               	.LM142:
+ 945 030c 9038      		cpi r25,lo8(-128)
+ 946 030e 01F0      		breq .+2
+ 947 0310 00C0      		rjmp .L58
+ 495:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			usb_wait_in_ready();
+ 949               	.LM143:
+ 950 0312 0E94 0000 		call usb_wait_in_ready
+ 496:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			UEDATX = usb_configuration;
+ 952               	.LM144:
+ 953 0316 8091 0000 		lds r24,usb_configuration
+ 954 031a 8093 F100 		sts 241,r24
+ 955 031e 00C0      		rjmp .L111
+ 956               	.L84:
+ 497:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			usb_send_in();
+ 498:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			return;
+ 499:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		}
+ 500:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 
+ 501:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		if (bRequest == GET_STATUS) {
+ 958               	.LM145:
+ 959 0320 8111      		cpse r24,__zero_reg__
+ 960 0322 00C0      		rjmp .L80
+ 502:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			usb_wait_in_ready();
+ 962               	.LM146:
+ 963 0324 9983      		std Y+1,r25
+ 964 0326 0E94 0000 		call usb_wait_in_ready
+ 503:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			i = 0;
+ 504:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			#ifdef SUPPORT_ENDPOINT_HALT
+ 505:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			if (bmRequestType == 0x82) {
+ 966               	.LM147:
+ 967 032a 9981      		ldd r25,Y+1
+ 968 032c 9238      		cpi r25,lo8(-126)
+ 969 032e 01F4      		brne .L95
+ 506:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				UENUM = wIndex;
+ 971               	.LM148:
+ 972 0330 E092 E900 		sts 233,r14
+ 507:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				if (UECONX & (1<<STALLRQ)) i = 1;
+ 974               	.LM149:
+ 975 0334 8091 EB00 		lds r24,235
+ 976 0338 85FB      		bst r24,5
+ 977 033a 8827      		clr r24
+ 978 033c 80F9      		bld r24,0
+ 508:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				UENUM = 0;
+ 980               	.LM150:
+ 981 033e 1092 E900 		sts 233,__zero_reg__
+ 982 0342 00C0      		rjmp .L85
+ 983               	.L95:
+ 503:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			i = 0;
+ 985               	.LM151:
+ 986 0344 80E0      		ldi r24,0
+ 987               	.L85:
+ 509:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			}
+ 510:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			#endif
+ 511:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			UEDATX = i;
+ 989               	.LM152:
+ 990 0346 8093 F100 		sts 241,r24
+ 512:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			UEDATX = 0;
+ 992               	.LM153:
+ 993 034a 1092 F100 		sts 241,__zero_reg__
+ 994               	.L111:
+ 995               	.LBB40:
+ 996               	.LBB41:
+ 385:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	UEINTX = ~(1<<TXINI);
+ 998               	.LM154:
+ 999 034e 8EEF      		ldi r24,lo8(-2)
+ 1000 0350 8093 E800 		sts 232,r24
+ 1001 0354 00C0      		rjmp .L57
+ 1002               	.L80:
+ 1003               	.LBE41:
+ 1004               	.LBE40:
+ 513:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			usb_send_in();
+ 514:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			return;
+ 515:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		}
+ 516:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		#ifdef SUPPORT_ENDPOINT_HALT
+ 517:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		if ((bRequest == CLEAR_FEATURE || bRequest == SET_FEATURE)
+ 1006               	.LM155:
+ 1007 0356 482F      		mov r20,r24
+ 1008 0358 4D7F      		andi r20,lo8(-3)
+ 1009 035a 4130      		cpi r20,lo8(1)
+ 1010 035c 01F0      		breq .+2
+ 1011 035e 00C0      		rjmp .L58
+ 518:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		  && bmRequestType == 0x02 && wValue == 0) {
+ 1013               	.LM156:
+ 1014 0360 9230      		cpi r25,lo8(2)
+ 1015 0362 01F4      		brne .L86
+ 1017               	.LM157:
+ 1018 0364 012B      		or r16,r17
+ 1019 0366 01F4      		brne .L58
+ 519:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			i = wIndex & 0x7F;
+ 1021               	.LM158:
+ 1022 0368 2E2D      		mov r18,r14
+ 1023 036a 2F77      		andi r18,lo8(127)
+ 520:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			if (i >= 1 && i <= MAX_ENDPOINT) {
+ 1025               	.LM159:
+ 1026 036c 9FEF      		ldi r25,lo8(-1)
+ 1027 036e 920F      		add r25,r18
+ 1028 0370 9430      		cpi r25,lo8(4)
+ 1029 0372 00F4      		brsh .L58
+ 1030               	.LBB42:
+ 1031               	.LBB43:
+ 385:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	UEINTX = ~(1<<TXINI);
+ 1033               	.LM160:
+ 1034 0374 9EEF      		ldi r25,lo8(-2)
+ 1035 0376 9093 E800 		sts 232,r25
+ 1036               	.LBE43:
+ 1037               	.LBE42:
+ 521:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				usb_send_in();
+ 522:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				UENUM = i;
+ 1039               	.LM161:
+ 1040 037a 2093 E900 		sts 233,r18
+ 523:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				if (bRequest == SET_FEATURE) {
+ 1042               	.LM162:
+ 1043 037e 8330      		cpi r24,lo8(3)
+ 1044 0380 01F0      		breq .L58
+ 524:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 					UECONX = (1<<STALLRQ)|(1<<EPEN);
+ 525:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				} else {
+ 526:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 					UECONX = (1<<STALLRQC)|(1<<RSTDT)|(1<<EPEN);
+ 1046               	.LM163:
+ 1047 0382 89E1      		ldi r24,lo8(25)
+ 1048 0384 8093 EB00 		sts 235,r24
+ 527:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 					UERST = (1 << i);
+ 1050               	.LM164:
+ 1051 0388 81E0      		ldi r24,lo8(1)
+ 1052 038a 90E0      		ldi r25,0
+ 1053 038c 022E      		mov r0,r18
+ 1054 038e 00C0      		rjmp 2f
+ 1055               		1:
+ 1056 0390 880F      		lsl r24
+ 1057               		2:
+ 1058 0392 0A94      		dec r0
+ 1059 0394 02F4      		brpl 1b
+ 1060               	.L110:
+ 1061 0396 8093 EA00 		sts 234,r24
+ 528:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 					UERST = 0;
+ 1063               	.LM165:
+ 1064 039a 1092 EA00 		sts 234,__zero_reg__
+ 1065 039e 00C0      		rjmp .L57
+ 1066               	.L86:
+ 529:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				}
+ 530:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				return;
+ 531:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			}
+ 532:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		}
+ 533:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		#endif
+ 534:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		if (bRequest == HID_GET_REPORT && bmRequestType == 0xA1) {
+ 1068               	.LM166:
+ 1069 03a0 8130      		cpi r24,lo8(1)
+ 1070 03a2 01F4      		brne .L58
+ 1072               	.LM167:
+ 1073 03a4 913A      		cpi r25,lo8(-95)
+ 1074 03a6 01F4      		brne .L58
+ 535:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			if (wIndex == 0) {
+ 1076               	.LM168:
+ 1077 03a8 EF28      		or r14,r15
+ 1078 03aa 01F4      		brne .L58
+ 1079               	.LBB44:
+ 1080               	.LBB45:
+ 385:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	UEINTX = ~(1<<TXINI);
+ 1082               	.LM169:
+ 1083 03ac 3EEF      		ldi r19,lo8(-2)
+ 1084               	.L90:
+ 1085               	.LBE45:
+ 1086               	.LBE44:
+ 536:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				len = wLength;
+ 537:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				do {
+ 538:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 					// wait for host ready for IN packet
+ 539:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 					do {
+ 540:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 						i = UEINTX;
+ 1088               	.LM170:
+ 1089 03ae 8091 E800 		lds r24,232
+ 541:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 					} while (!(i & ((1<<TXINI)|(1<<RXOUTI))));
+ 1091               	.LM171:
+ 1092 03b2 982F      		mov r25,r24
+ 1093 03b4 9570      		andi r25,lo8(5)
+ 1094 03b6 01F0      		breq .L90
+ 542:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 					if (i & (1<<RXOUTI)) return;	// abort
+ 1096               	.LM172:
+ 1097 03b8 82FD      		sbrc r24,2
+ 1098 03ba 00C0      		rjmp .L57
+ 543:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 					// send IN packet
+ 544:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 					n = len < ENDPOINT0_SIZE ? len : ENDPOINT0_SIZE;
+ 1100               	.LM173:
+ 1101 03bc 822F      		mov r24,r18
+ 1102 03be 2132      		cpi r18,lo8(33)
+ 1103 03c0 00F0      		brlo .L91
+ 1104 03c2 80E2      		ldi r24,lo8(32)
+ 1105               	.L91:
+ 545:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 					for (i = n; i; i--) {
+ 1107               	.LM174:
+ 1108 03c4 982F      		mov r25,r24
+ 1109               	.L92:
+ 1111               	.LM175:
+ 1112 03c6 9923      		tst r25
+ 1113 03c8 01F0      		breq .L113
+ 546:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 						UEDATX = 0;
+ 1115               	.LM176:
+ 1116 03ca 1092 F100 		sts 241,__zero_reg__
+ 545:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 					for (i = n; i; i--) {
+ 1118               	.LM177:
+ 1119 03ce 9150      		subi r25,lo8(-(-1))
+ 1120 03d0 00C0      		rjmp .L92
+ 1121               	.L113:
+ 547:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 					}
+ 548:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 					len -= n;
+ 1123               	.LM178:
+ 1124 03d2 281B      		sub r18,r24
+ 1125               	.LBB47:
+ 1126               	.LBB46:
+ 385:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	UEINTX = ~(1<<TXINI);
+ 1128               	.LM179:
+ 1129 03d4 3093 E800 		sts 232,r19
+ 1130               	.LBE46:
+ 1131               	.LBE47:
+ 549:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 					usb_send_in();
+ 550:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				} while (len || n == ENDPOINT0_SIZE);
+ 1133               	.LM180:
+ 1134 03d8 2111      		cpse r18,__zero_reg__
+ 1135 03da 00C0      		rjmp .L90
+ 1137               	.LM181:
+ 1138 03dc 8032      		cpi r24,lo8(32)
+ 1139 03de 01F0      		breq .L90
+ 1140 03e0 00C0      		rjmp .L57
+ 1141               	.L58:
+ 551:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 				return;
+ 552:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 			}
+ 553:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 		}
+ 554:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c ****         }
+ 555:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** 	UECONX = (1<<STALLRQ) | (1<<EPEN);	// stall
+ 1143               	.LM182:
+ 1144 03e2 81E2      		ldi r24,lo8(33)
+ 1145 03e4 8093 EB00 		sts 235,r24
+ 1146               	.L57:
+ 1147               	/* epilogue start */
+ 556:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/usb_debug_only.c **** }
+ 1149               	.LM183:
+ 1150 03e8 0F90      		pop __tmp_reg__
+ 1151 03ea DF91      		pop r29
+ 1152 03ec CF91      		pop r28
+ 1153 03ee FF91      		pop r31
+ 1154 03f0 EF91      		pop r30
+ 1155 03f2 BF91      		pop r27
+ 1156 03f4 AF91      		pop r26
+ 1157 03f6 9F91      		pop r25
+ 1158 03f8 8F91      		pop r24
+ 1159 03fa 7F91      		pop r23
+ 1160 03fc 6F91      		pop r22
+ 1161 03fe 5F91      		pop r21
+ 1162 0400 4F91      		pop r20
+ 1163 0402 3F91      		pop r19
+ 1164 0404 2F91      		pop r18
+ 1165 0406 1F91      		pop r17
+ 1166 0408 0F91      		pop r16
+ 1167 040a FF90      		pop r15
+ 1168 040c EF90      		pop r14
+ 1169 040e 0F90      		pop r0
+ 1170 0410 0BBE      		out __RAMPZ__,r0
+ 1171 0412 0F90      		pop r0
+ 1172 0414 0FBE      		out __SREG__,r0
+ 1173 0416 0F90      		pop r0
+ 1174 0418 1F90      		pop r1
+ 1175 041a 1895      		reti
+ 1189               	.Lscope8:
+ 1190               		.local	previous_timeout.1664
+ 1191               		.comm	previous_timeout.1664,1,1
+ 1192               		.local	debug_flush_timer
+ 1193               		.comm	debug_flush_timer,1,1
+ 1194               		.local	usb_configuration
+ 1195               		.comm	usb_configuration,1,1
+ 1196               		.section	.progmem.data,"a",@progbits
+ 1199               	descriptor_list:
+ 1200 0000 0001      		.word	256
+ 1201 0002 0000      		.word	0
+ 1202 0004 0000      		.word	device_descriptor
+ 1203 0006 12        		.byte	18
+ 1204 0007 0002      		.word	512
+ 1205 0009 0000      		.word	0
+ 1206 000b 0000      		.word	config1_descriptor
+ 1207 000d 22        		.byte	34
+ 1208 000e 0022      		.word	8704
+ 1209 0010 0000      		.word	0
+ 1210 0012 0000      		.word	hid_report_descriptor
+ 1211 0014 15        		.byte	21
+ 1212 0015 0021      		.word	8448
+ 1213 0017 0000      		.word	0
+ 1214 0019 0000      		.word	config1_descriptor+18
+ 1215 001b 09        		.byte	9
+ 1216 001c 0003      		.word	768
+ 1217 001e 0000      		.word	0
+ 1218 0020 0000      		.word	string0
+ 1219 0022 04        		.byte	4
+ 1220 0023 0103      		.word	769
+ 1221 0025 0904      		.word	1033
+ 1222 0027 0000      		.word	string1
+ 1223 0029 14        		.byte	20
+ 1224 002a 0203      		.word	770
+ 1225 002c 0904      		.word	1033
+ 1226 002e 0000      		.word	string2
+ 1227 0030 20        		.byte	32
+ 1230               	string2:
+ 1231 0031 20        		.byte	32
+ 1232 0032 03        		.byte	3
+ 1233 0033 5900      		.string	"Y"
+ 1234 0035 6F00      		.string	"o"
+ 1235 0037 7500      		.string	"u"
+ 1236 0039 7200      		.string	"r"
+ 1237 003b 2000      		.string	" "
+ 1238 003d 5500      		.string	"U"
+ 1239 003f 5300      		.string	"S"
+ 1240 0041 4200      		.string	"B"
+ 1241 0043 2000      		.string	" "
+ 1242 0045 4400      		.string	"D"
+ 1243 0047 6500      		.string	"e"
+ 1244 0049 7600      		.string	"v"
+ 1245 004b 6900      		.string	"i"
+ 1246 004d 6300      		.string	"c"
+ 1247 004f 6500      		.string	"e"
+ 1248 0051 00        		.string	""
+ 1249 0052 00        		.string	""
+ 1252               	string1:
+ 1253 0053 14        		.byte	20
+ 1254 0054 03        		.byte	3
+ 1255 0055 5900      		.string	"Y"
+ 1256 0057 6F00      		.string	"o"
+ 1257 0059 7500      		.string	"u"
+ 1258 005b 7200      		.string	"r"
+ 1259 005d 2000      		.string	" "
+ 1260 005f 4E00      		.string	"N"
+ 1261 0061 6100      		.string	"a"
+ 1262 0063 6D00      		.string	"m"
+ 1263 0065 6500      		.string	"e"
+ 1264 0067 00        		.string	""
+ 1265 0068 00        		.string	""
+ 1268               	string0:
+ 1269 0069 04        		.byte	4
+ 1270 006a 03        		.byte	3
+ 1271 006b 0904      		.word	1033
+ 1274               	config1_descriptor:
+ 1275 006d 09        		.byte	9
+ 1276 006e 02        		.byte	2
+ 1277 006f 22        		.byte	34
+ 1278 0070 00        		.byte	0
+ 1279 0071 01        		.byte	1
+ 1280 0072 01        		.byte	1
+ 1281 0073 00        		.byte	0
+ 1282 0074 C0        		.byte	-64
+ 1283 0075 32        		.byte	50
+ 1284 0076 09        		.byte	9
+ 1285 0077 04        		.byte	4
+ 1286 0078 00        		.byte	0
+ 1287 0079 00        		.byte	0
+ 1288 007a 01        		.byte	1
+ 1289 007b 03        		.byte	3
+ 1290 007c 00        		.byte	0
+ 1291 007d 00        		.byte	0
+ 1292 007e 00        		.byte	0
+ 1293 007f 09        		.byte	9
+ 1294 0080 21        		.byte	33
+ 1295 0081 11        		.byte	17
+ 1296 0082 01        		.byte	1
+ 1297 0083 00        		.byte	0
+ 1298 0084 01        		.byte	1
+ 1299 0085 22        		.byte	34
+ 1300 0086 15        		.byte	21
+ 1301 0087 00        		.byte	0
+ 1302 0088 07        		.byte	7
+ 1303 0089 05        		.byte	5
+ 1304 008a 83        		.byte	-125
+ 1305 008b 03        		.byte	3
+ 1306 008c 20        		.byte	32
+ 1307 008d 00        		.byte	0
+ 1308 008e 01        		.byte	1
+ 1311               	hid_report_descriptor:
+ 1312 008f 06        		.byte	6
+ 1313 0090 31        		.byte	49
+ 1314 0091 FF        		.byte	-1
+ 1315 0092 09        		.byte	9
+ 1316 0093 74        		.byte	116
+ 1317 0094 A1        		.byte	-95
+ 1318 0095 53        		.byte	83
+ 1319 0096 75        		.byte	117
+ 1320 0097 08        		.byte	8
+ 1321 0098 15        		.byte	21
+ 1322 0099 00        		.byte	0
+ 1323 009a 26        		.byte	38
+ 1324 009b FF        		.byte	-1
+ 1325 009c 00        		.byte	0
+ 1326 009d 95        		.byte	-107
+ 1327 009e 20        		.byte	32
+ 1328 009f 09        		.byte	9
+ 1329 00a0 75        		.byte	117
+ 1330 00a1 81        		.byte	-127
+ 1331 00a2 02        		.byte	2
+ 1332 00a3 C0        		.byte	-64
+ 1335               	device_descriptor:
+ 1336 00a4 12        		.byte	18
+ 1337 00a5 01        		.byte	1
+ 1338 00a6 00        		.byte	0
+ 1339 00a7 02        		.byte	2
+ 1340 00a8 00        		.byte	0
+ 1341 00a9 00        		.byte	0
+ 1342 00aa 00        		.byte	0
+ 1343 00ab 20        		.byte	32
+ 1344 00ac C0        		.byte	-64
+ 1345 00ad 16        		.byte	22
+ 1346 00ae 79        		.byte	121
+ 1347 00af 04        		.byte	4
+ 1348 00b0 00        		.byte	0
+ 1349 00b1 01        		.byte	1
+ 1350 00b2 01        		.byte	1
+ 1351 00b3 02        		.byte	2
+ 1352 00b4 00        		.byte	0
+ 1353 00b5 01        		.byte	1
+ 1356               	endpoint_config_table:
+ 1357 00b6 00        		.byte	0
+ 1358 00b7 00        		.byte	0
+ 1359 00b8 01        		.byte	1
+ 1360 00b9 C1        		.byte	-63
+ 1361 00ba 26        		.byte	38
+ 1362 00bb 00        		.byte	0
+ 1373               		.text
+ 1375               	.Letext0:
+ 1376               		.ident	"GCC: (GNU) 4.8.1"
+ 1377               	.global __do_clear_bss
+DEFINED SYMBOLS
+                            *ABS*:00000000 usb_debug_only.c
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccqRLUWk.s:2      *ABS*:0000003e __SP_H__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccqRLUWk.s:3      *ABS*:0000003d __SP_L__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccqRLUWk.s:4      *ABS*:0000003f __SREG__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccqRLUWk.s:5      *ABS*:0000003b __RAMPZ__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccqRLUWk.s:6      *ABS*:00000000 __tmp_reg__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccqRLUWk.s:7      *ABS*:00000001 __zero_reg__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccqRLUWk.s:113    .text:00000000 usb_wait_in_ready
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccqRLUWk.s:136    .text:0000000a usb_init
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccqRLUWk.s:1193   .bss:00000002 usb_configuration
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccqRLUWk.s:189    .text:00000038 usb_configured
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccqRLUWk.s:209    .text:0000003e usb_debug_putchar
+                             .bss:00000000 previous_timeout.1664
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccqRLUWk.s:1191   .bss:00000001 debug_flush_timer
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccqRLUWk.s:350    .text:000000c2 usb_debug_putstr
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccqRLUWk.s:405    .text:000000ee usb_debug_flush_output
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccqRLUWk.s:463    .text:0000011c __vector_10
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccqRLUWk.s:572    .text:0000019a __vector_11
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccqRLUWk.s:1199   .progmem.data:00000000 descriptor_list
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccqRLUWk.s:1356   .progmem.data:000000b6 endpoint_config_table
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccqRLUWk.s:1335   .progmem.data:000000a4 device_descriptor
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccqRLUWk.s:1274   .progmem.data:0000006d config1_descriptor
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccqRLUWk.s:1311   .progmem.data:0000008f hid_report_descriptor
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccqRLUWk.s:1268   .progmem.data:00000069 string0
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccqRLUWk.s:1252   .progmem.data:00000053 string1
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccqRLUWk.s:1230   .progmem.data:00000031 string2
+
+UNDEFINED SYMBOLS
+__do_clear_bss

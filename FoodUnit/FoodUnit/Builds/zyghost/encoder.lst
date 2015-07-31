@@ -1,0 +1,397 @@
+   1               		.file	"encoder.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__RAMPZ__ = 0x3b
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+   9               		.text
+  10               	.Ltext0:
+ 122               	.global	encoder_init
+ 124               	encoder_init:
+   1:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** //
+   2:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** //  encoder.c
+   3:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** //  lcd
+   4:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** //
+   5:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** //  Created by Schell Scivally on 2/6/15.
+   6:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** //  Copyright (c) 2015 zyghost. All rights reserved.
+   7:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** //
+   8:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** 
+   9:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** #include "encoder.h"
+  10:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** 
+  11:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** static const int8_t enc_states[] = {0,-1,1,0,1,0,0,-1,-1,0,0,1,0,1,-1,0};
+  12:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** static const uint8_t enc_edge_up = 0x01;
+  13:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** static const uint8_t enc_edge_down = 0xFE;
+  14:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** static const uint8_t enc_up = 0xFF;
+  15:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** 
+  16:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** void encoder_init(encoder* enc) {
+ 126               	.LM0:
+ 127               	.LFBB1:
+ 128 0000 CF93      		push r28
+ 129 0002 DF93      		push r29
+ 130               	/* prologue: function */
+ 131               	/* frame size = 0 */
+ 132               	/* stack size = 2 */
+ 133               	.L__stack_usage = 2
+ 134 0004 EC01      		movw r28,r24
+  17:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c ****     // Set btn to read a pushbutton
+  18:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c ****     input_pin(enc->btn);
+ 136               	.LM1:
+ 137 0006 2E85      		ldd r18,Y+14
+ 138 0008 3F85      		ldd r19,Y+15
+ 139 000a 4889      		ldd r20,Y+16
+ 140 000c 5989      		ldd r21,Y+17
+ 141 000e 6A89      		ldd r22,Y+18
+ 142 0010 7B89      		ldd r23,Y+19
+ 143 0012 8C89      		ldd r24,Y+20
+ 144 0014 0E94 0000 		call input_pin
+  19:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c ****     set_pin(enc->btn);
+ 146               	.LM2:
+ 147 0018 2E85      		ldd r18,Y+14
+ 148 001a 3F85      		ldd r19,Y+15
+ 149 001c 4889      		ldd r20,Y+16
+ 150 001e 5989      		ldd r21,Y+17
+ 151 0020 6A89      		ldd r22,Y+18
+ 152 0022 7B89      		ldd r23,Y+19
+ 153 0024 8C89      		ldd r24,Y+20
+ 154 0026 0E94 0000 		call set_pin
+  20:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c ****     
+  21:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c ****     // Set a and b to the rotary encoder gray code inputs
+  22:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c ****     // Use the tutorial to read gray code
+  23:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c ****     // @see http://www.circuitsathome.com/mcu/programming/reading-rotary-encoder-on-arduino
+  24:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c ****     input_pin(enc->a);
+ 156               	.LM3:
+ 157 002a 2881      		ld r18,Y
+ 158 002c 3981      		ldd r19,Y+1
+ 159 002e 4A81      		ldd r20,Y+2
+ 160 0030 5B81      		ldd r21,Y+3
+ 161 0032 6C81      		ldd r22,Y+4
+ 162 0034 7D81      		ldd r23,Y+5
+ 163 0036 8E81      		ldd r24,Y+6
+ 164 0038 0E94 0000 		call input_pin
+  25:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c ****     set_pin(enc->a);
+ 166               	.LM4:
+ 167 003c 2881      		ld r18,Y
+ 168 003e 3981      		ldd r19,Y+1
+ 169 0040 4A81      		ldd r20,Y+2
+ 170 0042 5B81      		ldd r21,Y+3
+ 171 0044 6C81      		ldd r22,Y+4
+ 172 0046 7D81      		ldd r23,Y+5
+ 173 0048 8E81      		ldd r24,Y+6
+ 174 004a 0E94 0000 		call set_pin
+  26:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c ****     input_pin(enc->b);
+ 176               	.LM5:
+ 177 004e 2F81      		ldd r18,Y+7
+ 178 0050 3885      		ldd r19,Y+8
+ 179 0052 4985      		ldd r20,Y+9
+ 180 0054 5A85      		ldd r21,Y+10
+ 181 0056 6B85      		ldd r22,Y+11
+ 182 0058 7C85      		ldd r23,Y+12
+ 183 005a 8D85      		ldd r24,Y+13
+ 184 005c 0E94 0000 		call input_pin
+  27:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c ****     set_pin(enc->b);
+ 186               	.LM6:
+ 187 0060 2F81      		ldd r18,Y+7
+ 188 0062 3885      		ldd r19,Y+8
+ 189 0064 4985      		ldd r20,Y+9
+ 190 0066 5A85      		ldd r21,Y+10
+ 191 0068 6B85      		ldd r22,Y+11
+ 192 006a 7C85      		ldd r23,Y+12
+ 193 006c 8D85      		ldd r24,Y+13
+ 194 006e 0E94 0000 		call set_pin
+ 195               	.LBB6:
+ 196               	.LBB7:
+  28:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c ****     
+  29:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c ****     encoder_clear(enc);
+  30:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c ****     
+  31:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** }
+  32:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** 
+  33:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** void encoder_clear(encoder* enc) {
+  34:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c ****     enc->val = 0;
+ 198               	.LM7:
+ 199 0072 1D8A      		std Y+21,__zero_reg__
+  35:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c ****     enc->steps = 0;
+ 201               	.LM8:
+ 202 0074 1F8A      		std Y+23,__zero_reg__
+  36:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c ****     enc->btn_val = enc_up;
+ 204               	.LM9:
+ 205 0076 8FEF      		ldi r24,lo8(-1)
+ 206 0078 8E8B      		std Y+22,r24
+ 207               	/* epilogue start */
+ 208               	.LBE7:
+ 209               	.LBE6:
+  31:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** }
+ 211               	.LM10:
+ 212 007a DF91      		pop r29
+ 213 007c CF91      		pop r28
+ 214 007e 0895      		ret
+ 216               	.Lscope1:
+ 219               	.global	encoder_clear
+ 221               	encoder_clear:
+  33:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** void encoder_clear(encoder* enc) {
+ 223               	.LM11:
+ 224               	.LFBB2:
+ 225               	/* prologue: function */
+ 226               	/* frame size = 0 */
+ 227               	/* stack size = 0 */
+ 228               	.L__stack_usage = 0
+ 229 0080 FC01      		movw r30,r24
+  34:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c ****     enc->val = 0;
+ 231               	.LM12:
+ 232 0082 158A      		std Z+21,__zero_reg__
+  35:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c ****     enc->steps = 0;
+ 234               	.LM13:
+ 235 0084 178A      		std Z+23,__zero_reg__
+ 237               	.LM14:
+ 238 0086 8FEF      		ldi r24,lo8(-1)
+ 239 0088 868B      		std Z+22,r24
+ 240 008a 0895      		ret
+ 242               	.Lscope2:
+ 245               	.global	encoder_get_step
+ 247               	encoder_get_step:
+  37:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** }
+  38:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** 
+  39:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** int8_t encoder_get_step(encoder* enc) {
+ 249               	.LM15:
+ 250               	.LFBB3:
+ 251 008c 1F93      		push r17
+ 252 008e CF93      		push r28
+ 253 0090 DF93      		push r29
+ 254               	/* prologue: function */
+ 255               	/* frame size = 0 */
+ 256               	/* stack size = 3 */
+ 257               	.L__stack_usage = 3
+ 258 0092 EC01      		movw r28,r24
+  40:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c ****     // Handle the rotary gray code.
+  41:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c ****     uint8_t a = read_pin(enc->a);
+ 260               	.LM16:
+ 261 0094 2881      		ld r18,Y
+ 262 0096 3981      		ldd r19,Y+1
+ 263 0098 4A81      		ldd r20,Y+2
+ 264 009a 5B81      		ldd r21,Y+3
+ 265 009c 6C81      		ldd r22,Y+4
+ 266 009e 7D81      		ldd r23,Y+5
+ 267 00a0 8E81      		ldd r24,Y+6
+ 268 00a2 0E94 0000 		call read_pin
+ 269 00a6 182F      		mov r17,r24
+  42:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c ****     uint8_t b = read_pin(enc->b);
+ 271               	.LM17:
+ 272 00a8 2F81      		ldd r18,Y+7
+ 273 00aa 3885      		ldd r19,Y+8
+ 274 00ac 4985      		ldd r20,Y+9
+ 275 00ae 5A85      		ldd r21,Y+10
+ 276 00b0 6B85      		ldd r22,Y+11
+ 277 00b2 7C85      		ldd r23,Y+12
+ 278 00b4 8D85      		ldd r24,Y+13
+ 279 00b6 0E94 0000 		call read_pin
+  43:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c ****     
+  44:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c ****     enc->val <<= 2;
+ 281               	.LM18:
+ 282 00ba 9D89      		ldd r25,Y+21
+ 283 00bc 990F      		lsl r25
+ 284 00be 990F      		lsl r25
+  45:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c ****     enc->val |= (a << 1) | b;
+ 286               	.LM19:
+ 287 00c0 982B      		or r25,r24
+ 288 00c2 E12F      		mov r30,r17
+ 289 00c4 EE0F      		lsl r30
+ 290 00c6 E92B      		or r30,r25
+ 291 00c8 ED8B      		std Y+21,r30
+  46:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c ****     
+  47:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c ****     return enc_states[enc->val & 0x0f];
+ 293               	.LM20:
+ 294 00ca EF70      		andi r30,lo8(15)
+ 295 00cc F0E0      		ldi r31,0
+ 296 00ce E050      		subi r30,lo8(-(enc_states))
+ 297 00d0 F040      		sbci r31,hi8(-(enc_states))
+  48:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** }
+ 299               	.LM21:
+ 300 00d2 8081      		ld r24,Z
+ 301               	/* epilogue start */
+ 302 00d4 DF91      		pop r29
+ 303 00d6 CF91      		pop r28
+ 304 00d8 1F91      		pop r17
+ 305 00da 0895      		ret
+ 310               	.Lscope3:
+ 313               	.global	encoder_update
+ 315               	encoder_update:
+  49:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** 
+  50:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** void encoder_update(encoder* e) {
+ 317               	.LM22:
+ 318               	.LFBB4:
+ 319 00dc 1F93      		push r17
+ 320 00de CF93      		push r28
+ 321 00e0 DF93      		push r29
+ 322               	/* prologue: function */
+ 323               	/* frame size = 0 */
+ 324               	/* stack size = 3 */
+ 325               	.L__stack_usage = 3
+ 326 00e2 EC01      		movw r28,r24
+  51:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c ****     e->steps += encoder_get_step(e);
+ 328               	.LM23:
+ 329 00e4 1F89      		ldd r17,Y+23
+ 330 00e6 0E94 0000 		call encoder_get_step
+ 331 00ea 810F      		add r24,r17
+ 332 00ec 8F8B      		std Y+23,r24
+  52:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c ****     e->btn_val <<= 1;
+ 334               	.LM24:
+ 335 00ee 1E89      		ldd r17,Y+22
+ 336 00f0 110F      		lsl r17
+ 337 00f2 1E8B      		std Y+22,r17
+  53:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c ****     e->btn_val |= read_pin(e->btn);
+ 339               	.LM25:
+ 340 00f4 2E85      		ldd r18,Y+14
+ 341 00f6 3F85      		ldd r19,Y+15
+ 342 00f8 4889      		ldd r20,Y+16
+ 343 00fa 5989      		ldd r21,Y+17
+ 344 00fc 6A89      		ldd r22,Y+18
+ 345 00fe 7B89      		ldd r23,Y+19
+ 346 0100 8C89      		ldd r24,Y+20
+ 347 0102 0E94 0000 		call read_pin
+ 348 0106 812B      		or r24,r17
+ 349 0108 8E8B      		std Y+22,r24
+ 350               	/* epilogue start */
+  54:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** }
+ 352               	.LM26:
+ 353 010a DF91      		pop r29
+ 354 010c CF91      		pop r28
+ 355 010e 1F91      		pop r17
+ 356 0110 0895      		ret
+ 358               	.Lscope4:
+ 361               	.global	encoder_btn_down
+ 363               	encoder_btn_down:
+  55:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** 
+  56:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** bool encoder_btn_down(encoder* e) {
+ 365               	.LM27:
+ 366               	.LFBB5:
+ 367               	/* prologue: function */
+ 368               	/* frame size = 0 */
+ 369               	/* stack size = 0 */
+ 370               	.L__stack_usage = 0
+  57:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c ****     return e->btn_val & 0x01;
+ 372               	.LM28:
+ 373 0112 FC01      		movw r30,r24
+ 374 0114 8689      		ldd r24,Z+22
+  58:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** }
+ 376               	.LM29:
+ 377 0116 8170      		andi r24,lo8(1)
+ 378 0118 0895      		ret
+ 380               	.Lscope5:
+ 383               	.global	encoder_btn_up
+ 385               	encoder_btn_up:
+  59:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** 
+  60:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** bool encoder_btn_up(encoder* e) {
+ 387               	.LM30:
+ 388               	.LFBB6:
+ 389               	/* prologue: function */
+ 390               	/* frame size = 0 */
+ 391               	/* stack size = 0 */
+ 392               	.L__stack_usage = 0
+ 393               	.LBB8:
+ 394               	.LBB9:
+  57:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c ****     return e->btn_val & 0x01;
+ 396               	.LM31:
+ 397 011a FC01      		movw r30,r24
+ 398 011c 8689      		ldd r24,Z+22
+ 399 011e 8095      		com r24
+ 400               	.LBE9:
+ 401               	.LBE8:
+  61:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c ****     return !encoder_btn_down(e);
+  62:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** }
+ 403               	.LM32:
+ 404 0120 8170      		andi r24,lo8(1)
+ 405 0122 0895      		ret
+ 407               	.Lscope6:
+ 410               	.global	encoder_btn_down_edge
+ 412               	encoder_btn_down_edge:
+  63:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** 
+  64:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** bool encoder_btn_down_edge(encoder* e) {
+ 414               	.LM33:
+ 415               	.LFBB7:
+ 416               	/* prologue: function */
+ 417               	/* frame size = 0 */
+ 418               	/* stack size = 0 */
+ 419               	.L__stack_usage = 0
+  65:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c ****     return (e->btn_val == enc_edge_down);
+ 421               	.LM34:
+ 422 0124 21E0      		ldi r18,lo8(1)
+ 423 0126 FC01      		movw r30,r24
+ 424 0128 8689      		ldd r24,Z+22
+ 425 012a 8E3F      		cpi r24,lo8(-2)
+ 426 012c 01F0      		breq .L8
+ 427 012e 20E0      		ldi r18,0
+ 428               	.L8:
+  66:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** }
+ 430               	.LM35:
+ 431 0130 822F      		mov r24,r18
+ 432 0132 0895      		ret
+ 434               	.Lscope7:
+ 437               	.global	encoder_btn_up_edge
+ 439               	encoder_btn_up_edge:
+  67:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** 
+  68:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** bool encoder_btn_up_edge(encoder* e) {
+ 441               	.LM36:
+ 442               	.LFBB8:
+ 443               	/* prologue: function */
+ 444               	/* frame size = 0 */
+ 445               	/* stack size = 0 */
+ 446               	.L__stack_usage = 0
+  69:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c ****     return (e->btn_val == enc_edge_up);
+ 448               	.LM37:
+ 449 0134 21E0      		ldi r18,lo8(1)
+ 450 0136 FC01      		movw r30,r24
+ 451 0138 8689      		ldd r24,Z+22
+ 452 013a 8130      		cpi r24,lo8(1)
+ 453 013c 01F0      		breq .L14
+ 454 013e 20E0      		ldi r18,0
+ 455               	.L14:
+  70:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/encoder.c **** }...
+ 457               	.LM38:
+ 458 0140 822F      		mov r24,r18
+ 459 0142 0895      		ret
+ 461               	.Lscope8:
+ 462               		.section	.rodata
+ 465               	enc_states:
+ 466 0000 00        		.byte	0
+ 467 0001 FF        		.byte	-1
+ 468 0002 01        		.byte	1
+ 469 0003 00        		.byte	0
+ 470 0004 01        		.byte	1
+ 471 0005 00        		.byte	0
+ 472 0006 00        		.byte	0
+ 473 0007 FF        		.byte	-1
+ 474 0008 FF        		.byte	-1
+ 475 0009 00        		.byte	0
+ 476 000a 00        		.byte	0
+ 477 000b 01        		.byte	1
+ 478 000c 00        		.byte	0
+ 479 000d 01        		.byte	1
+ 480 000e FF        		.byte	-1
+ 481 000f 00        		.byte	0
+ 486               		.text
+ 488               	.Letext0:
+ 489               		.ident	"GCC: (GNU) 4.8.1"
+ 490               	.global __do_copy_data
+DEFINED SYMBOLS
+                            *ABS*:00000000 encoder.c
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccTMTcn1.s:2      *ABS*:0000003e __SP_H__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccTMTcn1.s:3      *ABS*:0000003d __SP_L__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccTMTcn1.s:4      *ABS*:0000003f __SREG__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccTMTcn1.s:5      *ABS*:0000003b __RAMPZ__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccTMTcn1.s:6      *ABS*:00000000 __tmp_reg__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccTMTcn1.s:7      *ABS*:00000001 __zero_reg__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccTMTcn1.s:124    .text:00000000 encoder_init
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccTMTcn1.s:221    .text:00000080 encoder_clear
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccTMTcn1.s:247    .text:0000008c encoder_get_step
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccTMTcn1.s:465    .rodata:00000000 enc_states
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccTMTcn1.s:315    .text:000000dc encoder_update
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccTMTcn1.s:363    .text:00000112 encoder_btn_down
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccTMTcn1.s:385    .text:0000011a encoder_btn_up
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccTMTcn1.s:412    .text:00000124 encoder_btn_down_edge
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccTMTcn1.s:439    .text:00000134 encoder_btn_up_edge
+
+UNDEFINED SYMBOLS
+input_pin
+set_pin
+read_pin
+__do_copy_data

@@ -1,0 +1,829 @@
+Archive member included because of file (symbol)
+
+/usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_divmodhi4.o)
+                              Builds/main.o (__divmodhi4)
+/usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
+                              /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o (exit)
+/usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
+                              Builds/main.o (__do_copy_data)
+/usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
+                              Builds/main.o (__do_clear_bss)
+/usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_udivmodhi4.o)
+                              /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_divmodhi4.o) (__udivmodhi4)
+/usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(sprintf.o)
+                              Builds/main.o (sprintf)
+/usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(vfprintf_std.o)
+                              /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(sprintf.o) (vfprintf)
+/usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strnlen_P.o)
+                              /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(vfprintf_std.o) (strnlen_P)
+/usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strnlen.o)
+                              /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(vfprintf_std.o) (strnlen)
+/usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(fputc.o)
+                              /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(vfprintf_std.o) (fputc)
+/usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(ultoa_invert.o)
+                              /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(vfprintf_std.o) (__ultoa_invert)
+
+Allocating common symbols
+Common symbol       size              file
+
+timer               0x8               Builds/main.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+text             0x00000000         0x00020000         xr
+data             0x00800100         0x0000ff00         rw !x
+eeprom           0x00810000         0x00010000         rw !x
+fuse             0x00820000         0x00000400         rw !x
+lock             0x00830000         0x00000400         rw !x
+signature        0x00840000         0x00000400         rw !x
+user_signatures  0x00850000         0x00000400         rw !x
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+Address of section .data set to 0x800100
+LOAD /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+LOAD Builds/main.o
+LOAD Builds/zyghost/analog.o
+LOAD Builds/zyghost/encoder.o
+LOAD Builds/zyghost/lcd.o
+LOAD Builds/zyghost/pin.o
+LOAD Builds/zyghost/usb_debug_only.o
+LOAD Builds/zyghost/zyghost.o
+LOAD /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libm.a
+START GROUP
+LOAD /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a
+LOAD /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libm.a
+LOAD /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a
+END GROUP
+
+.hash
+ *(.hash)
+
+.dynsym
+ *(.dynsym)
+
+.dynstr
+ *(.dynstr)
+
+.gnu.version
+ *(.gnu.version)
+
+.gnu.version_d
+ *(.gnu.version_d)
+
+.gnu.version_r
+ *(.gnu.version_r)
+
+.rel.init
+ *(.rel.init)
+
+.rela.init
+ *(.rela.init)
+
+.rel.text
+ *(.rel.text)
+ *(.rel.text.*)
+ *(.rel.gnu.linkonce.t*)
+
+.rela.text
+ *(.rela.text)
+ *(.rela.text.*)
+ *(.rela.gnu.linkonce.t*)
+
+.rel.fini
+ *(.rel.fini)
+
+.rela.fini
+ *(.rela.fini)
+
+.rel.rodata
+ *(.rel.rodata)
+ *(.rel.rodata.*)
+ *(.rel.gnu.linkonce.r*)
+
+.rela.rodata
+ *(.rela.rodata)
+ *(.rela.rodata.*)
+ *(.rela.gnu.linkonce.r*)
+
+.rel.data
+ *(.rel.data)
+ *(.rel.data.*)
+ *(.rel.gnu.linkonce.d*)
+
+.rela.data
+ *(.rela.data)
+ *(.rela.data.*)
+ *(.rela.gnu.linkonce.d*)
+
+.rel.ctors
+ *(.rel.ctors)
+
+.rela.ctors
+ *(.rela.ctors)
+
+.rel.dtors
+ *(.rel.dtors)
+
+.rela.dtors
+ *(.rela.dtors)
+
+.rel.got
+ *(.rel.got)
+
+.rela.got
+ *(.rela.got)
+
+.rel.bss
+ *(.rel.bss)
+
+.rela.bss
+ *(.rela.bss)
+
+.rel.plt
+ *(.rel.plt)
+
+.rela.plt
+ *(.rela.plt)
+
+.text           0x00000000     0x2306
+ *(.vectors)
+ .vectors       0x00000000       0x98 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+                0x00000000                __vectors
+                0x00000000                __vector_default
+ *(.vectors)
+ *(.progmem.gcc*)
+                0x00000098                . = ALIGN (0x2)
+                0x00000098                __trampolines_start = .
+ *(.trampolines)
+ .trampolines   0x00000098        0x0 linker stubs
+ *(.trampolines*)
+                0x00000098                __trampolines_end = .
+ *(.progmem*)
+ .progmem.data  0x00000098       0xbc Builds/zyghost/usb_debug_only.o
+                0x00000154                . = ALIGN (0x2)
+ *(.jumptables)
+ *(.jumptables*)
+ *(.lowtext)
+ *(.lowtext*)
+                0x00000154                __ctors_start = .
+ *(.ctors)
+                0x00000154                __ctors_end = .
+                0x00000154                __dtors_start = .
+ *(.dtors)
+                0x00000154                __dtors_end = .
+ SORT(*)(.ctors)
+ SORT(*)(.dtors)
+ *(.init0)
+ .init0         0x00000154        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+                0x00000154                __init
+ *(.init0)
+ *(.init1)
+ *(.init1)
+ *(.init2)
+ .init2         0x00000154        0xc /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+ *(.init2)
+ *(.init3)
+ *(.init3)
+ *(.init4)
+ .init4         0x00000160       0x1a /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
+                0x00000160                __do_copy_data
+ .init4         0x0000017a       0x10 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
+                0x0000017a                __do_clear_bss
+ *(.init4)
+ *(.init5)
+ *(.init5)
+ *(.init6)
+ *(.init6)
+ *(.init7)
+ *(.init7)
+ *(.init8)
+ *(.init8)
+ *(.init9)
+ .init9         0x0000018a        0x8 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+ *(.init9)
+ *(.text)
+ .text          0x00000192        0x4 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+                0x00000192                __vector_20
+                0x00000192                __vector_28
+                0x00000192                __vector_1
+                0x00000192                __vector_32
+                0x00000192                __vector_34
+                0x00000192                __vector_24
+                0x00000192                __vector_12
+                0x00000192                __bad_interrupt
+                0x00000192                __vector_6
+                0x00000192                __vector_31
+                0x00000192                __vector_35
+                0x00000192                __vector_3
+                0x00000192                __vector_30
+                0x00000192                __vector_25
+                0x00000192                __vector_13
+                0x00000192                __vector_17
+                0x00000192                __vector_19
+                0x00000192                __vector_7
+                0x00000192                __vector_27
+                0x00000192                __vector_5
+                0x00000192                __vector_33
+                0x00000192                __vector_37
+                0x00000192                __vector_4
+                0x00000192                __vector_9
+                0x00000192                __vector_2
+                0x00000192                __vector_21
+                0x00000192                __vector_15
+                0x00000192                __vector_36
+                0x00000192                __vector_29
+                0x00000192                __vector_8
+                0x00000192                __vector_26
+                0x00000192                __vector_14
+                0x00000192                __vector_16
+                0x00000192                __vector_18
+                0x00000192                __vector_22
+ .text          0x00000196      0xe6e Builds/main.o
+                0x00000196                time_is_greater
+                0x00000250                time_update
+                0x000002f6                time_make
+                0x00000350                time_add
+                0x00000416                time_diff_internal
+                0x000005bc                time_diff
+                0x000006bc                time_str
+                0x00000724                __vector_23
+                0x000007b4                timer_start
+                0x000007e4                timer_stop
+                0x00000812                time_set_global
+                0x00000846                lcd_clear
+                0x0000088c                foodunit_update_current_screen
+                0x0000088e                foodunit_read_user
+                0x00000970                foodunit_display
+                0x00000a1a                foodunit_init
+                0x00000c76                water_level
+                0x00000cbc                foodunit_drain
+                0x00000d98                foodunit_update_h2o_check
+                0x00000e50                foodunit_fill
+                0x00000e7a                foodunit_update
+ .text          0x00001004       0x4e Builds/zyghost/analog.o
+                0x00001004                analogReference
+                0x0000100c                adc_read
+                0x00001044                analogRead
+ .text          0x00001052      0x144 Builds/zyghost/encoder.o
+                0x00001052                encoder_init
+                0x000010d2                encoder_clear
+                0x000010de                encoder_get_step
+                0x0000112e                encoder_update
+                0x00001164                encoder_btn_down
+                0x0000116c                encoder_btn_up
+                0x00001176                encoder_btn_down_edge
+                0x00001186                encoder_btn_up_edge
+ .text          0x00001196      0x4dc Builds/zyghost/lcd.o
+                0x00001196                flip_bit
+                0x000011b8                lcd_function_set_flags
+                0x00001200                lcd_display_toggle_flags
+                0x00001248                lcd_display_clear_flags
+                0x0000124c                lcd_entry_mode_set_flags
+                0x00001282                lcd_return_home_flags
+                0x00001286                lcd_set_ddram_addr
+                0x0000128a                lcd_select_register
+                0x000012ac                lcd_toggle_send_register
+                0x00001308                pin_set_bit
+                0x0000136a                lcd_send_nibble8
+                0x000013ea                lcd_send_nibble4
+                0x0000146e                lcd_send_byte
+                0x000014b2                lcd_send_data
+                0x000014b8                lcd_send_command
+                0x000014be                lcd_init
+                0x00001614                lcd_write
+                0x0000165e                lcd_xy
+ .text          0x00001672      0x1ca Builds/zyghost/pin.o
+                0x00001672                pin_make
+                0x000016b6                set_pin
+                0x00001704                clear_pin
+                0x00001754                read_pin
+                0x0000179e                output_pin
+                0x000017ec                input_pin
+ .text          0x0000183c      0x41c Builds/zyghost/usb_debug_only.o
+                0x00001846                usb_init
+                0x00001874                usb_configured
+                0x0000187a                usb_debug_putchar
+                0x000018fe                usb_debug_putstr
+                0x0000192a                usb_debug_flush_output
+                0x00001958                __vector_10
+                0x000019d6                __vector_11
+ .text          0x00001c58       0x44 Builds/zyghost/zyghost.o
+                0x00001c58                byte_to_binary
+                0x00001c8a                zstrlen
+ .text          0x00001c9c        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_divmodhi4.o)
+ .text          0x00001c9c        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
+ .text          0x00001c9c        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
+ .text          0x00001c9c        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
+ .text          0x00001c9c        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_udivmodhi4.o)
+ .text          0x00001c9c        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(sprintf.o)
+ .text          0x00001c9c        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(vfprintf_std.o)
+ .text          0x00001c9c        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strnlen_P.o)
+ .text          0x00001c9c        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strnlen.o)
+ .text          0x00001c9c        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(fputc.o)
+ .text          0x00001c9c        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(ultoa_invert.o)
+                0x00001c9c                . = ALIGN (0x2)
+ *(.text.*)
+ .text.startup  0x00001c9c       0x76 Builds/main.o
+                0x00001c9c                main
+ .text.libgcc.mul
+                0x00001d12        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_divmodhi4.o)
+ .text.libgcc.div
+                0x00001d12       0x28 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_divmodhi4.o)
+                0x00001d12                __divmodhi4
+                0x00001d12                _div
+ .text.libgcc   0x00001d3a        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_divmodhi4.o)
+ .text.libgcc.prologue
+                0x00001d3a        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_divmodhi4.o)
+ .text.libgcc.builtins
+                0x00001d3a        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_divmodhi4.o)
+ .text.libgcc.fmul
+                0x00001d3a        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_divmodhi4.o)
+ .text.libgcc.fixed
+                0x00001d3a        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_divmodhi4.o)
+ .text.libgcc.mul
+                0x00001d3a        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
+ .text.libgcc.div
+                0x00001d3a        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
+ .text.libgcc   0x00001d3a        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
+ .text.libgcc.prologue
+                0x00001d3a        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
+ .text.libgcc.builtins
+                0x00001d3a        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
+ .text.libgcc.fmul
+                0x00001d3a        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
+ .text.libgcc.fixed
+                0x00001d3a        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
+ .text.libgcc.mul
+                0x00001d3a        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
+ .text.libgcc.div
+                0x00001d3a        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
+ .text.libgcc   0x00001d3a        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
+ .text.libgcc.prologue
+                0x00001d3a        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
+ .text.libgcc.builtins
+                0x00001d3a        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
+ .text.libgcc.fmul
+                0x00001d3a        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
+ .text.libgcc.fixed
+                0x00001d3a        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
+ .text.libgcc.mul
+                0x00001d3a        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
+ .text.libgcc.div
+                0x00001d3a        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
+ .text.libgcc   0x00001d3a        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
+ .text.libgcc.prologue
+                0x00001d3a        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
+ .text.libgcc.builtins
+                0x00001d3a        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
+ .text.libgcc.fmul
+                0x00001d3a        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
+ .text.libgcc.fixed
+                0x00001d3a        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
+ .text.libgcc.mul
+                0x00001d3a        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_udivmodhi4.o)
+ .text.libgcc.div
+                0x00001d3a       0x28 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_udivmodhi4.o)
+                0x00001d3a                __udivmodhi4
+ .text.libgcc   0x00001d62        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_udivmodhi4.o)
+ .text.libgcc.prologue
+                0x00001d62        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_udivmodhi4.o)
+ .text.libgcc.builtins
+                0x00001d62        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_udivmodhi4.o)
+ .text.libgcc.fmul
+                0x00001d62        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_udivmodhi4.o)
+ .text.libgcc.fixed
+                0x00001d62        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_udivmodhi4.o)
+ .text.avr-libc
+                0x00001d62       0x5e /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(sprintf.o)
+                0x00001d62                sprintf
+ .text.avr-libc
+                0x00001dc0      0x3f6 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(vfprintf_std.o)
+                0x00001dc0                vfprintf
+ .text.avr-libc
+                0x000021b6       0x16 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strnlen_P.o)
+                0x000021b6                strnlen_P
+ .text.avr-libc
+                0x000021cc       0x16 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strnlen.o)
+                0x000021cc                strnlen
+ .text.avr-libc
+                0x000021e2       0x64 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(fputc.o)
+                0x000021e2                fputc
+ .text.avr-libc
+                0x00002246       0xbc /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(ultoa_invert.o)
+                0x00002246                __ultoa_invert
+                0x00002302                . = ALIGN (0x2)
+ *(.fini9)
+ .fini9         0x00002302        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
+                0x00002302                exit
+                0x00002302                _exit
+ *(.fini9)
+ *(.fini8)
+ *(.fini8)
+ *(.fini7)
+ *(.fini7)
+ *(.fini6)
+ *(.fini6)
+ *(.fini5)
+ *(.fini5)
+ *(.fini4)
+ *(.fini4)
+ *(.fini3)
+ *(.fini3)
+ *(.fini2)
+ *(.fini2)
+ *(.fini1)
+ *(.fini1)
+ *(.fini0)
+ .fini0         0x00002302        0x4 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
+ *(.fini0)
+                0x00002306                _etext = .
+
+.data           0x00800100       0x86 load address 0x00002306
+                0x00800100                PROVIDE (__data_start, .)
+ *(.data)
+ .data          0x00800100        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+ .data          0x00800100        0x0 Builds/main.o
+ .data          0x00800100        0x1 Builds/zyghost/analog.o
+ .data          0x00800101        0x0 Builds/zyghost/encoder.o
+ .data          0x00800101        0x0 Builds/zyghost/lcd.o
+ .data          0x00800101        0x0 Builds/zyghost/pin.o
+ .data          0x00800101        0x0 Builds/zyghost/usb_debug_only.o
+ .data          0x00800101        0x0 Builds/zyghost/zyghost.o
+ .data          0x00800101        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_divmodhi4.o)
+ .data          0x00800101        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
+ .data          0x00800101        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
+ .data          0x00800101        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
+ .data          0x00800101        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_udivmodhi4.o)
+ .data          0x00800101        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(sprintf.o)
+ .data          0x00800101        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(vfprintf_std.o)
+ .data          0x00800101        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strnlen_P.o)
+ .data          0x00800101        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strnlen.o)
+ .data          0x00800101        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(fputc.o)
+ .data          0x00800101        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(ultoa_invert.o)
+ *(.data*)
+ *(.rodata)
+ .rodata        0x00800101       0x10 Builds/zyghost/encoder.o
+ .rodata        0x00800111        0x4 Builds/zyghost/lcd.o
+ *(.rodata*)
+ .rodata.str1.1
+                0x00800115       0x70 Builds/main.o
+ *(.gnu.linkonce.d*)
+                0x00800186                . = ALIGN (0x2)
+ *fill*         0x00800185        0x1 
+                0x00800186                _edata = .
+                0x00800186                PROVIDE (__data_end, .)
+
+.bss            0x00800186        0xb
+                0x00800186                PROVIDE (__bss_start, .)
+ *(.bss)
+ .bss           0x00800186        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+ .bss           0x00800186        0x0 Builds/main.o
+ .bss           0x00800186        0x0 Builds/zyghost/analog.o
+ .bss           0x00800186        0x0 Builds/zyghost/encoder.o
+ .bss           0x00800186        0x0 Builds/zyghost/lcd.o
+ .bss           0x00800186        0x0 Builds/zyghost/pin.o
+ .bss           0x00800186        0x3 Builds/zyghost/usb_debug_only.o
+ .bss           0x00800189        0x0 Builds/zyghost/zyghost.o
+ .bss           0x00800189        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_divmodhi4.o)
+ .bss           0x00800189        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
+ .bss           0x00800189        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
+ .bss           0x00800189        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
+ .bss           0x00800189        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_udivmodhi4.o)
+ .bss           0x00800189        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(sprintf.o)
+ .bss           0x00800189        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(vfprintf_std.o)
+ .bss           0x00800189        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strnlen_P.o)
+ .bss           0x00800189        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strnlen.o)
+ .bss           0x00800189        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(fputc.o)
+ .bss           0x00800189        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(ultoa_invert.o)
+ *(.bss*)
+ *(COMMON)
+ COMMON         0x00800189        0x8 Builds/main.o
+                0x00800189                timer
+                0x00800191                PROVIDE (__bss_end, .)
+                0x00002306                __data_load_start = LOADADDR (.data)
+                0x0000238c                __data_load_end = (__data_load_start + SIZEOF (.data))
+
+.noinit         0x00800191        0x0
+                0x00800191                PROVIDE (__noinit_start, .)
+ *(.noinit*)
+                0x00800191                PROVIDE (__noinit_end, .)
+                0x00800191                _end = .
+                0x00800191                PROVIDE (__heap_start, .)
+
+.eeprom         0x00810000        0x0
+ *(.eeprom*)
+                0x00810000                __eeprom_end = .
+
+.fuse
+ *(.fuse)
+ *(.lfuse)
+ *(.hfuse)
+ *(.efuse)
+
+.lock
+ *(.lock*)
+
+.signature
+ *(.signature*)
+
+.user_signatures
+ *(.user_signatures*)
+
+.stab           0x00000000     0x40d4
+ *(.stab)
+ .stab          0x00000000     0x1470 Builds/main.o
+ .stab          0x00001470      0x3fc Builds/zyghost/analog.o
+                                0x5d0 (size before relaxing)
+ .stab          0x0000186c      0x5c4 Builds/zyghost/encoder.o
+                                0x828 (size before relaxing)
+ .stab          0x00001e30      0xd14 Builds/zyghost/lcd.o
+                                0xf3c (size before relaxing)
+ .stab          0x00002b44      0x42c Builds/zyghost/pin.o
+                                0x648 (size before relaxing)
+ .stab          0x00002f70      0xdb0 Builds/zyghost/usb_debug_only.o
+                                0xf9c (size before relaxing)
+ .stab          0x00003d20      0x3b4 Builds/zyghost/zyghost.o
+                                0x5a0 (size before relaxing)
+
+.stabstr        0x00000000     0x212e
+ *(.stabstr)
+ .stabstr       0x00000000     0x212e Builds/main.o
+
+.stab.excl
+ *(.stab.excl)
+
+.stab.exclstr
+ *(.stab.exclstr)
+
+.stab.index
+ *(.stab.index)
+
+.stab.indexstr
+ *(.stab.indexstr)
+
+.comment        0x00000000       0x11
+ *(.comment)
+ .comment       0x00000000       0x11 Builds/main.o
+                                 0x12 (size before relaxing)
+ .comment       0x00000000       0x12 Builds/zyghost/analog.o
+ .comment       0x00000000       0x12 Builds/zyghost/encoder.o
+ .comment       0x00000000       0x12 Builds/zyghost/lcd.o
+ .comment       0x00000000       0x12 Builds/zyghost/pin.o
+ .comment       0x00000000       0x12 Builds/zyghost/usb_debug_only.o
+ .comment       0x00000000       0x12 Builds/zyghost/zyghost.o
+ .comment       0x00000000       0x12 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(sprintf.o)
+ .comment       0x00000000       0x12 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(vfprintf_std.o)
+ .comment       0x00000000       0x12 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(fputc.o)
+
+.debug
+ *(.debug)
+
+.line
+ *(.line)
+
+.debug_srcinfo
+ *(.debug_srcinfo)
+
+.debug_sfnames
+ *(.debug_sfnames)
+
+.debug_aranges  0x00000000       0xa0
+ *(.debug_aranges)
+ .debug_aranges
+                0x00000000       0x20 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_divmodhi4.o)
+ .debug_aranges
+                0x00000020       0x20 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
+ .debug_aranges
+                0x00000040       0x20 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
+ .debug_aranges
+                0x00000060       0x20 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
+ .debug_aranges
+                0x00000080       0x20 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_udivmodhi4.o)
+
+.debug_pubnames
+ *(.debug_pubnames)
+
+.debug_info     0x00000000      0x3bb
+ *(.debug_info)
+ .debug_info    0x00000000       0xbf /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_divmodhi4.o)
+ .debug_info    0x000000bf       0xbf /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
+ .debug_info    0x0000017e       0xbf /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
+ .debug_info    0x0000023d       0xbf /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
+ .debug_info    0x000002fc       0xbf /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_udivmodhi4.o)
+ *(.gnu.linkonce.wi.*)
+
+.debug_abbrev   0x00000000       0x64
+ *(.debug_abbrev)
+ .debug_abbrev  0x00000000       0x14 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_divmodhi4.o)
+ .debug_abbrev  0x00000014       0x14 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
+ .debug_abbrev  0x00000028       0x14 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
+ .debug_abbrev  0x0000003c       0x14 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
+ .debug_abbrev  0x00000050       0x14 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_udivmodhi4.o)
+
+.debug_line     0x00000000      0x1ec
+ *(.debug_line)
+ .debug_line    0x00000000       0x69 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_divmodhi4.o)
+ .debug_line    0x00000069       0x58 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
+ .debug_line    0x000000c1       0x63 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
+ .debug_line    0x00000124       0x5e /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
+ .debug_line    0x00000182       0x6a /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_udivmodhi4.o)
+
+.debug_frame
+ *(.debug_frame)
+
+.debug_str
+ *(.debug_str)
+
+.debug_loc
+ *(.debug_loc)
+
+.debug_macinfo
+ *(.debug_macinfo)
+
+.debug_pubtypes
+ *(.debug_pubtypes)
+
+.debug_ranges
+ *(.debug_ranges)
+
+.debug_macro
+ *(.debug_macro)
+OUTPUT(Builds/main.elf elf32-avr)
+LOAD linker stubs
+
+Cross Reference Table
+
+Symbol                                            File
+__bad_interrupt                                   /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__bss_end                                         /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
+__bss_start                                       /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
+__data_end                                        /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
+__data_load_start                                 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
+__data_start                                      /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
+__divmodhi4                                       /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_divmodhi4.o)
+                                                  Builds/main.o
+__do_clear_bss                                    /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
+                                                  Builds/zyghost/usb_debug_only.o
+                                                  Builds/main.o
+__do_copy_data                                    /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
+                                                  Builds/zyghost/lcd.o
+                                                  Builds/zyghost/encoder.o
+                                                  Builds/zyghost/analog.o
+                                                  Builds/main.o
+__heap_end                                        /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__init                                            /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__stack                                           /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__udivmodhi4                                      /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_udivmodhi4.o)
+                                                  /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_divmodhi4.o)
+__ultoa_invert                                    /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(ultoa_invert.o)
+                                                  /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(vfprintf_std.o)
+__vector_1                                        /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_10                                       Builds/zyghost/usb_debug_only.o
+                                                  /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_11                                       Builds/zyghost/usb_debug_only.o
+                                                  /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_12                                       /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_13                                       /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_14                                       /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_15                                       /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_16                                       /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_17                                       /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_18                                       /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_19                                       /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_2                                        /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_20                                       /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_21                                       /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_22                                       /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_23                                       Builds/main.o
+                                                  /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_24                                       /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_25                                       /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_26                                       /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_27                                       /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_28                                       /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_29                                       /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_3                                        /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_30                                       /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_31                                       /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_32                                       /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_33                                       /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_34                                       /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_35                                       /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_36                                       /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_37                                       /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_4                                        /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_5                                        /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_6                                        /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_7                                        /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_8                                        /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_9                                        /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vector_default                                  /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+__vectors                                         /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+_div                                              /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_divmodhi4.o)
+_exit                                             /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
+adc_read                                          Builds/zyghost/analog.o
+                                                  Builds/main.o
+analogRead                                        Builds/zyghost/analog.o
+analogReference                                   Builds/zyghost/analog.o
+                                                  Builds/main.o
+byte_to_binary                                    Builds/zyghost/zyghost.o
+clear_pin                                         Builds/zyghost/pin.o
+                                                  Builds/zyghost/lcd.o
+                                                  Builds/main.o
+encoder_btn_down                                  Builds/zyghost/encoder.o
+encoder_btn_down_edge                             Builds/zyghost/encoder.o
+encoder_btn_up                                    Builds/zyghost/encoder.o
+encoder_btn_up_edge                               Builds/zyghost/encoder.o
+                                                  Builds/main.o
+encoder_clear                                     Builds/zyghost/encoder.o
+                                                  Builds/main.o
+encoder_get_step                                  Builds/zyghost/encoder.o
+encoder_init                                      Builds/zyghost/encoder.o
+                                                  Builds/main.o
+encoder_update                                    Builds/zyghost/encoder.o
+                                                  Builds/main.o
+exit                                              /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
+                                                  /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+flip_bit                                          Builds/zyghost/lcd.o
+foodunit_display                                  Builds/main.o
+foodunit_drain                                    Builds/main.o
+foodunit_fill                                     Builds/main.o
+foodunit_init                                     Builds/main.o
+foodunit_read_user                                Builds/main.o
+foodunit_update                                   Builds/main.o
+foodunit_update_current_screen                    Builds/main.o
+foodunit_update_h2o_check                         Builds/main.o
+fputc                                             /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(fputc.o)
+                                                  /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(vfprintf_std.o)
+input_pin                                         Builds/zyghost/pin.o
+                                                  Builds/zyghost/encoder.o
+                                                  Builds/main.o
+lcd_clear                                         Builds/main.o
+lcd_display_clear_flags                           Builds/zyghost/lcd.o
+                                                  Builds/main.o
+lcd_display_toggle_flags                          Builds/zyghost/lcd.o
+                                                  Builds/main.o
+lcd_entry_mode_set_flags                          Builds/zyghost/lcd.o
+lcd_function_set_flags                            Builds/zyghost/lcd.o
+lcd_init                                          Builds/zyghost/lcd.o
+                                                  Builds/main.o
+lcd_return_home_flags                             Builds/zyghost/lcd.o
+                                                  Builds/main.o
+lcd_select_register                               Builds/zyghost/lcd.o
+lcd_send_byte                                     Builds/zyghost/lcd.o
+lcd_send_command                                  Builds/zyghost/lcd.o
+                                                  Builds/main.o
+lcd_send_data                                     Builds/zyghost/lcd.o
+lcd_send_nibble4                                  Builds/zyghost/lcd.o
+lcd_send_nibble8                                  Builds/zyghost/lcd.o
+lcd_set_ddram_addr                                Builds/zyghost/lcd.o
+lcd_toggle_send_register                          Builds/zyghost/lcd.o
+lcd_write                                         Builds/zyghost/lcd.o
+                                                  Builds/main.o
+lcd_xy                                            Builds/zyghost/lcd.o
+                                                  Builds/main.o
+main                                              Builds/main.o
+                                                  /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtusb1286.o
+output_pin                                        Builds/zyghost/pin.o
+                                                  Builds/zyghost/lcd.o
+                                                  Builds/main.o
+pin_make                                          Builds/zyghost/pin.o
+                                                  Builds/main.o
+pin_set_bit                                       Builds/zyghost/lcd.o
+read_pin                                          Builds/zyghost/pin.o
+                                                  Builds/zyghost/encoder.o
+set_pin                                           Builds/zyghost/pin.o
+                                                  Builds/zyghost/lcd.o
+                                                  Builds/zyghost/encoder.o
+                                                  Builds/main.o
+sprintf                                           /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(sprintf.o)
+                                                  Builds/main.o
+strnlen                                           /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strnlen.o)
+                                                  /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(vfprintf_std.o)
+strnlen_P                                         /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strnlen_P.o)
+                                                  /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(vfprintf_std.o)
+time_add                                          Builds/main.o
+time_diff                                         Builds/main.o
+time_diff_internal                                Builds/main.o
+time_is_greater                                   Builds/main.o
+time_make                                         Builds/main.o
+time_set_global                                   Builds/main.o
+time_str                                          Builds/main.o
+time_update                                       Builds/main.o
+timer                                             Builds/main.o
+timer_start                                       Builds/main.o
+timer_stop                                        Builds/main.o
+usb_configured                                    Builds/zyghost/usb_debug_only.o
+                                                  Builds/main.o
+usb_debug_flush_output                            Builds/zyghost/usb_debug_only.o
+usb_debug_putchar                                 Builds/zyghost/usb_debug_only.o
+usb_debug_putstr                                  Builds/zyghost/usb_debug_only.o
+usb_init                                          Builds/zyghost/usb_debug_only.o
+                                                  Builds/main.o
+vfprintf                                          /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(vfprintf_std.o)
+                                                  /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(sprintf.o)
+water_level                                       Builds/main.o
+zstrlen                                           Builds/zyghost/zyghost.o

@@ -1,0 +1,375 @@
+   1               		.file	"pin.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__RAMPZ__ = 0x3b
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+   9               		.text
+  10               	.Ltext0:
+ 114               	.global	pin_make
+ 116               	pin_make:
+   1:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c **** //
+   2:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c **** //  pin.c
+   3:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c **** //
+   4:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c **** //  Created by Schell Scivally on 1/28/15.
+   5:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c **** //  Copyright (c) 2015 zyghost. All rights reserved.
+   6:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c **** //
+   7:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c **** 
+   8:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c **** #include "pin.h"
+   9:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c **** 
+  10:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c **** pin pin_make(volatile uint8_t *port, volatile uint8_t *ddr, volatile uint8_t *pinr, uint8_t bit) {
+ 118               	.LM0:
+ 119               	.LFBB1:
+ 120 0000 CF93      		push r28
+ 121 0002 DF93      		push r29
+ 122 0004 CDB7      		in r28,__SP_L__
+ 123 0006 DEB7      		in r29,__SP_H__
+ 124 0008 2797      		sbiw r28,7
+ 125 000a 0FB6      		in __tmp_reg__,__SREG__
+ 126 000c F894      		cli
+ 127 000e DEBF      		out __SP_H__,r29
+ 128 0010 0FBE      		out __SREG__,__tmp_reg__
+ 129 0012 CDBF      		out __SP_L__,r28
+ 130               	/* prologue: function */
+ 131               	/* frame size = 7 */
+ 132               	/* stack size = 9 */
+ 133               	.L__stack_usage = 9
+ 134 0014 E22F      		mov r30,r18
+  11:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c ****     pin p;
+  12:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c ****     p.port = port;
+  13:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c ****     p.ddr = ddr;
+  14:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c ****     p.pinr = pinr;
+  15:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c ****     p.bit = bit;
+  16:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c ****     return p;
+ 136               	.LM1:
+ 137 0016 8983      		std Y+1,r24
+ 138 0018 9A83      		std Y+2,r25
+ 139 001a 6B83      		std Y+3,r22
+ 140 001c 7C83      		std Y+4,r23
+ 141 001e 4D83      		std Y+5,r20
+ 142 0020 5E83      		std Y+6,r21
+ 143 0022 9C01      		movw r18,r24
+ 144 0024 962F      		mov r25,r22
+ 145 0026 572F      		mov r21,r23
+ 146 0028 642F      		mov r22,r20
+ 147 002a 7E81      		ldd r23,Y+6
+  17:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c **** }
+ 149               	.LM2:
+ 150 002c 492F      		mov r20,r25
+ 151 002e 8E2F      		mov r24,r30
+ 152 0030 90E0      		ldi r25,0
+ 153               	/* epilogue start */
+ 154 0032 2796      		adiw r28,7
+ 155 0034 0FB6      		in __tmp_reg__,__SREG__
+ 156 0036 F894      		cli
+ 157 0038 DEBF      		out __SP_H__,r29
+ 158 003a 0FBE      		out __SREG__,__tmp_reg__
+ 159 003c CDBF      		out __SP_L__,r28
+ 160 003e DF91      		pop r29
+ 161 0040 CF91      		pop r28
+ 162 0042 0895      		ret
+ 164               	.Lscope1:
+ 167               	.global	set_pin
+ 169               	set_pin:
+  18:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c **** 
+  19:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c **** void set_pin(pin p) {
+ 171               	.LM3:
+ 172               	.LFBB2:
+ 173 0044 CF93      		push r28
+ 174 0046 DF93      		push r29
+ 175 0048 CDB7      		in r28,__SP_L__
+ 176 004a DEB7      		in r29,__SP_H__
+ 177 004c 2797      		sbiw r28,7
+ 178 004e 0FB6      		in __tmp_reg__,__SREG__
+ 179 0050 F894      		cli
+ 180 0052 DEBF      		out __SP_H__,r29
+ 181 0054 0FBE      		out __SREG__,__tmp_reg__
+ 182 0056 CDBF      		out __SP_L__,r28
+ 183               	/* prologue: function */
+ 184               	/* frame size = 7 */
+ 185               	/* stack size = 9 */
+ 186               	.L__stack_usage = 9
+ 187 0058 2983      		std Y+1,r18
+ 188 005a 3A83      		std Y+2,r19
+ 189 005c 4B83      		std Y+3,r20
+ 190 005e 5C83      		std Y+4,r21
+ 191 0060 6D83      		std Y+5,r22
+ 192 0062 7E83      		std Y+6,r23
+ 193 0064 8F83      		std Y+7,r24
+  20:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c ****     set_bit(*p.port, p.bit);
+ 195               	.LM4:
+ 196 0066 E981      		ldd r30,Y+1
+ 197 0068 FA81      		ldd r31,Y+2
+ 198 006a 2081      		ld r18,Z
+ 199 006c 81E0      		ldi r24,lo8(1)
+ 200 006e 90E0      		ldi r25,0
+ 201 0070 0F80      		ldd r0,Y+7
+ 202 0072 00C0      		rjmp 2f
+ 203               		1:
+ 204 0074 880F      		lsl r24
+ 205 0076 991F      		rol r25
+ 206               		2:
+ 207 0078 0A94      		dec r0
+ 208 007a 02F4      		brpl 1b
+ 209 007c 282B      		or r18,r24
+ 210 007e 2083      		st Z,r18
+ 211               	/* epilogue start */
+  21:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c **** }
+ 213               	.LM5:
+ 214 0080 2796      		adiw r28,7
+ 215 0082 0FB6      		in __tmp_reg__,__SREG__
+ 216 0084 F894      		cli
+ 217 0086 DEBF      		out __SP_H__,r29
+ 218 0088 0FBE      		out __SREG__,__tmp_reg__
+ 219 008a CDBF      		out __SP_L__,r28
+ 220 008c DF91      		pop r29
+ 221 008e CF91      		pop r28
+ 222 0090 0895      		ret
+ 224               	.Lscope2:
+ 227               	.global	clear_pin
+ 229               	clear_pin:
+  22:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c **** 
+  23:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c **** void clear_pin(pin p) {
+ 231               	.LM6:
+ 232               	.LFBB3:
+ 233 0092 CF93      		push r28
+ 234 0094 DF93      		push r29
+ 235 0096 CDB7      		in r28,__SP_L__
+ 236 0098 DEB7      		in r29,__SP_H__
+ 237 009a 2797      		sbiw r28,7
+ 238 009c 0FB6      		in __tmp_reg__,__SREG__
+ 239 009e F894      		cli
+ 240 00a0 DEBF      		out __SP_H__,r29
+ 241 00a2 0FBE      		out __SREG__,__tmp_reg__
+ 242 00a4 CDBF      		out __SP_L__,r28
+ 243               	/* prologue: function */
+ 244               	/* frame size = 7 */
+ 245               	/* stack size = 9 */
+ 246               	.L__stack_usage = 9
+ 247 00a6 2983      		std Y+1,r18
+ 248 00a8 3A83      		std Y+2,r19
+ 249 00aa 4B83      		std Y+3,r20
+ 250 00ac 5C83      		std Y+4,r21
+ 251 00ae 6D83      		std Y+5,r22
+ 252 00b0 7E83      		std Y+6,r23
+ 253 00b2 8F83      		std Y+7,r24
+  24:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c ****     clear_bit(*p.port, p.bit);
+ 255               	.LM7:
+ 256 00b4 E981      		ldd r30,Y+1
+ 257 00b6 FA81      		ldd r31,Y+2
+ 258 00b8 2081      		ld r18,Z
+ 259 00ba 81E0      		ldi r24,lo8(1)
+ 260 00bc 90E0      		ldi r25,0
+ 261 00be 0F80      		ldd r0,Y+7
+ 262 00c0 00C0      		rjmp 2f
+ 263               		1:
+ 264 00c2 880F      		lsl r24
+ 265 00c4 991F      		rol r25
+ 266               		2:
+ 267 00c6 0A94      		dec r0
+ 268 00c8 02F4      		brpl 1b
+ 269 00ca 8095      		com r24
+ 270 00cc 8223      		and r24,r18
+ 271 00ce 8083      		st Z,r24
+ 272               	/* epilogue start */
+  25:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c **** }
+ 274               	.LM8:
+ 275 00d0 2796      		adiw r28,7
+ 276 00d2 0FB6      		in __tmp_reg__,__SREG__
+ 277 00d4 F894      		cli
+ 278 00d6 DEBF      		out __SP_H__,r29
+ 279 00d8 0FBE      		out __SREG__,__tmp_reg__
+ 280 00da CDBF      		out __SP_L__,r28
+ 281 00dc DF91      		pop r29
+ 282 00de CF91      		pop r28
+ 283 00e0 0895      		ret
+ 285               	.Lscope3:
+ 288               	.global	read_pin
+ 290               	read_pin:
+  26:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c **** 
+  27:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c **** bool read_pin(pin p) {
+ 292               	.LM9:
+ 293               	.LFBB4:
+ 294 00e2 CF93      		push r28
+ 295 00e4 DF93      		push r29
+ 296 00e6 CDB7      		in r28,__SP_L__
+ 297 00e8 DEB7      		in r29,__SP_H__
+ 298 00ea 2797      		sbiw r28,7
+ 299 00ec 0FB6      		in __tmp_reg__,__SREG__
+ 300 00ee F894      		cli
+ 301 00f0 DEBF      		out __SP_H__,r29
+ 302 00f2 0FBE      		out __SREG__,__tmp_reg__
+ 303 00f4 CDBF      		out __SP_L__,r28
+ 304               	/* prologue: function */
+ 305               	/* frame size = 7 */
+ 306               	/* stack size = 9 */
+ 307               	.L__stack_usage = 9
+ 308 00f6 2983      		std Y+1,r18
+ 309 00f8 3A83      		std Y+2,r19
+ 310 00fa 4B83      		std Y+3,r20
+ 311 00fc 5C83      		std Y+4,r21
+ 312 00fe 6D83      		std Y+5,r22
+ 313 0100 7E83      		std Y+6,r23
+ 314 0102 8F83      		std Y+7,r24
+  28:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c ****     return read_bit(*p.pinr, p.bit) ? 1 : 0;
+ 316               	.LM10:
+ 317 0104 ED81      		ldd r30,Y+5
+ 318 0106 FE81      		ldd r31,Y+6
+ 319 0108 8081      		ld r24,Z
+ 320 010a 90E0      		ldi r25,0
+ 321 010c 0F80      		ldd r0,Y+7
+ 322 010e 00C0      		rjmp 2f
+ 323               		1:
+ 324 0110 9595      		asr r25
+ 325 0112 8795      		ror r24
+ 326               		2:
+ 327 0114 0A94      		dec r0
+ 328 0116 02F4      		brpl 1b
+  29:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c **** }
+ 330               	.LM11:
+ 331 0118 8170      		andi r24,lo8(1)
+ 332               	/* epilogue start */
+ 333 011a 2796      		adiw r28,7
+ 334 011c 0FB6      		in __tmp_reg__,__SREG__
+ 335 011e F894      		cli
+ 336 0120 DEBF      		out __SP_H__,r29
+ 337 0122 0FBE      		out __SREG__,__tmp_reg__
+ 338 0124 CDBF      		out __SP_L__,r28
+ 339 0126 DF91      		pop r29
+ 340 0128 CF91      		pop r28
+ 341 012a 0895      		ret
+ 343               	.Lscope4:
+ 346               	.global	output_pin
+ 348               	output_pin:
+  30:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c **** 
+  31:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c **** void output_pin(pin p) {
+ 350               	.LM12:
+ 351               	.LFBB5:
+ 352 012c CF93      		push r28
+ 353 012e DF93      		push r29
+ 354 0130 CDB7      		in r28,__SP_L__
+ 355 0132 DEB7      		in r29,__SP_H__
+ 356 0134 2797      		sbiw r28,7
+ 357 0136 0FB6      		in __tmp_reg__,__SREG__
+ 358 0138 F894      		cli
+ 359 013a DEBF      		out __SP_H__,r29
+ 360 013c 0FBE      		out __SREG__,__tmp_reg__
+ 361 013e CDBF      		out __SP_L__,r28
+ 362               	/* prologue: function */
+ 363               	/* frame size = 7 */
+ 364               	/* stack size = 9 */
+ 365               	.L__stack_usage = 9
+ 366 0140 2983      		std Y+1,r18
+ 367 0142 3A83      		std Y+2,r19
+ 368 0144 4B83      		std Y+3,r20
+ 369 0146 5C83      		std Y+4,r21
+ 370 0148 6D83      		std Y+5,r22
+ 371 014a 7E83      		std Y+6,r23
+ 372 014c 8F83      		std Y+7,r24
+  32:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c ****     set_bit(*p.ddr, p.bit);
+ 374               	.LM13:
+ 375 014e EB81      		ldd r30,Y+3
+ 376 0150 FC81      		ldd r31,Y+4
+ 377 0152 2081      		ld r18,Z
+ 378 0154 81E0      		ldi r24,lo8(1)
+ 379 0156 90E0      		ldi r25,0
+ 380 0158 0F80      		ldd r0,Y+7
+ 381 015a 00C0      		rjmp 2f
+ 382               		1:
+ 383 015c 880F      		lsl r24
+ 384 015e 991F      		rol r25
+ 385               		2:
+ 386 0160 0A94      		dec r0
+ 387 0162 02F4      		brpl 1b
+ 388 0164 282B      		or r18,r24
+ 389 0166 2083      		st Z,r18
+ 390               	/* epilogue start */
+  33:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c **** }
+ 392               	.LM14:
+ 393 0168 2796      		adiw r28,7
+ 394 016a 0FB6      		in __tmp_reg__,__SREG__
+ 395 016c F894      		cli
+ 396 016e DEBF      		out __SP_H__,r29
+ 397 0170 0FBE      		out __SREG__,__tmp_reg__
+ 398 0172 CDBF      		out __SP_L__,r28
+ 399 0174 DF91      		pop r29
+ 400 0176 CF91      		pop r28
+ 401 0178 0895      		ret
+ 403               	.Lscope5:
+ 406               	.global	input_pin
+ 408               	input_pin:
+  34:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c **** 
+  35:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c **** void input_pin(pin p) {
+ 410               	.LM15:
+ 411               	.LFBB6:
+ 412 017a CF93      		push r28
+ 413 017c DF93      		push r29
+ 414 017e CDB7      		in r28,__SP_L__
+ 415 0180 DEB7      		in r29,__SP_H__
+ 416 0182 2797      		sbiw r28,7
+ 417 0184 0FB6      		in __tmp_reg__,__SREG__
+ 418 0186 F894      		cli
+ 419 0188 DEBF      		out __SP_H__,r29
+ 420 018a 0FBE      		out __SREG__,__tmp_reg__
+ 421 018c CDBF      		out __SP_L__,r28
+ 422               	/* prologue: function */
+ 423               	/* frame size = 7 */
+ 424               	/* stack size = 9 */
+ 425               	.L__stack_usage = 9
+ 426 018e 2983      		std Y+1,r18
+ 427 0190 3A83      		std Y+2,r19
+ 428 0192 4B83      		std Y+3,r20
+ 429 0194 5C83      		std Y+4,r21
+ 430 0196 6D83      		std Y+5,r22
+ 431 0198 7E83      		std Y+6,r23
+ 432 019a 8F83      		std Y+7,r24
+  36:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c ****     clear_bit(*p.ddr, p.bit);
+ 434               	.LM16:
+ 435 019c EB81      		ldd r30,Y+3
+ 436 019e FC81      		ldd r31,Y+4
+ 437 01a0 2081      		ld r18,Z
+ 438 01a2 81E0      		ldi r24,lo8(1)
+ 439 01a4 90E0      		ldi r25,0
+ 440 01a6 0F80      		ldd r0,Y+7
+ 441 01a8 00C0      		rjmp 2f
+ 442               		1:
+ 443 01aa 880F      		lsl r24
+ 444 01ac 991F      		rol r25
+ 445               		2:
+ 446 01ae 0A94      		dec r0
+ 447 01b0 02F4      		brpl 1b
+ 448 01b2 8095      		com r24
+ 449 01b4 8223      		and r24,r18
+ 450 01b6 8083      		st Z,r24
+ 451               	/* epilogue start */
+  37:/Users/schell/Code/teensy/FoodUnit/FoodUnit/zyghost/pin.c **** }...
+ 453               	.LM17:
+ 454 01b8 2796      		adiw r28,7
+ 455 01ba 0FB6      		in __tmp_reg__,__SREG__
+ 456 01bc F894      		cli
+ 457 01be DEBF      		out __SP_H__,r29
+ 458 01c0 0FBE      		out __SREG__,__tmp_reg__
+ 459 01c2 CDBF      		out __SP_L__,r28
+ 460 01c4 DF91      		pop r29
+ 461 01c6 CF91      		pop r28
+ 462 01c8 0895      		ret
+ 464               	.Lscope6:
+ 466               	.Letext0:
+ 467               		.ident	"GCC: (GNU) 4.8.1"
+DEFINED SYMBOLS
+                            *ABS*:00000000 pin.c
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccpeMyf8.s:2      *ABS*:0000003e __SP_H__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccpeMyf8.s:3      *ABS*:0000003d __SP_L__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccpeMyf8.s:4      *ABS*:0000003f __SREG__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccpeMyf8.s:5      *ABS*:0000003b __RAMPZ__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccpeMyf8.s:6      *ABS*:00000000 __tmp_reg__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccpeMyf8.s:7      *ABS*:00000001 __zero_reg__
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccpeMyf8.s:116    .text:00000000 pin_make
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccpeMyf8.s:169    .text:00000044 set_pin
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccpeMyf8.s:229    .text:00000092 clear_pin
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccpeMyf8.s:290    .text:000000e2 read_pin
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccpeMyf8.s:348    .text:0000012c output_pin
+/var/folders/t8/nnlph4js2sx79l45ty30rqdc0000gn/T//ccpeMyf8.s:408    .text:0000017a input_pin
+
+NO UNDEFINED SYMBOLS
